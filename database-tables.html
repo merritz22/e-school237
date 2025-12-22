@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schéma Base de Données</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .database-schema {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .table {
+            background: #f8fafc;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .table:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .table-header {
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .users { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .content { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .categories { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .files { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .forum { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .relations { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+
+        .table-body {
+            padding: 0;
+        }
+
+        .field {
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s ease;
+        }
+
+        .field:hover {
+            background: #e2e8f0;
+        }
+
+        .field:last-child {
+            border-bottom: none;
+        }
+
+        .field-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .field-type {
+            font-size: 0.9em;
+            color: #4a5568;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .primary-key {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .foreign-key {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .nullable {
+            background: #f0fff4;
+            color: #22543d;
+        }
+
+        .relationships {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 15px;
+        }
+
+        .relationships h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .relationship-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .relationship {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .relationship h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .relationship p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .sql-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: #1a202c;
+            border-radius: 15px;
+            color: #e2e8f0;
+        }
+
+        .sql-section h2 {
+            color: #4facfe;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sql-code {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .keyword { color: #4facfe; }
+        .string { color: #68d391; }
+        .comment { color: #a0aec0; }
+
+        @media (max-width: 768px) {
+            .database-schema {
+                grid-template-columns: 1fr;
+            }
+            
+            .legend {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Schéma de Base de Données</h1>
+            <p>Site Éducatif - Structure complète des données</p>
+        </div>
+
+        <div class="main-content">
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color primary-key"></div>
+                    <span>Clé Primaire (PK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color foreign-key"></div>
+                    <span>Clé Étrangère (FK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color nullable"></div>
+                    <span>Champ Nullable</span>
+                </div>
+            </div>
+
+            <div class="database-schema">
+                <!-- Table Users -->
+                <div class="table">
+                    <div class="table-header users">
+                        <span>👥</span>
+                        <span>users</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">username</span>
+                            <span class="field-type">VARCHAR(50) UNIQUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">email</span>
+                            <span class="field-type">VARCHAR(255) UNIQUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">password_hash</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">first_name</span>
+                            <span class="field-type">VARCHAR(100)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">last_name</span>
+                            <span class="field-type">VARCHAR(100)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">role</span>
+                            <span class="field-type">ENUM('admin','moderator','author','member')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">avatar_url</span>
+                            <span class="field-type nullable">VARCHAR(255) NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">bio</span>
+                            <span class="field-type nullable">TEXT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">is_active</span>
+                            <span class="field-type">BOOLEAN DEFAULT TRUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">updated_at</span>
+                            <span class="field-type">TIMESTAMP ON UPDATE NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Categories -->
+                <div class="table">
+                    <div class="table-header categories">
+                        <span>📂</span>
+                        <span>categories</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">name</span>
+                            <span class="field-type">VARCHAR(100)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">slug</span>
+                            <span class="field-type">VARCHAR(100) UNIQUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">description</span>
+                            <span class="field-type nullable">TEXT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">type</span>
+                            <span class="field-type">ENUM('subject','level','file_type')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">parent_id</span>
+                            <span class="field-type foreign-key nullable">INT NULL FK</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Articles -->
+                <div class="table">
+                    <div class="table-header content">
+                        <span>📰</span>
+                        <span>articles</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">title</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">slug</span>
+                            <span class="field-type">VARCHAR(255) UNIQUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">content</span>
+                            <span class="field-type">LONGTEXT</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">excerpt</span>
+                            <span class="field-type nullable">TEXT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">featured_image</span>
+                            <span class="field-type nullable">VARCHAR(255) NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">author_id</span>
+                            <span class="field-type foreign-key">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">category_id</span>
+                            <span class="field-type foreign-key">INT FK → categories(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">status</span>
+                            <span class="field-type">ENUM('draft','published','archived')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">views_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">published_at</span>
+                            <span class="field-type nullable">TIMESTAMP NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">updated_at</span>
+                            <span class="field-type">TIMESTAMP ON UPDATE NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Evaluation Subjects -->
+                <div class="table">
+                    <div class="table-header content">
+                        <span>📝</span>
+                        <span>evaluation_subjects</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">title</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">description</span>
+                            <span class="field-type nullable">TEXT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">type</span>
+                            <span class="field-type">ENUM('exam','quiz','exercise','qcm')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">subject_id</span>
+                            <span class="field-type foreign-key">INT FK → categories(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">level_id</span>
+                            <span class="field-type foreign-key">INT FK → categories(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">author_id</span>
+                            <span class="field-type foreign-key">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">duration_minutes</span>
+                            <span class="field-type nullable">INT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">difficulty</span>
+                            <span class="field-type">ENUM('easy','medium','hard')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">downloads_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">updated_at</span>
+                            <span class="field-type">TIMESTAMP ON UPDATE NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Educational Resources -->
+                <div class="table">
+                    <div class="table-header files">
+                        <span>📚</span>
+                        <span>educational_resources</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">title</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">description</span>
+                            <span class="field-type nullable">TEXT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">file_name</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">file_path</span>
+                            <span class="field-type">VARCHAR(500)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">file_size</span>
+                            <span class="field-type">BIGINT</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">file_type</span>
+                            <span class="field-type">VARCHAR(50)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">mime_type</span>
+                            <span class="field-type">VARCHAR(100)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">uploader_id</span>
+                            <span class="field-type foreign-key">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">category_id</span>
+                            <span class="field-type foreign-key">INT FK → categories(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">downloads_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">is_approved</span>
+                            <span class="field-type">BOOLEAN DEFAULT FALSE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">updated_at</span>
+                            <span class="field-type">TIMESTAMP ON UPDATE NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Forum Topics -->
+                <div class="table">
+                    <div class="table-header forum">
+                        <span>💬</span>
+                        <span>forum_topics</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">title</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">content</span>
+                            <span class="field-type">LONGTEXT</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">author_id</span>
+                            <span class="field-type foreign-key">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">category_id</span>
+                            <span class="field-type foreign-key nullable">INT FK → categories(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">is_pinned</span>
+                            <span class="field-type">BOOLEAN DEFAULT FALSE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">is_locked</span>
+                            <span class="field-type">BOOLEAN DEFAULT FALSE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">views_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">replies_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">last_reply_at</span>
+                            <span class="field-type nullable">TIMESTAMP NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">updated_at</span>
+                            <span class="field-type">TIMESTAMP ON UPDATE NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Forum Replies -->
+                <div class="table">
+                    <div class="table-header forum">
+                        <span>💭</span>
+                        <span>forum_replies</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">content</span>
+                            <span class="field-type">LONGTEXT</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">topic_id</span>
+                            <span class="field-type foreign-key">INT FK → forum_topics(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">author_id</span>
+                            <span class="field-type foreign-key">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">parent_reply_id</span>
+                            <span class="field-type foreign-key nullable">INT FK → forum_replies(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">likes_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">is_approved</span>
+                            <span class="field-type">BOOLEAN DEFAULT TRUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">updated_at</span>
+                            <span class="field-type">TIMESTAMP ON UPDATE NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Tags -->
+                <div class="table">
+                    <div class="table-header categories">
+                        <span>🏷️</span>
+                        <span>tags</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">name</span>
+                            <span class="field-type">VARCHAR(100) UNIQUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">slug</span>
+                            <span class="field-type">VARCHAR(100) UNIQUE</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">usage_count</span>
+                            <span class="field-type">INT DEFAULT 0</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tables de Liaison -->
+                <div class="table">
+                    <div class="table-header relations">
+                        <span>🔗</span>
+                        <span>article_tags</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">article_id</span>
+                            <span class="field-type foreign-key primary-key">INT FK → articles(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">tag_id</span>
+                            <span class="field-type foreign-key primary-key">INT FK → tags(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table">
+                    <div class="table-header relations">
+                        <span>❤️</span>
+                        <span>user_likes</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">user_id</span>
+                            <span class="field-type foreign-key">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">likeable_type</span>
+                            <span class="field-type">ENUM('article','reply','resource')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">likeable_id</span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table">
+                    <div class="table-header relations">
+                        <span>📊</span>
+                        <span>download_logs</span>
+                    </div>
+                    <div class="table-body">
+                        <div class="field">
+                            <span class="field-name">id</span>
+                            <span class="field-type primary-key">INT PRIMARY KEY</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">user_id</span>
+                            <span class="field-type foreign-key nullable">INT FK → users(id)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">resource_type</span>
+                            <span class="field-type">ENUM('resource','evaluation')</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">resource_id</span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">ip_address</span>
+                            <span class="field-type">VARCHAR(45)</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">user_agent</span>
+                            <span class="field-type nullable">TEXT NULL</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-name">downloaded_at</span>
+                            <span class="field-type">TIMESTAMP DEFAULT NOW()</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relationships">
+                <h2>🔗 Relations entre les Tables</h2>
+                <div class="relationship-grid">
+                    <div class="relationship">
+                        <h3>Users → Content</h3>
+                        <p><strong>1:N</strong> - Un utilisateur peut créer plusieurs articles, sujets d'évaluation et ressources. Chaque contenu appartient à un seul auteur.</p>
+                    </div>
+
+
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

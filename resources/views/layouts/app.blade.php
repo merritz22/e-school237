@@ -144,8 +144,8 @@
                     <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Accueil</a>
                     <a href="{{ route('articles.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Articles</a>
                     <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Sujets d'évaluation</a>
-                    <a href="{{ route('supports.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Supports</a>
-                    <a href="{{ route('blog.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Blog</a>
+                    {{-- <a href="{{ route('supports.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Supports</a> --}}
+                    {{-- <a href="{{ route('blog.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Blog</a> --}}
                     
                     <!-- Mobile search -->
                     <form action="{{ route('search') }}" method="GET" class="px-3 py-2">

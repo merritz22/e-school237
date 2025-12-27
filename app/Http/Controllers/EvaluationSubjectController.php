@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
+use setasign\Fpdi\Tcpdf\Fpdi;
 
 
 class EvaluationSubjectController extends Controller
@@ -128,7 +129,43 @@ class EvaluationSubjectController extends Controller
         // Incrémenter le compteur
         $subject->increment('downloads_count');
 
-        return Storage::disk('private')->download($subject->file_path, $subject->title . '.' . pathinfo($subject->file_path, PATHINFO_EXTENSION));
+        // 📄 Chemin réel du PDF
+        $pdfPath = Storage::disk('private')->path($subject->file_path);
+
+        // 👤 Infos du filigrane
+        $watermarkText = "E-School237";
+
+        // 🧠 Création du PDF filigrané
+        $pdf = new Fpdi();
+        $pageCount = $pdf->setSourceFile($pdfPath);
+
+        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+            $tplId = $pdf->importPage($pageNo);
+            $size = $pdf->getTemplateSize($tplId);
+
+            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+            $pdf->useTemplate($tplId);
+
+            // 🎨 Filigrane
+            $pdf->SetFont('helvetica', 'B', 80);
+            $pdf->SetTextColor(30, 64, 175); // blue-600
+            $pdf->SetAlpha(0.12);
+
+            $pdf->Rotate(45, $size['width'] / 2, $size['height'] / 2);
+            $pdf->Text(20, $size['height'] / 2, $watermarkText);
+            $pdf->Rotate(0);
+        }
+
+        // 📤 Téléchargement
+        $fileName = $subject->title . '.pdf';
+
+        return response($pdf->Output($fileName, 'S'))
+            ->header('Content-Type', 'application/pdf')
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="' . $fileName . '"'
+        );
+        // return Storage::disk('private')->download($subject->file_path, $subject->title . '.' . pathinfo($subject->file_path, PATHINFO_EXTENSION));
     }
 
     /**

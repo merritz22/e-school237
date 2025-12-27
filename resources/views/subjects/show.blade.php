@@ -7,7 +7,20 @@
     
     <!-- Titre -->
     <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ $subject->title }}</h1>
-
+    <div class="p-6">
+        <div class="relative w-full h-100 mb-4 border rounded overflow-hidden">
+            <iframe 
+                src="{{ url('/pdf/' . $subject->id) }}#toolbar=0&navpanes=0"
+                class="w-full h-full"
+                loading="lazy">
+            </iframe>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span class="text-blue-600/20 text-5xl font-bold rotate-[-30deg] select-none">
+                    E-School237
+                </span>
+            </div>
+        </div>
+    </div>
     <!-- Description -->
     <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-700 mb-2">Description</h2>

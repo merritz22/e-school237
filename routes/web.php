@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\FileController;
+use App\Models\EvaluationSubject;
 
 /*
 |--------------------------------------------------------------------------
@@ -218,4 +219,11 @@ Route::middleware('auth')->prefix('user')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/files/upload', [FileController::class, 'upload'])->name('files.upload');
     Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('files.destroy');
+});
+
+Route::get('/pdf/{id}', function ($id) {
+    $subject = EvaluationSubject::findOrFail($id);
+    return response()->file(
+        storage_path('app/private/' . $subject->file_path)
+    );
 });

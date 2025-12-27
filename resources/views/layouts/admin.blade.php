@@ -22,10 +22,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
-<body class="h-full">
+<body class="h-full" x-data="{ open: false }">
     <div class="min-h-full">
         <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900" x-data="{ open: false }">
+        <div :class="{'translate-x-0': open, '-translate-x-full': !open}" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900">
             <!-- Mobile menu button -->
             <div class="absolute top-0 right-0 -mr-12 pt-2 lg:hidden">
                 <button @click="open = !open" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">

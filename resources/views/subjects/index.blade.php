@@ -144,18 +144,20 @@
                 </button>
             </div> --}}
         </div>
-
+        
+        
         <!-- Subjects list -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($subjects as $subject)
-                <a href="{{ route('subjects.show', $subject) }}" 
-                   class="block bg-white rounded-lg shadow-sm hover:shadow-md border border-gray-200 overflow-hidden transition">
-                    <div class="p-6">
-                        <h3 class="font-semibold text-xl mb-2 line-clamp-2">{{ $subject->title }}</h3>
-                        <div class="text-sm text-gray-600 mb-3 space-y-1">
-                            <div><strong>Niveau :</strong> {{ $subject->level_id ?? 0 }}</div>
-                            <div><strong>Matière :</strong> {{ $subject->subject_name ?? $subject->subject_id }}</div>
-                            <div><strong>Catégorie :</strong> {{ $subject->category->name ?? 'N/A' }}</div>
+            <a href="{{ route('subjects.show', $subject) }}" 
+            class="block bg-white rounded-lg shadow-sm hover:shadow-md border border-gray-200 overflow-hidden transition">
+            <div class="p-6">
+                <h3 class="font-semibold text-xl mb-2 line-clamp-2">{{ $subject->title }}</h3>
+                <div class="text-sm text-gray-600 mb-3 space-y-1">
+                            {{-- @dd($subject) --}}
+                            {{-- <div><strong>Niveau :</strong> {{ $subject->level_id ?? 0 }}</div> --}}
+                            {{-- <div><strong>Matière :</strong> {{ $subject->subject_name ?? $subject->subject_id }}</div> --}}
+                            <div><strong>Matière :</strong> {{ $subject->category->name ?? 'N/A' }}</div>
                             <div><strong>Type :</strong> {{ $subject->type }}</div>
                             {{-- <div><strong>Année :</strong> {{ $subject->exam_date ? $subject->exam_date->format('Y') : '-' }}</div> --}}
                             <div><strong>Téléchargements :</strong> {{ $subject->downloads_count }}</div>

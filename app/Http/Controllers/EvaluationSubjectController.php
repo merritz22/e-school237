@@ -203,7 +203,7 @@ class EvaluationSubjectController extends Controller
         
         $categories = Category::where('type', 'subject')->orderBy('name')->get();
         $levels = Category::where('type', 'level')->orderBy('name')->get();
-        $types = ['exam', 'quiz', 'exercise', 'qcm'];
+        $types = ['Examen', 'Séquence', 'Travaux dirigés'];
         
         return view('admin.subjects.create', compact('categories', 'levels', 'types'));
     }
@@ -271,9 +271,9 @@ class EvaluationSubjectController extends Controller
         
         // $categories = Category::orderBy('name')->get();
         // $levels = EvaluationSubject::distinct()->pluck('level_id')->filter()->sort();
-        $types = ['Examen', 'Contrôle', 'QCM', 'Exercice', 'Devoir'];
+        // $types = ['Examen', 'Contrôle', 'QCM', 'Exercice', 'Devoir'];
         // dd($subject);
-        $types = ['exam', 'quiz', 'exercise', 'qcm'];
+        $types = ['Examen', 'Séquence', 'Travaux dirigés'];
 
         
         return view('admin.subjects.edit', compact('subject', 'categories', 'levels', 'types'));

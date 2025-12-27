@@ -35,12 +35,12 @@
                class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
                 📄 Télécharger le sujet
             </a>
-            @if($subject->correction_file_path)
+            {{-- @if($subject->correction_file_path)
                 <a href="{{ route('subjects.download', ['subject' => $subject->id, 'file' => 'correction']) }}" 
                    class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow">
                     📝 Télécharger la correction
                 </a>
-            @endif
+            @endif --}}
         @else
             <p class="text-gray-600">
                 <a href="{{ route('login') }}" class="text-blue-600 underline">Connectez-vous</a> 

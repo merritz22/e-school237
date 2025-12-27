@@ -188,13 +188,13 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div class="col-span-1 md:col-span-2">
-                        <h3 class="text-lg font-semibold mb-4">{{ config('app.name', 'EduSite') }}</h3>
+                        <h3 class="text-lg font-semibold mb-4">{{ config('app.name', 'E-School237') }}</h3>
                         <p class="text-gray-300 mb-4">Plateforme éducative dédiée au partage d'articles, de sujets d'évaluation et de supports pédagogiques.</p>
                         <div class="flex space-x-4">
                             <!-- Social links -->
-                            <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+                            <a href="https://www.facebook.com/share/1DGRporPoN" class="text-gray-400 hover:text-white">Facebook</a>
                             <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
-                            <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
+                            <a href="https://www.youtube.com/@E-School237" class="text-gray-400 hover:text-white">Youtube</a>
                         </div>
                     </div>
                     

@@ -121,7 +121,7 @@
             </div>
 
             <!-- Fichier de correction -->
-            <div>
+            {{-- <div>
                 <label for="correction_file" class="block text-sm font-medium text-gray-700 mb-2">Fichier de correction</label>
                 @if($subject->correction_file_path)
                     <div class="mb-2 flex items-center">
@@ -145,7 +145,7 @@
                 </div>
                 <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>
                 @error('correction_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-            </div>
+            </div> --}}
         </div>
 
         <div class="flex justify-between space-x-4 pt-4">
@@ -174,10 +174,10 @@
         document.getElementById('file-name').textContent = fileName;
     });
 
-    document.getElementById('correction_file').addEventListener('change', function(e) {
+    /*document.getElementById('correction_file').addEventListener('change', function(e) {
         const fileName = e.target.files[0] ? e.target.files[0].name : 'Choisir un nouveau fichier';
         document.getElementById('correction-file-name').textContent = fileName;
-    });
+    });*/
 </script>
 @endpush
 

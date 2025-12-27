@@ -111,7 +111,7 @@
             </div>
 
             <!-- Fichier de correction - Style amélioré -->
-            <div>
+            {{-- <div>
                 <label for="correction_file" class="block text-sm font-medium text-gray-700 mb-2">Fichier de correction (optionnel)</label>
                 <div class="mt-1 flex items-center">
                     <label for="correction_file" class="relative cursor-pointer bg-white rounded-lg border border-gray-300 hover:border-blue-500 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500 @error('correction_file') border-red-500 @enderror">
@@ -126,7 +126,7 @@
                 </div>
                 <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>
                 @error('correction_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-            </div>
+            </div> --}}
         </div>
 
         <div class="flex justify-between space-x-4 pt-4">
@@ -155,10 +155,10 @@
         document.getElementById('file-name').textContent = fileName;
     });
 
-    document.getElementById('correction_file').addEventListener('change', function(e) {
+    /*document.getElementById('correction_file').addEventListener('change', function(e) {
         const fileName = e.target.files[0] ? e.target.files[0].name : 'Choisir un fichier';
         document.getElementById('correction-file-name').textContent = fileName;
-    });
+    });*/
 </script>
 @endpush
 

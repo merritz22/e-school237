@@ -12,7 +12,7 @@
 <div class="bg-white">
     <div class="px-4 sm:px-6 lg:px-8 py-3">
         <!-- Filters -->
-        <div class="bg-gray-50 rounded-lg mb-3">
+        {{-- <div class="bg-gray-50 rounded-lg mb-3">
             <form method="GET" action="{{ route('subjects.index') }}" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5">
                     <!-- Search -->
@@ -54,41 +54,6 @@
                         </select>
                     </div>
 
-                    <!-- Type -->
-                    {{-- <div>
-                        <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                        <select id="type" name="type" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Tous les types</option>
-                            @foreach($types as $type)
-                                <option value="{{ $type }}" @if(request('type') === $type) selected @endif>{{ $type }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-
-                    <!-- Année -->
-                    {{-- <div>
-                        <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Année</label>
-                        <select id="year" name="year" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Toutes les années</option>
-                            @foreach($years as $year)
-                                <option value="{{ $year }}" @if(request('year') === $year) selected @endif>{{ $year }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-
-                    <!-- Trier -->
-                    {{-- <div>
-                        <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">Trier</label>
-                        <select id="sort" name="sort" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="latest" @if(request('sort') === 'latest') selected @endif>Derniers</option>
-                            <option value="popular" @if(request('sort') === 'popular') selected @endif>Populaires</option>
-                            <option value="title" @if(request('sort') === 'title') selected @endif>Titre</option>
-                            <option value="level" @if(request('sort') === 'level') selected @endif>Niveau</option>
-                        </select>
-                    </div> --}}
                     <div class="flex flex-col sm:flex-row gap-4">
                         <button type="submit" 
                                 class="bg-[#03386a] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
@@ -108,7 +73,7 @@
                 </div>
 
             </form>
-        </div>
+        </div> --}}
         
         
         <!-- Subjects list -->

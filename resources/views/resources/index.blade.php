@@ -11,7 +11,7 @@
 @endcomponent
 <div class="bg-white">
     <div class="px-4 sm:px-6 lg:px-8 py-3">
-        <div class="bg-gray-50 rounded-lg mb-3">
+        {{-- <div class="bg-gray-50 rounded-lg mb-3">
             <form action="{{ route('resources.index') }}" method="GET" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5">
                     <!-- Search -->
@@ -74,7 +74,7 @@
                 </div>
             </form>
         </div>
-    
+     --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($resources as $resource)
             <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">

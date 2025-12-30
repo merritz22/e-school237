@@ -34,7 +34,7 @@ class DashboardController extends Controller
             'total_articles' => Article::count(),
             'pending_articles' => Article::where('status', 'draft')->count(),
             'total_subjects' => EvaluationSubject::count(),
-            'supports' => EducationalResource::count(),
+            'total_resources' => EducationalResource::count(),
             'blog_posts' => ForumTopic::count(),
             
             'activity' => [

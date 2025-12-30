@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\DownloadLog;
+use setasign\Fpdi\Tcpdf\Fpdi;
+use setasign\Fpdi\PdfParser\PdfParserException;
 
 class EducationalResourceController extends Controller
 {
@@ -32,7 +35,7 @@ class EducationalResourceController extends Controller
 
         return view('admin.resources.index', [
             'resources' => $resources,
-            'categories' => Category::all(),
+            'subjects' => Category::all()->where('type', 'subject'),
         ]);
     }
 
@@ -55,15 +58,16 @@ class EducationalResourceController extends Controller
                 $query->popular(10);
             })
             ->when(!$request->user() || !$request->user()->isAdmin(), function($query) {
-                $query->approved();
+                $query->where('is_approved', 1);
             })
             ->with(['category', 'uploader'])
             ->latest()
             ->paginate(15);
 
-        $categories = Category::all();
+        $subjects = Category::all()->where('type', 'subject');
+        $levels = Category::all()->where('type', 'level');
 
-        return view('admin.resources.index', compact('resources', 'categories'));
+        return view('resources.index', compact('resources', 'subjects', 'levels'));
     }
 
     /**
@@ -71,8 +75,9 @@ class EducationalResourceController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
-        return view('admin.resources.create', compact('categories'));
+        $subjects = Category::all()->where('type', 'subject');
+        $levels = Category::all()->where('type', 'level');
+        return view('admin.resources.create', compact('subjects', 'levels'));
     }
 
     /**
@@ -83,7 +88,7 @@ class EducationalResourceController extends Controller
         $validated = $this->validateResource($request);
 
         $file = $request->file('resource_file');
-        $filePath = $file->store('educational-resources');
+        $filePath = $file->store('educational_resources', 'private');
 
         $resource = EducationalResource::create([
             'title' => $validated['title'],
@@ -94,12 +99,13 @@ class EducationalResourceController extends Controller
             'file_type' => $file->getClientOriginalExtension(),
             'mime_type' => $file->getMimeType(),
             'uploader_id' => Auth::id(),
-            'category_id' => $validated['category_id'],
-            'is_approved' => Auth::user()->can('approve', EducationalResource::class),
+            'category_id' => $validated['subject_id'],
+            // 'level_id' => $validated['level_id'],
+            'is_approved' => 0,
         ]);
 
-        return redirect()->route('resources.show', $resource)
-            ->with('success', 'Ressource créée avec succès. ' . 
+        return redirect()->route('admin.resources.index')
+            ->with('success', 'Support crée avec succès. ' . 
                 ($resource->is_approved ? '' : 'En attente d\'approbation.'));
     }
 
@@ -112,11 +118,11 @@ class EducationalResourceController extends Controller
             abort(403, 'Cette ressource n\'est pas encore approuvée.');
         }
 
-        return view('educational-resources.show', [
+        return view('resources.show', [
             'resource' => $resource->load(['category', 'uploader', 'likes']),
             'relatedResources' => EducationalResource::where('category_id', $resource->category_id)
                 ->where('id', '!=', $resource->id)
-                ->approved()
+                ->where('is_approved', 1)
                 ->popular(5)
                 ->get(),
         ]);
@@ -125,21 +131,70 @@ class EducationalResourceController extends Controller
     /**
      * Télécharger le fichier de la ressource
      */
-    public function download(EducationalResource $resource): StreamedResponse
+    public function download(EducationalResource $resource)
     {
-        if (!$resource->canBeDownloadedBy(Auth::user())) {
-            abort(403, 'Accès non autorisé à cette ressource.');
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté pour télécharger.');
         }
 
-        $resource->incrementDownloads();
-
-        if (Auth::check()) {
-            $resource->downloadLogs()->create(['user_id' => Auth::id()]);
+        if (!Storage::disk('private')->exists($resource->file_path)) {
+            abort(404, 'Fichier non trouvé.');
         }
 
-        return Storage::download($resource->file_path, $resource->file_name, [
-            'Content-Type' => $resource->mime_type,
+        // Enregistrer le téléchargement
+        DownloadLog::create([
+            'user_id' => Auth::id(),
+            'downloadable_type' => EducationalResource::class,
+            'downloadable_id' => $resource->id,
+            'ip_address' => request()->ip(),
+            'resource_id' => $resource->id
         ]);
+
+        // Incrémenter le compteur
+        $resource->increment('downloads_count');
+
+        // 📄 Chemin réel du PDF
+        $pdfPath = Storage::disk('private')->path($resource->file_path);
+
+        // 👤 Infos du filigrane
+        $watermarkText = "E-School237";
+
+        // 🧠 Création du PDF filigrané
+        try {
+            $pdf = new Fpdi();
+            $pageCount = $pdf->setSourceFile($pdfPath);
+
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $tplId = $pdf->importPage($pageNo);
+                $size = $pdf->getTemplateSize($tplId);
+
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($tplId);
+
+                // 🎨 Filigrane
+                $pdf->SetFont('helvetica', 'B', 80);
+                $pdf->SetTextColor(30, 64, 175); // blue-600
+                $pdf->SetAlpha(0.12);
+
+                $pdf->Rotate(45, $size['width'] / 2, $size['height'] / 2);
+                $pdf->Text(20, $size['height'] / 2, $watermarkText);
+                $pdf->Rotate(0);
+            }
+
+            // 📤 Téléchargement
+            $fileName = $resource->title . '.pdf';
+
+            return response($pdf->Output($fileName, 'S'))
+                ->header('Content-Type', 'application/pdf')
+                ->header(
+                    'Content-Disposition',
+                    'attachment; filename="' . $fileName . '"'
+            );
+        } catch (\Exception $e) {
+            // Ici tu peux gérer l’erreur comme tu veux
+            \Log::error('Erreur lors de la génération du PDF : ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage() .' Impossible de télécharger ce fichier. Le PDF semble corrompu.');
+        }
     }
 
     /**
@@ -147,10 +202,11 @@ class EducationalResourceController extends Controller
      */
     public function edit(EducationalResource $resource)
     {
-        $this->authorize('update', $resource);
+        // $this->authorize('update', $resource);
 
-        $categories = Category::all();
-        return view('educational-resources.edit', compact('resource', 'categories'));
+        $subjects = Category::all()->where('type', 'subject');
+        $levels = Category::all()->where('type', 'level');
+        return view('admin.resources.edit', compact('resource', 'subjects', 'levels'));
     }
 
     /**
@@ -158,14 +214,14 @@ class EducationalResourceController extends Controller
      */
     public function update(Request $request, EducationalResource $resource)
     {
-        $this->authorize('update', $resource);
+        // $this->authorize('update', $resource);
 
         $validated = $this->validateResource($request, $resource);
 
         $updateData = [
             'title' => $validated['title'],
             'description' => $validated['description'],
-            'category_id' => $validated['category_id'],
+            'category_id' => $validated['subject_id'],
         ];
 
         if ($request->hasFile('resource_file')) {
@@ -188,8 +244,8 @@ class EducationalResourceController extends Controller
 
         $resource->update($updateData);
 
-        return redirect()->route('resources.show', $resource)
-            ->with('success', 'Ressource mise à jour avec succès.');
+        return redirect()->route('admin.resources.index', $resource)
+            ->with('success', 'Support mis à jour avec succès.');
     }
 
     /**
@@ -197,7 +253,7 @@ class EducationalResourceController extends Controller
      */
     public function destroy(EducationalResource $resource)
     {
-        $this->authorize('delete', $resource);
+        // $this->authorize('delete', $resource);
 
         $resource->deleteFile();
         $resource->delete();
@@ -225,6 +281,7 @@ class EducationalResourceController extends Controller
 
         return back()->with('success', 'Ressource rejetée avec succès.');
     }
+    
 
     /**
      * Valider les données de la ressource
@@ -234,7 +291,7 @@ class EducationalResourceController extends Controller
         $rules = [
             'title' => 'required|string|max:255',
             'description' => 'required|string|min:20',
-            'category_id' => 'required|exists:categories,id',
+            'subject_id' => 'required|exists:categories,id',
         ];
 
         if (!$resource || $request->hasFile('resource_file')) {
@@ -242,10 +299,25 @@ class EducationalResourceController extends Controller
                 'required',
                 'file',
                 'max:20480', // 20MB
-                'mimes:' . implode(',', EducationalResource::allowedFileExtensions()),
+                'mimetypes:' . implode(',', EducationalResource::allowedMimeTypes()),
             ];
         }
 
         return $request->validate($rules);
+    }
+
+    /**
+     * Publier/dépublier un article
+     */
+    public function publish(EducationalResource $resource)
+    {
+        // $this->authorize('update', $article);
+        Auth::user()->hasRole([ 'admin', 'author']);
+        // dd(now());
+
+        $resource->publishOrUnPublish();
+
+        $status = $resource->is_approved == 1 ? 'publié' : 'dépublié';
+        return redirect()->back()->with('success', "Support {$status} avec succès.");
     }
 }

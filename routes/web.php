@@ -67,7 +67,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     });
 
     // Gestion des ressources éducatives
-    Route::prefix('admin/resources')->group(function () {
+    Route::prefix('resources')->group(function () {
         // Liste des ressources (avec gestion d'approbation)
         Route::get('/', [EducationalResourceController::class, 'adminIndex'])
             ->name('admin.resources.index');
@@ -88,11 +88,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::delete('/{resource}', [EducationalResourceController::class, 'destroy'])
             ->name('admin.resources.destroy');
         
-        // Approbation
-        Route::post('/{resource}/approve', [EducationalResourceController::class, 'approve'])
-            ->name('admin.resources.approve');
-        Route::post('/{resource}/reject', [EducationalResourceController::class, 'reject'])
-            ->name('admin.resources.reject');
+        // Publication
+        Route::post('/{resource}/publish', [EducationalResourceController::class, 'publish'])
+            ->name('admin.resources.publish');
+        
+            // dépublication
+        Route::post('/{resource}/unpublish', [EducationalResourceController::class, 'unpublish'])
+            ->name('admin.resources.unpublish');
     });
     
     // Gestion des supports

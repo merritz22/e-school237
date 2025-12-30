@@ -25,36 +25,36 @@
         <form class="mt-8 space-y-6" action="{{ route('login.post') }}" method="POST">
             @csrf
             
-            <div class="rounded-md shadow-sm -space-y-px">
                 <div>
-                    <label for="email" class="sr-only">Adresse email</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Adresse email</label>
                     <input id="email" 
                            name="email" 
                            type="email" 
                            autocomplete="email" 
                            required 
                            value="{{ old('email') }}"
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border @error('email') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                           placeholder="Adresse email">
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('email') border-[#b20101] @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('email')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="Adresse email"
+                           onChange="validateEmail(this)">
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="password" class="sr-only">Mot de passe</label>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
                     <input id="password" 
                            name="password" 
                            type="password" 
                            autocomplete="current-password" 
                            required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border @error('password') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                           placeholder="Mot de passe">
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('password') border-[#b20101] @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('password')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="Mot de passe"
+                           onChange="validatePassword(this)">
                     @error('password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
 
             <div class="flex items-center justify-between">
                 <div class="flex items-center">

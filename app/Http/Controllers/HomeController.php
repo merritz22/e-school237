@@ -33,8 +33,8 @@ class HomeController extends Controller
                     ->get(),
 
                 // Derniers supports pédagogiques (5 plus récents)
-                'latest_supports' => EducationalResource::with('category_id')
-                    ->latest()
+                'latest_supports' => EducationalResource::latest()
+                    ->where('is_approved', 1)
                     ->take(5)
                     ->get(),
 
@@ -55,6 +55,7 @@ class HomeController extends Controller
                 // Supports les plus téléchargés
                 'popular_supports' => EducationalResource::with('category')
                     ->orderBy('downloads_count', 'desc')
+                    ->where('is_approved', 1)
                     ->take(3)
                     ->get(),
 
@@ -62,7 +63,7 @@ class HomeController extends Controller
                 'stats' => [
                     'total_articles' => Article::where('status','published')->count(),
                     'total_subjects' => EvaluationSubject::count(),
-                    'total_supports' => EducationalResource::count(),
+                    'total_supports' => EducationalResource::where('is_approved', 1)->count(),
                     'total_users' => User::where('is_active', true)->count(),
                     'total_downloads' => EducationalResource::sum('downloads_count') + EvaluationSubject::sum('downloads_count'),
                 ],

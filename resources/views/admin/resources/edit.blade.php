@@ -17,7 +17,8 @@
             @csrf
             @method('PUT')
             <div class="p-6">
-                <x-admin.resources.form :resource="$resource" :categories="$categories" />
+                @component('admin.resources.form', ['resource' => $resource, 'subjects' => $subjects, 'levels' => $levels])
+                @endcomponent
             </div>
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">

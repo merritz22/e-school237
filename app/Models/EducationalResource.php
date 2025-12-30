@@ -16,22 +16,22 @@ class EducationalResource extends Model
 
     const MIME_TYPES_DOCUMENTS = [
         'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'text/plain',
-        'text/csv',
+        // 'application/msword',
+        // 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        // 'application/vnd.ms-excel',
+        // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // 'application/vnd.ms-powerpoint',
+        // 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        // 'text/plain',
+        // 'text/csv',
     ];
 
     const MIME_TYPES_IMAGES = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/svg+xml',
-        'image/webp',
+        // 'image/jpeg',
+        // 'image/png',
+        // 'image/gif',
+        // 'image/svg+xml',
+        // 'image/webp',
     ];
 
     protected $fillable = [
@@ -44,6 +44,7 @@ class EducationalResource extends Model
         'mime_type',
         'uploader_id',
         'category_id',
+        'level_id',
         'downloads_count',
         'is_approved',
     ];
@@ -87,9 +88,9 @@ class EducationalResource extends Model
 
     // Scopes
 
-    public function scopeApproved($query)
+    public function isPublished()
     {
-        return $query->where('is_approved', true);
+        return $this->is_approved === true;
     }
 
     public function scopePending($query)
@@ -191,9 +192,11 @@ class EducationalResource extends Model
         return $user && $user->id === $this->uploader_id;
     }
 
-    public function approve(): bool
+    public function publishOrUnPublish(): bool
     {
-        return $this->update(['is_approved' => true]);
+        return $this->update(['is_approved' => !$this->is_approved,
+            'published_at' => now(),
+        ]);
     }
 
     public function reject(): bool

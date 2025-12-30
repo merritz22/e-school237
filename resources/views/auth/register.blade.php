@@ -27,16 +27,32 @@
             
             <div class="space-y-4">
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">Nom complet</label>
-                    <input id="name" 
-                           name="name" 
+                    <label for="first_name" class="block text-sm font-medium text-gray-700">Nom </label>
+                    <input id="first_name" 
+                           name="first_name" 
                            type="text" 
-                           autocomplete="name" 
+                           autocomplete="first_name" 
                            required 
-                           value="{{ old('name') }}"
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('name') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                           placeholder="Votre nom complet">
-                    @error('name')
+                           value="{{ old('first_name') }}"
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('first_name') border-[#b20101] @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('first_name')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="Votre nom "
+                           onChange="validateText(this)">
+                    @error('first_name')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="last_name" class="block text-sm font-medium text-gray-700">Prénom</label>
+                    <input id="last_name" 
+                           name="last_name" 
+                           type="text" 
+                           autocomplete="last_name" 
+                           required 
+                           value="{{ old('last_name') }}"
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('last_name') border-[#b20101] @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('last_name')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="Votre prénom"
+                           onChange="validateText(this)">
+                    @error('last_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -49,8 +65,9 @@
                            autocomplete="email" 
                            required 
                            value="{{ old('email') }}"
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('email') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                           placeholder="votre@email.com">
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('email') border-[#b20101] @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('email')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="votre@email.com"
+                           onChange="validateEmail(this)">
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -63,8 +80,9 @@
                            type="password" 
                            autocomplete="new-password" 
                            required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('password') border-red-300 @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                           placeholder="Mot de passe (min. 8 caractères)">
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border @error('password') border-[#b20101] @else border-gray-300 @enderror placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('password')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="Mot de passe (min. 8 caractères)"
+                           onChange="validatePassword(this)">
                     @error('password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -77,8 +95,9 @@
                            type="password" 
                            autocomplete="new-password" 
                            required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                           placeholder="Confirmez votre mot de passe">
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @if((empty(old('password')))) border-l-[4px] border-l-[#b20101] @endif" 
+                           placeholder="Confirmez votre mot de passe"
+                           onChange="validatePassword(this)">
                 </div>
             </div>
 
@@ -88,7 +107,7 @@
                        name="terms" 
                        type="checkbox" 
                        required
-                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded @error('terms') border-red-300 @enderror">
+                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded @error('terms') border-[#b20101] @enderror">
                 <label for="terms" class="ml-2 block text-sm text-gray-900">
                     J'accepte les 
                     <a href="#" class="text-blue-600 hover:text-blue-500">conditions d'utilisation</a> 

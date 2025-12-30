@@ -44,7 +44,7 @@ class ArticleController extends Controller
         }
 
         $articles = $query->paginate(12);
-        $categories = Category::whereHas('articles')->withCount('articles')->orderBy('name')->get();
+        $categories = Category::all()->where('type', 'subject');
 
         return view('articles.index', compact('articles', 'categories'));
     }

@@ -4,22 +4,18 @@
 @section('description', 'Découvrez notre collection d\'articles éducatifs couvrant diverses matières et niveaux.')
 
 @section('content')
+<!-- Hero Section -->
+@component('components.homepanel', 
+    [
+        'title' => 'Articles éducatifs', 
+        'description' => 'Explorez notre collection d\'articles soigneusement rédigés pour enrichir vos connaissances.'])
+@endcomponent
 <div class="bg-white">
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <h1 class="text-4xl font-bold mb-4">Articles éducatifs</h1>
-            <p class="text-xl text-blue-100 max-w-2xl">
-                Explorez notre collection d'articles soigneusement rédigés pour enrichir vos connaissances.
-            </p>
-        </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="px-4 sm:px-6 lg:px-8 py-3">
         <!-- Filters & Search -->
-        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+        <div class="bg-gray-50 rounded-lg mb-3">
             <form method="GET" action="{{ route('articles.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5">
                     <!-- Search -->
                     <div class="md:col-span-2">
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
@@ -62,7 +58,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <button type="submit" class="bg-[#03386a] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
@@ -76,35 +72,6 @@
                     @endif
                 </div>
             </form>
-        </div>
-
-        <!-- Results Info -->
-        <div class="flex justify-between items-center mb-6">
-            <div class="text-gray-600">
-                @if($articles->total() > 0)
-                    {{ $articles->firstItem() }} - {{ $articles->lastItem() }} sur {{ number_format($articles->total()) }} articles
-                @else
-                    Aucun article trouvé
-                @endif
-            </div>
-            
-            <!-- View Toggle -->
-            {{-- <div class="flex bg-gray-200 rounded-lg p-1" x-data="{ view: 'grid' }">
-                <button @click="view = 'grid'" 
-                        :class="view === 'grid' ? 'bg-white shadow-sm' : ''"
-                        class="px-3 py-1 rounded text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                    </svg>
-                </button>
-                <button @click="view = 'list'" 
-                        :class="view === 'list' ? 'bg-white shadow-sm' : ''"
-                        class="px-3 py-1 rounded text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div> --}}
         </div>
 
         <!-- Articles Grid -->

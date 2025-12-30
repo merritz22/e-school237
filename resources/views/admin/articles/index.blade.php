@@ -366,6 +366,7 @@
         @endif
     </div>
 </div>
+
 <!-- Modal suppression -->
 <div id="deleteModal" class="fixed inset-0 bg-gray-50 bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">

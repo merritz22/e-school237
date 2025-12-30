@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use setasign\Fpdi\Tcpdf\Fpdi;
+use setasign\Fpdi\PdfParser\PdfParserException;
 
 
 class EvaluationSubjectController extends Controller
@@ -78,11 +79,12 @@ class EvaluationSubjectController extends Controller
         //     ->distinct()
         //     ->orderBy('year', 'desc')
         //     ->pluck('year');
-        $categories = Category::whereHas('subjects')->withCount('subjects')->orderBy('name')->get();
+        $filter_subjects = Category::all()->where('type', 'subject');
+        $levels = Category::all()->where('type', 'level');
 
         // dd($subjects[0]->level_id);
         
-        return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'categories','authors'));
+        return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
     }
 
     /**
@@ -136,35 +138,41 @@ class EvaluationSubjectController extends Controller
         $watermarkText = "E-School237";
 
         // 🧠 Création du PDF filigrané
-        $pdf = new Fpdi();
-        $pageCount = $pdf->setSourceFile($pdfPath);
+        try {
+            $pdf = new Fpdi();
+            $pageCount = $pdf->setSourceFile($pdfPath);
 
-        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-            $tplId = $pdf->importPage($pageNo);
-            $size = $pdf->getTemplateSize($tplId);
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $tplId = $pdf->importPage($pageNo);
+                $size = $pdf->getTemplateSize($tplId);
 
-            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-            $pdf->useTemplate($tplId);
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($tplId);
 
-            // 🎨 Filigrane
-            $pdf->SetFont('helvetica', 'B', 80);
-            $pdf->SetTextColor(30, 64, 175); // blue-600
-            $pdf->SetAlpha(0.12);
+                // 🎨 Filigrane
+                $pdf->SetFont('helvetica', 'B', 80);
+                $pdf->SetTextColor(30, 64, 175); // blue-600
+                $pdf->SetAlpha(0.12);
 
-            $pdf->Rotate(45, $size['width'] / 2, $size['height'] / 2);
-            $pdf->Text(20, $size['height'] / 2, $watermarkText);
-            $pdf->Rotate(0);
+                $pdf->Rotate(45, $size['width'] / 2, $size['height'] / 2);
+                $pdf->Text(20, $size['height'] / 2, $watermarkText);
+                $pdf->Rotate(0);
+            }
+
+            // 📤 Téléchargement
+            $fileName = $subject->title . '.pdf';
+
+            return response($pdf->Output($fileName, 'S'))
+                ->header('Content-Type', 'application/pdf')
+                ->header(
+                    'Content-Disposition',
+                    'attachment; filename="' . $fileName . '"'
+            );
+        } catch (\Exception $e) {
+            // Ici tu peux gérer l’erreur comme tu veux
+            \Log::error('Erreur lors de la génération du PDF : ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Impossible de télécharger ce fichier. Le PDF semble corrompu.');
         }
-
-        // 📤 Téléchargement
-        $fileName = $subject->title . '.pdf';
-
-        return response($pdf->Output($fileName, 'S'))
-            ->header('Content-Type', 'application/pdf')
-            ->header(
-                'Content-Disposition',
-                'attachment; filename="' . $fileName . '"'
-        );
         // return Storage::disk('private')->download($subject->file_path, $subject->title . '.' . pathinfo($subject->file_path, PATHINFO_EXTENSION));
     }
 

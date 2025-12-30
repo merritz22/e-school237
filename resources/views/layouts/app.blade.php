@@ -21,14 +21,15 @@
 <body class="font-sans antialiased bg-gray-50">
     <div id="app">
         <!-- Navigation -->
-        <nav class="bg-white shadow-sm border-b border-gray-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="bg-red shadow-sm border-b border-gray-100 ">
+            <div class="px-2 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('home') }}" class="flex items-center">
                             <div class="flex-shrink-0 flex items-center">
-                                <h1 class="text-xl font-bold text-blue-600">{{ config('app.name', 'EduSite') }}</h1>
+                                <img src="{{ Vite::asset('resources/images/e-school-logo.jpg') }}" alt="" class="w-10 h-10 rounded bg-blue" srcset="">
+                                <h1 class="text-xl font-bold text-primary">{{ config('app.name', 'EduSite') }}</h1>
                             </div>
                         </a>
                     </div>
@@ -36,44 +37,25 @@
                     <!-- Navigation Links -->
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-blue-600 border-b-2 border-blue-600 @else text-gray-600 hover:text-blue-600 @endif px-3 py-2 text-sm font-medium transition-colors">
+                            <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
                                 Accueil
                             </a>
-                            <a href="{{ route('articles.index') }}" class="@if(request()->routeIs('articles.*')) text-blue-600 border-b-2 border-blue-600 @else text-gray-600 hover:text-blue-600 @endif px-3 py-2 text-sm font-medium transition-colors">
+                            <a href="{{ route('articles.index') }}" class="@if(request()->routeIs('articles.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
                                 Articles
                             </a>
-                            <a href="{{ route('subjects.index') }}" class="@if(request()->routeIs('subjects.*')) text-blue-600 border-b-2 border-blue-600 @else text-gray-600 hover:text-blue-600 @endif px-3 py-2 text-sm font-medium transition-colors">
+                            <a href="{{ route('resources.index') }}" class="@if(request()->routeIs('resources.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
+                                Supports pédagogiques
+                            </a>
+                            <a href="{{ route('subjects.index') }}" class="@if(request()->routeIs('subjects.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
                                 Sujets d'évaluation
                             </a>
-                            {{-- <a href="{{ route('supports.index') }}" class="@if(request()->routeIs('supports.*')) text-blue-600 border-b-2 border-blue-600 @else text-gray-600 hover:text-blue-600 @endif px-3 py-2 text-sm font-medium transition-colors">
-                                Supports
-                            </a>
-                            <a href="{{ route('blog.index') }}" class="@if(request()->routeIs('blog.*')) text-blue-600 border-b-2 border-blue-600 @else text-gray-600 hover:text-blue-600 @endif px-3 py-2 text-sm font-medium transition-colors">
-                                Blog
-                            </a> --}}
                         </div>
-                    </div>
-
-                    <!-- Search Bar -->
-                    <div class="hidden md:block flex-1 max-w-xs mx-4">
-                        <form action="{{ route('search') }}" method="GET" class="relative">
-                            <input type="text" 
-                                   name="q" 
-                                   value="{{ request('q') }}"
-                                   placeholder="Rechercher..." 
-                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                        </form>
                     </div>
 
                     <!-- Auth Links -->
                     <div class="flex items-center space-x-4">
                         @guest
-                            <a href="{{ route('login') }}" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                            <a href="{{ route('login') }}" class="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
                                 Connexion
                             </a>
                             <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -90,12 +72,6 @@
                                 </button>
 
                                 <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                    {{-- <a href="{{ route('user.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <svg class="mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                        </svg>
-                                        Mon espace
-                                    </a> --}}
                                     <a href="{{ route('user.profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         <svg class="mr-3 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -129,7 +105,7 @@
 
                     <!-- Mobile menu button -->
                     <div class="md:hidden">
-                        <button type="button" class="text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600" x-data @click="$dispatch('toggle-mobile-menu')">
+                        <button type="button" class="text-gray-600 hover:text-primary focus:outline-none focus:text-primary" x-data @click="$dispatch('toggle-mobile-menu')">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
@@ -141,16 +117,10 @@
             <!-- Mobile menu -->
             <div class="md:hidden" x-data="{ open: false }" @toggle-mobile-menu.window="open = !open" x-show="open" x-transition>
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
-                    <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Accueil</a>
-                    <a href="{{ route('articles.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Articles</a>
-                    <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Sujets d'évaluation</a>
-                    {{-- <a href="{{ route('supports.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Supports</a> --}}
-                    {{-- <a href="{{ route('blog.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600">Blog</a> --}}
-                    
-                    <!-- Mobile search -->
-                    <form action="{{ route('search') }}" method="GET" class="px-3 py-2">
-                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Rechercher..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </form>
+                    <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Accueil</a>
+                    <a href="{{ route('articles.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Articles</a>
+                    <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Sujets d'évaluation</a>
+                    <a href="{{ route('resources.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Supports pédagogiques</a>
                 </div>
             </div>
         </nav>
@@ -202,9 +172,9 @@
                         <h4 class="font-semibold mb-4">Navigation</h4>
                         <ul class="space-y-2 text-gray-300">
                             <li><a href="{{ route('articles.index') }}" class="hover:text-white">Articles</a></li>
+                            <li><a href="{{ route('resources.index') }}" class="hover:text-white">Supports pédagogiques</a></li>
                             <li><a href="{{ route('subjects.index') }}" class="hover:text-white">Sujets</a></li>
-                            {{-- <li><a href="{{ route('supports.index') }}" class="hover:text-white">Supports</a></li>
-                            <li><a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a></li> --}}
+                            {{-- <li><a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a></li> --}}
                         </ul>
                     </div>
                     

@@ -7,6 +7,10 @@
       "app.css"
     ]
   },
+  "resources/images/e-school-logo.jpg": {
+    "file": "assets/e-school-logo-sVF7nl9D.jpg",
+    "src": "resources/images/e-school-logo.jpg"
+  },
   "resources/js/app.js": {
     "file": "assets/app-BfISbOzm.js",
     "name": "app",

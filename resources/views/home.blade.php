@@ -110,8 +110,8 @@
                             <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded uppercase">
                                 {{ $subject->file_type }}
                             </span>
-                            @if($subject->category->name)
-                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $subject->category->name }}</span>
+                            @if($subject->subject->name)
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $subject->subject->name }}</span>
                             @endif
                         </div>
                         

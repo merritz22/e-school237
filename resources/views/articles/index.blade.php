@@ -13,11 +13,11 @@
 <div class="bg-white">
     <div class="px-4 sm:px-6 lg:px-8 py-3">
         <!-- Filters & Search -->
-        {{-- <div class="bg-gray-50 rounded-lg mb-3">
+        <div class="bg-gray-50 rounded-lg mb-3">
             <form method="GET" action="{{ route('articles.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
                     <!-- Search -->
-                    <div class="md:col-span-2">
+                    {{-- <div class="md:col-span-2">
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
                         <input type="text" 
                                id="search" 
@@ -25,19 +25,18 @@
                                value="{{ request('search') }}"
                                placeholder="Titre, contenu..."
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
+                    </div> --}}
 
                     <!-- Category Filter -->
                     <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
-                        <select id="category" 
-                                name="category" 
+                        <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
+                        <select id="subject" 
+                                name="subject" 
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Toutes les catégories</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->slug }}" 
-                                        @if(request('category') === $category->slug) selected @endif>
-                                    {{ $category->name }} ({{ $category->articles_count }})
+                            <option value="">Toutes les Matières</option>
+                            @foreach($subjects as $subject)
+                                <option value="{{ $subject->slug }}" @if(request('subject') === $subject->slug) selected @endif>
+                                    {{ $subject->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -56,7 +55,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button type="submit" class="bg-[#03386a] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,14 +63,15 @@
                         Rechercher
                     </button>
                     
-                    @if(request()->hasAny(['search', 'category', 'sort']))
+                    @if(request()->hasAny(['search', 'subject', 'sort']))
                         <a href="{{ route('articles.index') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">
                             Effacer les filtres
                         </a>
                     @endif
                 </div>
+
             </form>
-        </div> --}}
+        </div>
 
         <!-- Articles Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" x-show="view === 'grid'">
@@ -89,7 +88,7 @@
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-3">
                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                {{ $article->category->name }}
+                                {{ $article->subject->name }}
                             </span>
                             <span class="text-gray-500 text-xs">
                                 {{ $article->created_at->diffForHumans() }}
@@ -134,7 +133,7 @@
                         <p class="mt-1 text-sm text-gray-500">
                             Essayez de modifier vos critères de recherche.
                         </p>
-                        @if(request()->hasAny(['search', 'category']))
+                        @if(request()->hasAny(['search', 'subject']))
                             <div class="mt-6">
                                 <a href="{{ route('articles.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                                     Voir tous les articles
@@ -162,7 +161,7 @@
                         <div class="p-6 flex-1">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                    {{ $article->category->name }}
+                                    {{ $article->subject->name }}
                                 </span>
                                 <span class="text-gray-500 text-sm">
                                     {{ $article->created_at->diffForHumans() }}

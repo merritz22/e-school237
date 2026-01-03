@@ -21,7 +21,7 @@ class HomeController extends Controller
         $data = Cache::remember('home_data', 300, function () { // Cache pendant 10 minutes
             return [
                 // Derniers articles (5 plus récents)
-                'latest_articles' => Article::with('category', 'author')
+                'latest_articles' => Article::with('subject', 'author')
                     ->where('status','published')
                     ->latest()
                     ->take(5)
@@ -46,14 +46,14 @@ class HomeController extends Controller
                     ->get(),
 
                 // Articles les plus populaires (par nombre de vues)
-                'popular_articles' => Article::with('category', 'author')
+                'popular_articles' => Article::with('subject', 'author')
                     ->where('status','published')
                     ->orderBy('views_count', 'desc')
                     ->take(3)
                     ->get(),
 
                 // Supports les plus téléchargés
-                'popular_supports' => EducationalResource::with('category')
+                'popular_supports' => EducationalResource::with('subject')
                     ->orderBy('downloads_count', 'desc')
                     ->where('is_approved', 1)
                     ->take(3)
@@ -73,20 +73,21 @@ class HomeController extends Controller
         // Catégories pour le menu de navigation
         $categories = Cache::remember('home_categories', 3600, function () { // Cache pendant 1 heure
             return [
-                'article_categories' => \App\Models\Category::whereHas('articles')
-                    ->withCount('articles')
-                    ->orderBy('name')
-                    ->get(),
-                'subject_categories' => \App\Models\Category::whereHas('subjects')
-                    ->withCount('subjects')
-                    ->orderBy('name')
-                    ->get(),
+                'article_categories' => \App\Models\Subject::whereHas('subjects')
+                ->withCount('subjects')
+                ->orderBy('name')
+                ->get(),
+                'subject_categories' => \App\Models\Subject::whereHas('subjects')
+                ->withCount('subjects')
+                ->orderBy('name')
+                ->get(),
                 'support_categories' => \App\Models\Category::whereHas('supports')
-                    ->withCount('supports')
-                    ->orderBy('name')
-                    ->get(),
+                ->withCount('supports')
+                ->orderBy('name')
+                ->get(),
             ];
         });
+        // dd($categories );
 
         return view('home', array_merge($data, $categories));
     }

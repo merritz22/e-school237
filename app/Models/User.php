@@ -167,4 +167,61 @@ class User extends Authenticatable
     {
         return $query->where('role', $role);
     }
+
+    /**
+     * Relation Eloquent :
+     * Un utilisateur (ou modèle courant) peut avoir plusieurs abonnements.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function subscriptions()
+    {
+        // Déclare une relation "hasMany" vers le modèle Subscription
+        // Laravel suppose automatiquement :
+        // - clé étrangère : subscription.user_id
+        // - clé primaire locale : users.id
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * Récupère uniquement les abonnements actifs.
+     *
+     * Conditions :
+     * - le statut doit être "active"
+     * - la date de fin (ends_at) ne doit pas être dépassée
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function activeSubscriptions()
+    {
+        // On repart de la relation subscriptions()
+        // afin de chaîner des conditions supplémentaires
+        return $this->subscriptions()
+            ->where('status', 'active')     // abonnement marqué comme actif
+            ->where('ends_at', '>=', now()); // abonnement toujours valide (non expiré)
+    }
+
+    /**
+     * Vérifie si l'utilisateur possède un abonnement actif
+     * pour une matière (subject) donnée.
+     *
+     * Règles de validation :
+     * - l'abonnement doit être lié au subject passé en paramètre
+     * - son statut doit être "active"
+     * - sa date de fin ne doit pas être dépassée
+     *
+     * @param  int  $subjectId  Identifiant du subject à vérifier
+     * @return bool Retourne true si un abonnement valide existe, sinon false
+     */
+    public function hasActiveSubscriptionForSubject($subjectId): bool
+    {
+        // On interroge la relation subscriptions() de l'utilisateur
+        // sans charger les données en mémoire (exists() est optimisé)
+        return $this->subscriptions()
+            ->where('subject_id', $subjectId) // abonnement lié à la matière ciblée
+            ->where('status', 'active')       // abonnement actif
+            ->where('ends_at', '>=', now())   // abonnement non expiré
+            ->exists();                       // true/false selon l'existence
+    }
+
 }

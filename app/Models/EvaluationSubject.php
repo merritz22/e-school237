@@ -44,19 +44,19 @@ class EvaluationSubject extends Model
     }
 
     /**
-     * Subject category.
+     * Subject evaluation subject.
      */
-    public function category(): BelongsTo
+    public function subject(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'subject_id');
+        return $this->belongsTo(Subject::class, 'subject_id');
     }
 
     /**
-     * Level category.
+     * Level of the evaluation subject.
      */
     public function level(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'level_id');
+        return $this->belongsTo(Level::class, 'level_id');
     }
 
     /**

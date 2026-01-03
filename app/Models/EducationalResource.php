@@ -44,6 +44,7 @@ class EducationalResource extends Model
         'mime_type',
         'uploader_id',
         'category_id',
+        'subject_id',
         'level_id',
         'downloads_count',
         'is_approved',
@@ -76,6 +77,16 @@ class EducationalResource extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class);
+    }
+
     public function likes(): MorphMany
     {
         return $this->morphMany(UserLike::class, 'likeable');
@@ -101,6 +112,16 @@ class EducationalResource extends Model
     public function scopeByCategory($query, $categoryId)
     {
         return $query->where('category_id', $categoryId);
+    }
+
+    public function scopeBySubject($query, $subjectId)
+    {
+        return $query->where('subject_id', $subjectId);
+    }
+
+    public function scopeByLevel($query, $levelId)
+    {
+        return $query->where('level_id', $levelId);
     }
 
     public function scopeByUploader($query, $uploaderId)

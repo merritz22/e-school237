@@ -45,7 +45,7 @@
         <form method="GET" action="{{ route('admin.articles.index') }}" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <!-- Search -->
-                <div class="md:col-span-2">
+                {{-- <div class="md:col-span-2">
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
                     <input type="text" 
                            id="search" 
@@ -53,7 +53,7 @@
                            value="{{ request('search') }}"
                            placeholder="Titre, contenu..."
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
+                </div> --}}
 
                 <!-- Status Filter -->
                 <div>
@@ -69,15 +69,15 @@
 
                 <!-- Category Filter -->
                 <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
-                    <select id="category" 
-                            name="category" 
+                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
+                    <select id="subject" 
+                            name="subject" 
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Toutes les Matières</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" 
-                                    @if(request('category') == $category->id) selected @endif>
-                                {{ $category->name }}
+                        @foreach($subjects as $subject)
+                            <option value="{{ $subject->id }}" 
+                                    @if(request('subject') == $subject->id) selected @endif>
+                                {{ $subject->name }}
                             </option>
                         @endforeach
                     </select>
@@ -108,7 +108,7 @@
                     Rechercher
                 </button>
                 
-                @if(request()->hasAny(['search', 'status', 'category', 'author']))
+                @if(request()->hasAny(['search', 'status', 'subject', 'author']))
                     <a href="{{ route('admin.articles.index') }}" 
                        class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">
                         Effacer les filtres
@@ -232,7 +232,7 @@
                             
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                                    {{ $article->category->name }}
+                                    {{ $article->subject->name }}
                                 </span>
                             </td>
                             
@@ -396,7 +396,7 @@
 @push('scripts')
 <script>
 // Auto-submit form on select change
-document.querySelectorAll('select[name="status"], select[name="category"], select[name="author"]').forEach(function(select) {
+document.querySelectorAll('select[name="status"], select[name="subject"], select[name="author"]').forEach(function(select) {
     select.addEventListener('change', function() {
         this.closest('form').submit();
     });

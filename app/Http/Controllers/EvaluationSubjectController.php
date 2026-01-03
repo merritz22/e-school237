@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\EvaluationSubject;
 use App\Models\Category;
+use App\Models\Subject;
+use App\Models\Level;
 use App\Models\DownloadLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ class EvaluationSubjectController extends Controller
      */
     public function index(Request $request)
     {
-        $query = EvaluationSubject::with('category');
+        $query = EvaluationSubject::with('subject', 'level');
 
         // Filtrage par niveau
         if ($request->filled('level_id')) {
@@ -29,16 +31,10 @@ class EvaluationSubjectController extends Controller
         }
 
         // Filtrage par matière
-        if ($request->filled('subject')) {
-            $query->where('subject_id', 'LIKE', '%' . $request->subject . '%');
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
         }
 
-        // Filtrage par catégorie
-        if ($request->filled('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
-            });
-        }
 
         // Filtrage par type
         if ($request->filled('type')) {
@@ -46,9 +42,9 @@ class EvaluationSubjectController extends Controller
         }
 
         // Filtrage par année
-        // if ($request->filled('year')) {
-        //     $query->whereYear('exam_date', $request->year);
-        // }
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
 
         // Tri
         $sort = $request->get('sort', 'latest');
@@ -74,13 +70,13 @@ class EvaluationSubjectController extends Controller
         $types = EvaluationSubject::distinct()->pluck('type')->filter()->sort();
         $authors = [];
         $years = [];
-        // $years = EvaluationSubject::selectRaw('YEAR(exam_date) as year')
-        //     ->whereNotNull('exam_date')
-        //     ->distinct()
-        //     ->orderBy('year', 'desc')
-        //     ->pluck('year');
-        $filter_subjects = Category::all()->where('type', 'subject');
-        $levels = Category::all()->where('type', 'level');
+        $years = EvaluationSubject::selectRaw('YEAR(created_at) as year')
+            ->whereNotNull('created_at')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+        $filter_subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
 
         // dd($subjects[0]->level_id);
         
@@ -181,7 +177,7 @@ class EvaluationSubjectController extends Controller
      */
     public function byLevel($level_id)
     {
-        $subjects = EvaluationSubject::with('category')
+        $subjects = EvaluationSubject::with('level')
             ->where('level_id', $level_id)
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -194,7 +190,7 @@ class EvaluationSubjectController extends Controller
      */
     public function bySubject($subject_id)
     {
-        $subjects = EvaluationSubject::with('category')
+        $subjects = EvaluationSubject::with('subject')
             ->where('subject_id', $subject_id)
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -209,34 +205,35 @@ class EvaluationSubjectController extends Controller
     {
         // $this->authorize('manage', EvaluationSubject::class);
 
-        $query = EvaluationSubject::with( 'category', 'author');
+        $query = EvaluationSubject::with( 'subject', 'level', 'author');
 
         // Filtres
-        if ($request->filled('level')) {
-            $query->where('level_id', $request->level);
+        if ($request->filled('level_id')) {
+            $query->where('level_id', $request->level_id);
             // echo($request->level_id);
         }
 
-        if ($request->filled('category')) {
-            $query->where('subject_id', $request->category);
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
         }
 
-        // if ($request->filled('subject_id')) {
-        //     $query->where('subject_id', $request->subject_id);
-        //     dd('ok');
-        // }
+        
+        if ($request->filled('author_id')) {
+            $query->where('author_id', $request->author_id);
+        }
 
-        $subjects = $query->orderBy('created_at', 'desc')->paginate(20);
 
-        $categories = Category::where('type', 'subject')->orderBy('name')->get();
-        $levels = Category::where('type', 'level')->orderBy('name')->get();
+        $evalsubjects = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        $subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
 
         $authors = User::where('role', 'author')->get();
 
         // dd($levels);
 
-        // dd($categories);
-        return view('admin.subjects.index', compact('subjects', 'levels', 'categories', 'authors'));
+        // dd($subjects);
+        return view('admin.subjects.index', compact('evalsubjects', 'levels', 'subjects', 'authors'));
     }
 
     /**
@@ -246,11 +243,11 @@ class EvaluationSubjectController extends Controller
     {
         // $this->authorize('create', EvaluationSubject::class);
         
-        $categories = Category::where('type', 'subject')->orderBy('name')->get();
-        $levels = Category::where('type', 'level')->orderBy('name')->get();
+        $subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
         $types = ['Examen', 'Séquence', 'Travaux dirigés'];
         
-        return view('admin.subjects.create', compact('categories', 'levels', 'types'));
+        return view('admin.subjects.create', compact('subjects', 'levels', 'types'));
     }
 
     /**
@@ -311,8 +308,8 @@ class EvaluationSubjectController extends Controller
     public function edit(EvaluationSubject $subject)
     {
         // $this->authorize('update', $subject);
-        $categories = Category::where('type', 'subject')->orderBy('name')->get();
-        $levels = Category::where('type', 'level')->orderBy('name')->get();
+        $subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
         
         // $categories = Category::orderBy('name')->get();
         // $levels = EvaluationSubject::distinct()->pluck('level_id')->filter()->sort();
@@ -321,7 +318,7 @@ class EvaluationSubjectController extends Controller
         $types = ['Examen', 'Séquence', 'Travaux dirigés'];
 
         
-        return view('admin.subjects.edit', compact('subject', 'categories', 'levels', 'types'));
+        return view('admin.subjects.edit', compact('subject', 'subjects', 'levels', 'types'));
     }
 
     /**
@@ -331,18 +328,17 @@ class EvaluationSubjectController extends Controller
     {
         // $this->authorize('update', $subject);
 
-        // $request->validate([
-        //     'title' => 'required|max:255',
-        //     'description' => 'nullable|max:1000',
-        //     'level_id' => 'required|integer',
-        //     'subject_id' => 'required|exists:categories,id',
-        //     'type' => 'required|max:50',
-        //     // 'exam_date' => 'nullable|date',
-        //     'duration_minutes' => 'nullable|integer|min:1',
-        //     'file' => 'sometimes|file|mimes:pdf,doc,docx|max:10240',
-        //     'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-        // ]);
-
+        $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'nullable|max:1000',
+            'level_id' => 'required|integer',
+            'subject_id' => 'required|exists:categories,id',
+            'type' => 'required|max:50',
+            // 'exam_date' => 'nullable|date',
+            'duration_minutes' => 'nullable|integer|min:1',
+            'file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+        ]);
         // dd($request);
         $data = $request->except(['file', 'correction_file']);
 

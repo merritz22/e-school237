@@ -42,15 +42,15 @@
         </div>
 
         <div>
-            <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">Matière <span class="text-red-500">*</span></label>
-            <select name="category_id" id="category_id" required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('category_id') border-red-500 @enderror">
+            <label for="subject_id" class="block text-sm font-medium text-gray-700 mb-2">Matière <span class="text-red-500">*</span></label>
+            <select name="subject_id" id="subject_id" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('subject_id') border-red-500 @enderror">
                 <option value="">Sélectionner une matière</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected(old('subject_id', $subject->subject_id) == $category->id)>{{ $category->name }}</option>
+                @foreach($subjects as $subject_ddl)
+                    <option value="{{ $subject_ddl->id }}" @selected(old('subject_id', $subject->subject_id) == $subject_ddl->id)>{{ $subject_ddl->name }}</option>
                 @endforeach
             </select>
-            @error('category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            @error('subject_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>

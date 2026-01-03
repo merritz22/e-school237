@@ -51,7 +51,7 @@
                     <div class="p-6">
                         <div class="flex items-center mb-3">
                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                {{ $article->category->name }}
+                                {{ $article->subject->name }}
                             </span>
                             <span class="text-gray-500 text-sm ml-auto">
                                 {{ $article->created_at->diffForHumans() }}
@@ -195,15 +195,15 @@
         <h2 class="text-3xl font-bold text-gray-900 mb-8">Explorer par catégorie</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Article Categories -->
+            <!-- Article Subjects -->
             @if($article_categories->isNotEmpty())
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <h3 class="text-lg font-semibold mb-4 text-blue-600">Catégories d'articles</h3>
                     <div class="space-y-2">
-                        @foreach($article_categories->take(5) as $category)
-                            <a href="{{ route('articles.category', $category->slug) }}" class="flex justify-between items-center py-2 text-sm text-gray-700 hover:text-blue-600">
-                                <span>{{ $category->name }}</span>
-                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ $category->articles_count }}</span>
+                        @foreach($article_categories->take(5) as $subject)
+                            <a href="{{ route('articles.subject', $subject->slug) }}" class="flex justify-between items-center py-2 text-sm text-gray-700 hover:text-blue-600">
+                                <span>{{ $subject->name }}</span>
+                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ $subject->subjects_count }}</span>
                             </a>
                         @endforeach
                     </div>

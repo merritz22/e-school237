@@ -12,11 +12,11 @@
 <div class="bg-white">
     <div class="px-4 sm:px-6 lg:px-8 py-3">
         <!-- Filters -->
-        {{-- <div class="bg-gray-50 rounded-lg mb-3">
-            <form method="GET" action="{{ route('subjects.index') }}" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5">
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <form method="GET" action="{{ route('subjects.index') }}" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <!-- Search -->
-                    <div class="md:col-span-2">
+                    {{-- <div class="md:col-span-2">
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
                         <input type="text" 
                                id="search" 
@@ -24,17 +24,17 @@
                                value="{{ request('search') }}"
                                placeholder="Titre, contenu..."
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
+                    </div> --}}
 
                     <!-- Catégorie -->
                     <div>
-                        <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
-                        <select id="subject" name="subject" 
+                        <label for="subject_id" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
+                        <select id="subject_id" name="subject_id" 
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Toutes les matières</option>
                             @foreach($filter_subjects as $subject)
-                                <option value="{{ $subject->slug }}" @if(request('subject') === $subject->slug) selected @endif>
-                                    {{ $subject->name }} ({{ $subject->subjects_count }})
+                                <option value="{{ $subject->id }}" @if(request('subject_id') == $subject->id) selected @endif>
+                                    {{ $subject->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -42,38 +42,52 @@
 
                     <!-- Niveau -->
                     <div>
-                        <label for="level" class="block text-sm font-medium text-gray-700 mb-2">Niveau</label>
-                        <select id="level" name="level" 
+                        <label for="level_id" class="block text-sm font-medium text-gray-700 mb-2">Niveau</label>
+                        <select id="level_id" name="level_id" 
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Tout les niveaux</option>
                             @foreach($levels as $level)
-                                <option value="{{ $level->slug }}" @if(request('level') === $level->slug) selected @endif>
-                                    {{ $level->name }} ({{ $level->subjects_count }})
+                                <option value="{{ $level->id }}" @if(request('level_id') == $level->id) selected @endif>
+                                    {{ $level->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <button type="submit" 
-                                class="bg-[#03386a] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                            Filtrer
-                        </button>
-    
-                        @if(request()->hasAny(['level', 'subject', 'category', 'type', 'year', 'sort']))
-                            <a href="{{ route('subjects.index') }}" 
-                               class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center">
-                                Réinitialiser
-                            </a>
-                        @endif
+                    <!-- Année -->
+                    <div>
+                        <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Année</label>
+                        <select id="year" name="year" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Choisir une année</option>
+                            @foreach($years as $year)
+                                <option value="{{ $year }}" @if(request('year') == $year) selected @endif>
+                                    {{ $year }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button type="submit" 
+                            class="bg-[#03386a] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Filtrer
+                    </button>
+
+                    @if(request()->hasAny(['level_id', 'subject_id', 'year']))
+                        <a href="{{ route('subjects.index') }}" 
+                            class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center">
+                            Réinitialiser
+                        </a>
+                    @endif
                 </div>
 
             </form>
-        </div> --}}
+        </div>
         
         
         <!-- Subjects list -->
@@ -98,7 +112,7 @@
                 <div class="text-sm text-gray-600 mb-3 space-y-1">
                     {{-- @dd($subject) --}}
                     <div><strong>Niveau :</strong> {{ $subject->level->name ?? 0 }}</div>
-                    <div><strong>Matière :</strong> {{ $subject->category->name ?? 'N/A' }}</div>
+                    <div><strong>Matière :</strong> {{ $subject->subject->name ?? 'N/A' }}</div>
                     <div><strong>Type :</strong> {{ $subject->type }}</div>
                     {{-- <div><strong>Année :</strong> {{ $subject->exam_date ? $subject->exam_date->format('Y') : '-' }}</div> --}}
                     <div><strong>Téléchargements :</strong> {{ $subject->downloads_count }}</div>
@@ -116,7 +130,7 @@
                         <p class="mt-1 text-sm text-gray-500">
                             Essayez de modifier vos critères de recherche.
                         </p>
-                        @if(request()->hasAny(['level', 'subject', 'category', 'type', 'year', 'sort']))
+                        @if(request()->hasAny(['level_id', 'subject_id', 'type', 'year', 'sort']))
                             <div class="mt-6">
                                 <a href="{{ route('subjects.index') }}" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">

@@ -161,7 +161,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('articles')->group(function () {
     Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
     Route::get('/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
-    Route::get('/category/{category:slug}', [ArticleController::class, 'byCategory'])->name('articles.category');
+    Route::get('/subject/{subject:slug}', [ArticleController::class, 'bySubject'])->name('articles.subject');
 });
 
 // Sujets d'évaluation

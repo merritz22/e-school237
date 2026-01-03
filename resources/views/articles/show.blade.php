@@ -12,8 +12,8 @@
         <meta property="og:image" content="{{ Storage::url($article->featured_image) }}">
     @endif
     <meta name="author" content="{{ $article->author->name }}">
-    <meta name="article:published_time" content="{{ $article->published_at->toISOString() }}">
-    <meta name="article:section" content="{{ $article->category->name }}">
+    <meta name="article:published_time" content="{{ $article->published_at?->toISOString() ?? '-' }}">
+    <meta name="article:section" content="{{ $article->subject->name }}">
 @endpush
 
 @section('content')
@@ -29,7 +29,7 @@
             <div class="absolute bottom-0 left-0 right-0 p-8">
                 <div class="max-w-4xl mx-auto">
                     <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        {{ $article->category->name }}
+                        {{ $article->subject->name }}
                     </span>
                     <h1 class="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">
                         {{ $article->title }}
@@ -41,7 +41,7 @@
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {{ $article->category->name }}
+                    {{ $article->subject->name }}
                 </span>
                 <h1 class="text-4xl md:text-5xl font-bold mt-4 mb-4">
                     {{ $article->title }}
@@ -61,7 +61,7 @@
                 <div>
                     <div class="font-medium text-gray-900">{{ $article->author->name }}</div>
                     <div class="text-sm text-gray-500">
-                        Publié le {{ $article->published_at->format('d/m/Y à H:i') }}
+                        Publié le {{ $article->published_at?->format('d/m/Y à H:i') ?? '-' }}
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@
         </div>
 
         <!-- Article Tags -->
-        @if($article->tags->isNotEmpty())
+        {{-- @if($article->tags->isNotEmpty())
             <div class="mt-8 pt-6 border-t border-gray-200">
                 <h4 class="text-sm font-medium text-gray-900 mb-3">Tags :</h4>
                 <div class="flex flex-wrap gap-2">
@@ -101,7 +101,7 @@
                     @endforeach
                 </div>
             </div>
-        @endif
+        @endif --}}
 
         <!-- Share & Actions -->
         <div class="mt-8 pt-6 border-t border-gray-200">
@@ -200,7 +200,7 @@
                                 </h4>
                                 
                                 <div class="flex items-center justify-between text-sm text-gray-500">
-                                    <span>{{ $related->published_at->format('d/m/Y') }}</span>
+                                    <span>{{ $related->published_at?->format('d/m/Y') ?? '-' }}</span>
                                     <span>{{ number_format($related->views_count) }} vues</span>
                                 </div>
                             </div>

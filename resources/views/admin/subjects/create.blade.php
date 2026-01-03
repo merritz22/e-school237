@@ -45,8 +45,8 @@
             <select name="subject_id" id="subject_id" required
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('category_id') border-red-500 @enderror">
                 <option value="">Sélectionner une matière</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected(old('subject_id') == $category->id)>{{ $category->name }}</option>
+                @foreach($subjects as $subject)
+                    <option value="{{ $subject->id }}" @selected(old('subject_id') == $subject->id)>{{ $subject->name }}</option>
                 @endforeach
             </select>
             @error('subject_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

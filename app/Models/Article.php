@@ -20,7 +20,7 @@ class Article extends Model
         'excerpt',
         'featured_image',
         'author_id',
-        'category_id',
+        'subject_id',
         'status',
         'views_count',
         'published_at',
@@ -88,12 +88,13 @@ class Article extends Model
     }
 
     /**
-     * Article category.
+     * Article subject.
      */
-    public function category(): BelongsTo
+    public function subject(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Subject::class);
     }
+
 
     /**
      * Article tags.
@@ -147,13 +148,6 @@ class Article extends Model
         return $query->where('author_id', $authorId);
     }
 
-    /**
-     * Scope for articles by category.
-     */
-    public function scopeByCategory($query, $categoryId)
-    {
-        return $query->where('category_id', $categoryId);
-    }
 
     /**
      * Scope for popular articles (most viewed).
@@ -224,11 +218,17 @@ class Article extends Model
      */
     public function getPreviousArticle()
     {
-        return self::where('status', 'published') // On prend seulement les articles publiés
-            ->where('published_at', '<', $this->published_at) // Dont la date est avant celle de l'article actuel
-            ->orderBy('published_at', 'desc') // On prend le plus proche en date avant
-            ->first(); // Retourne le premier trouvé (ou null si aucun)
+        if ($this->published_at === null) {
+            return null;
+        }
+
+        return self::where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<', $this->published_at)
+            ->orderBy('published_at', 'desc')
+            ->first();
     }
+
 
     /**
      * Récupère l'article suivant (par date de publication).
@@ -237,6 +237,10 @@ class Article extends Model
      */
     public function getNextArticle()
     {
+        if ($this->published_at === null) {
+            return null;
+        }
+        
         return self::where('status', 'published') // On prend seulement les articles publiés
             ->where('published_at', '>', $this->published_at) // Dont la date est après celle de l'article actuel
             ->orderBy('published_at', 'asc') // On prend le plus proche en date après

@@ -212,22 +212,22 @@
                     </div>
                 </div>
 
-                <!-- Category -->
+                <!-- Matière -->
                 <div class="bg-white border border-gray-200 rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Catégorie</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Matière</h3>
                     
                     <div>
-                        <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">Catégorie <span class="text-red-500">*</span></label>
-                        <select name="category_id" id="category_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('category_id') border-red-500 @enderror">
-                            <option value="">Sélectionnez une catégorie</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" @selected(old('category_id', $article->category_id) == $category->id)>
-                                    {{ $category->name }}
+                        <label for="subject_id" class="block text-sm font-medium text-gray-700 mb-2">Matière <span class="text-red-500">*</span></label>
+                        <select name="subject_id" id="subject_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('subject_id') border-red-500 @enderror">
+                            <option value="">Sélectionnez une Matière</option>
+                            @foreach($subjects as $subject)
+                                <option value="{{ $subject->id }}" @selected(old('subject_id', $article->subject_id) == $subject->id)>
+                                    {{ $subject->name }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('subject_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
@@ -279,7 +279,7 @@
                 </div>
 
                 <!-- Tags -->
-                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                {{-- <div class="bg-white border border-gray-200 rounded-lg p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Tags</h3>
                     
                     <div>
@@ -294,7 +294,7 @@
                         </select>
                         <p class="mt-1 text-sm text-gray-500">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs tags</p>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Actions -->
                 <div class="bg-white border border-gray-200 rounded-lg p-6">

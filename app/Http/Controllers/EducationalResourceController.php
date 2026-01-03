@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\EducationalResource;
 use App\Models\Category;
+use App\Models\Subject;
+use App\Models\Level;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -28,14 +30,24 @@ class EducationalResourceController extends Controller
      */
     public function adminIndex(Request $request)
     {
-        $resources = EducationalResource::with(['category', 'uploader'])
+        $resources = EducationalResource::query()
+            ->when($request->has('search'), function($query) use ($request) {
+                $query->search($request->search);
+            })
+            ->when($request->has('subject'), function($query) use ($request) {
+                $query->bySubject($request->subject);
+            })
+            ->when($request->has('level'), function($query) use ($request) {
+                $query->byLevel($request->level);
+            })
+            ->with(['subject', 'level', 'uploader'])
             ->latest()
-            // ->filter($request->all())
             ->paginate(20);
 
         return view('admin.resources.index', [
             'resources' => $resources,
-            'subjects' => Category::all()->where('type', 'subject'),
+            'subjects' => Subject::all()->where('is_active', 1),
+            'levels' => Level::all()->where('is_active', 1),
         ]);
     }
 
@@ -48,24 +60,23 @@ class EducationalResourceController extends Controller
             ->when($request->has('search'), function($query) use ($request) {
                 $query->search($request->search);
             })
-            ->when($request->has('category'), function($query) use ($request) {
-                $query->byCategory($request->category);
+            ->when($request->has('subject'), function($query) use ($request) {
+                $query->bySubject($request->subject);
             })
-            ->when($request->has('type'), function($query) use ($request) {
-                $query->byFileType($request->type);
-            })
-            ->when($request->has('popular'), function($query) {
-                $query->popular(10);
+            ->when($request->has('level'), function($query) use ($request) {
+                $query->byLevel($request->level);
             })
             ->when(!$request->user() || !$request->user()->isAdmin(), function($query) {
                 $query->where('is_approved', 1);
             })
-            ->with(['category', 'uploader'])
+            ->with(['subject', 'level', 'uploader'])
             ->latest()
             ->paginate(15);
 
-        $subjects = Category::all()->where('type', 'subject');
-        $levels = Category::all()->where('type', 'level');
+        // dd($resources);
+
+        $subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
 
         return view('resources.index', compact('resources', 'subjects', 'levels'));
     }
@@ -75,8 +86,8 @@ class EducationalResourceController extends Controller
      */
     public function create()
     {
-        $subjects = Category::all()->where('type', 'subject');
-        $levels = Category::all()->where('type', 'level');
+        $subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
         return view('admin.resources.create', compact('subjects', 'levels'));
     }
 
@@ -100,7 +111,8 @@ class EducationalResourceController extends Controller
             'mime_type' => $file->getMimeType(),
             'uploader_id' => Auth::id(),
             'category_id' => $validated['subject_id'],
-            // 'level_id' => $validated['level_id'],
+            'subject_id' => $validated['subject_id'],
+            'level_id' => $validated['level_id'],
             'is_approved' => 0,
         ]);
 
@@ -204,8 +216,8 @@ class EducationalResourceController extends Controller
     {
         // $this->authorize('update', $resource);
 
-        $subjects = Category::all()->where('type', 'subject');
-        $levels = Category::all()->where('type', 'level');
+        $subjects = Subject::all()->where('is_active', 1);
+        $levels = Level::all()->where('is_active', 1);
         return view('admin.resources.edit', compact('resource', 'subjects', 'levels'));
     }
 
@@ -222,6 +234,8 @@ class EducationalResourceController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'],
             'category_id' => $validated['subject_id'],
+            'subject_id' => $validated['subject_id'],
+            'level_id' => $validated['level_id'],
         ];
 
         if ($request->hasFile('resource_file')) {
@@ -291,7 +305,8 @@ class EducationalResourceController extends Controller
         $rules = [
             'title' => 'required|string|max:255',
             'description' => 'required|string|min:20',
-            'subject_id' => 'required|exists:categories,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'level_id' => 'required|exists:levels,id',
         ];
 
         if (!$resource || $request->hasFile('resource_file')) {

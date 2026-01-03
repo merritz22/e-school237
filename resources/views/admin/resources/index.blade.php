@@ -28,9 +28,9 @@
     <!-- Filters -->
     <div class="bg-gray-50 rounded-lg p-6 mb-6">
         <form method="GET" action="{{ route('admin.resources.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <!-- Search -->
-                <div class="md:col-span-2">
+                {{-- <div class="md:col-span-2">
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
                     <input type="text" 
                            id="search" 
@@ -38,7 +38,7 @@
                            value="{{ request('search') }}"
                            placeholder="Titre, contenu..."
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
+                </div> --}}
 
                 <!-- Status Filter -->
                 <div>
@@ -52,17 +52,33 @@
                     </select>
                 </div>
 
-                <!-- Category Filter -->
+                <!-- Subject Filter -->
                 <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
-                    <select id="category" 
-                            name="category" 
+                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
+                    <select id="subject" 
+                            name="subject" 
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Toutes les Matières</option>
                         @foreach($subjects as $subject)
                             <option value="{{ $subject->id }}" 
-                                    @if(request('category') == $subject->id) selected @endif>
+                                    @if(request('subject') == $subject->id) selected @endif>
                                 {{ $subject->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Level Filter -->
+                <div>
+                    <label for="level" class="block text-sm font-medium text-gray-700 mb-2">Niveau</label>
+                    <select id="level" 
+                            name="level" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Toutes les Niveaux</option>
+                        @foreach($levels as $level)
+                            <option value="{{ $level->id }}" 
+                                    @if(request('level') == $level->id) selected @endif>
+                                {{ $level->name }}
                             </option>
                         @endforeach
                     </select>
@@ -203,18 +219,14 @@
                             
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                                    {{ $resource->category->name }}
+                                    {{ $resource->subject->name }}
                                 </span>
                             </td>
                             
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($resource->status === 'published')
+                                @if($resource->is_approved === true)
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                                         Publié
-                                    </span>
-                                @elseif($resource->status === 'archived')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                                        Archivé
                                     </span>
                                 @else
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">

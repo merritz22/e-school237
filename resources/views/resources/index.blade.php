@@ -11,11 +11,11 @@
 @endcomponent
 <div class="bg-white">
     <div class="px-4 sm:px-6 lg:px-8 py-3">
-        {{-- <div class="bg-gray-50 rounded-lg mb-3">
+        <div class="bg-gray-50 rounded-lg mb-3">
             <form action="{{ route('resources.index') }}" method="GET" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
                     <!-- Search -->
-                    <div class="md:col-span-2">
+                    {{-- <div class="md:col-span-2">
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
                         <input type="text" 
                                 id="search" 
@@ -23,19 +23,19 @@
                                 value="{{ request('search') }}"
                                 placeholder="Titre, contenu..."
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
+                    </div> --}}
     
-                    <!-- Category Filter -->
+                    <!-- Subject Filter -->
                     <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
-                        <select id="category" 
-                                name="category" 
+                        <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Matière</label>
+                        <select id="subject" 
+                                name="subject" 
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Toutes les matières</option>
-                            @foreach($subjects as $category)
-                                <option value="{{ $category->slug }}" 
-                                        @if(request('category') === $category->slug) selected @endif>
-                                    {{ $category->name }} ({{ $category->resources_count }})
+                            @foreach($subjects as $subject)
+                                <option value="{{ $subject->slug }}" 
+                                        @if(request('subject') === $subject->slug) selected @endif>
+                                    {{ $subject->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -51,7 +51,7 @@
                             @foreach($levels as $level)
                                 <option value="{{ $level->slug }}" 
                                         @if(request('level') === $level->slug) selected @endif>
-                                    {{ $level->name }} ({{ $level->resources_count }})
+                                    {{ $level->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -65,8 +65,8 @@
                             Rechercher
                         </button>
                         
-                        @if(request()->hasAny(['search', 'category', 'sort']))
-                            <a href="{{ route('articles.index') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        @if(request()->hasAny(['subject', 'level']))
+                            <a href="{{ route('resources.index') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">
                                 Effacer les filtres
                             </a>
                         @endif
@@ -74,7 +74,7 @@
                 </div>
             </form>
         </div>
-     --}}
+    
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($resources as $resource)
             <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -96,7 +96,7 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 flex justify-between items-center">
-                    <span class="text-sm text-gray-600">{{ $resource->category->name }}</span>
+                    <span class="text-sm text-gray-600">{{ $resource->subject->name }}</span>
                     <a href="{{ route('resources.download', $resource) }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
                         Télécharger
                     </a>

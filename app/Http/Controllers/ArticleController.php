@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Subject;
 use App\Models\User;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -18,12 +19,12 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Article::with('category', 'author')->where('status','published');
+        $query = Article::with('subject', 'author')->where('status','published');
 
-        // Filtrage par catégorie
-        if ($request->filled('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
+        // Filtrage par matière
+        if ($request->filled('subject')) {
+            $query->whereHas('subject', function ($q) use ($request) {
+                $q->where('slug', $request->subject);
             });
         }
 
@@ -43,10 +44,10 @@ class ArticleController extends Controller
                 $query->orderBy('created_at', 'desc');
         }
 
-        $articles = $query->paginate(12);
-        $categories = Category::all()->where('type', 'subject');
+        $articles = $query->paginate(15);
+        $subjects = Subject::all()->where('is_active', 1);
 
-        return view('articles.index', compact('articles', 'categories'));
+        return view('articles.index', compact('articles', 'subjects'));
     }
 
     /**
@@ -55,41 +56,27 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         // Vérifier si l'article est publié (sauf pour l'auteur et les admins)
-        if (($article->status != 'published') && !(Auth::user()->hasRole(['admin']))) {
+        if (($article->status != 'published') && !(Auth::user()->hasRole(['admin', 'author']))) {
             abort(404);
         }
-
+        
         // Incrémenter le compteur de vues
         $article->increment('views_count');
-
+        
         // Articles similaires
         $related_articles = Article::where('status','published')
-            ->where('id', '!=', $article->id)
-            ->where('category_id', $article->category_id)
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
-
+        ->where('id', '!=', $article->id)
+        ->where('subject_id', $article->subject_id)
+        ->orderBy('created_at', 'desc')
+        ->take(3)
+        ->get();
+        
         // Charger les commentaires
         // $article->load(['comments' => function ($query) {
         //     $query->with('user')->orderBy('created_at', 'desc');
         // }]);
 
         return view('articles.show', compact('article', 'related_articles'));
-    }
-
-    /**
-     * Articles par catégorie
-     */
-    public function byCategory(Category $category)
-    {
-        $articles = Article::with('author')
-            ->published()
-            ->where('category_id', $category->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
-
-        return view('articles.category', compact('articles', 'category'));
     }
 
     /**
@@ -100,15 +87,15 @@ class ArticleController extends Controller
         // $this->authorize('manage', Article::class);
         Auth::user()->hasRole([ 'admin', 'author']);
 
-        $query = Article::with('category', 'author');
+        $query = Article::with('subject', 'author');
 
         // Filtres
         if ($request->filled('status')) {
             $query->where('is_published', $request->status === 'published');
         }
 
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+        if ($request->filled('subject')) {
+            $query->where('subject_id', $request->subject);
         }
 
         if ($request->filled('author')) {
@@ -116,10 +103,10 @@ class ArticleController extends Controller
         }
 
         $articles = $query->orderBy('created_at', 'desc')->paginate(20);
-        $categories = Category::where('type','subject')->orderBy('name')->get();
+        $subjects = Subject::all();
         $authors = User::where('role', 'admin')->get();
 
-        return view('admin.articles.index', compact('articles', 'categories', 'authors'));
+        return view('admin.articles.index', compact('articles', 'subjects', 'authors'));
     }
 
     /**
@@ -130,8 +117,8 @@ class ArticleController extends Controller
         // $this->authorize('create', Article::class);
         Auth::user()->hasRole([ 'admin', 'author']);
         
-        $categories = Category::where('type','subject')->orderBy('name')->get();
-        return view('admin.articles.create', compact('categories'));
+        $subjects = Subject::all();
+        return view('admin.articles.create', compact('subjects'));
     }
 
     /**
@@ -142,11 +129,12 @@ class ArticleController extends Controller
         // $this->authorize('create', Article::class);
         Auth::user()->hasRole([ 'admin', 'author']);
 
+
         $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
             'excerpt' => 'nullable|max:500',
-            'category_id' => 'required|exists:categories,id',
+            'subject_id' => 'required|exists:subjects,id',
             'featured_image' => 'nullable|image|max:2048',
             'is_published' => 'boolean',
             'published_at' => 'nullable|date',
@@ -180,9 +168,9 @@ class ArticleController extends Controller
         // $this->authorize('update', $article);
         Auth::user()->hasRole([ 'admin', 'author']);
         
-        $categories = Category::orderBy('name')->get();
+        $subjects = Subject::all();
         $tags = TAG::all();
-        return view('admin.articles.edit', compact('article', 'categories', 'tags'));
+        return view('admin.articles.edit', compact('article', 'subjects', 'tags'));
     }
 
     /**
@@ -197,7 +185,7 @@ class ArticleController extends Controller
             'title' => 'required|max:255',
             'content' => 'required',
             'excerpt' => 'nullable|max:500',
-            'category_id' => 'required|exists:categories,id',
+            'subject_id' => 'required|exists:subjects,id',
             'featured_image' => 'nullable|image|max:2048',
             'is_published' => 'boolean',
             'published_at' => 'nullable|date',

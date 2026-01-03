@@ -33,7 +33,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-700">
             <p><span class="font-medium">Niveau :</span> {{ $subject->level->name ?? $subject->level_id }}</p>
             {{-- <p><span class="font-medium">Matière :</span> {{ $subject->subject_name ?? $subject->subject_id }}</p> --}}
-            <p><span class="font-medium">Matière :</span> {{ $subject->category->name ?? 'N/A' }}</p>
+            <p><span class="font-medium">Matière :</span> {{ $subject->subject->name ?? 'N/A' }}</p>
             <p><span class="font-medium">Type :</span> {{ $subject->type }}</p>
             <p><span class="font-medium">Durée :</span> {{ $subject->formatted_duration ?? '-' }}</p>
             {{-- <p><span class="font-medium">Année :</span> {{ $subject->exam_date ? $subject->exam_date->format('Y') : '-' }}</p> --}}

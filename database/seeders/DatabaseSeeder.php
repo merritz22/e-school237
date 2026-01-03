@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             // UserLikeSeeder::class,
             // DownloadLogSeeder::class,
             LevelSeeder::class,
+            SubjectSeeder::class,
         ]);
 
         // $this->command->info('✅ Database seeding completed successfully!');

@@ -51,7 +51,7 @@
                             </a>
                             @if(Auth::check())
                                 <a href="{{ route('subscriptions.index') }}" class="@if(request()->routeIs('subscriptions.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
-                                    Abonnement
+                                    Abonnements
                                 </a>
                             @endif
                         </div>
@@ -127,7 +127,7 @@
                     <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Sujets</a>
                     <a href="{{ route('resources.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Supports</a>
                     @if(Auth::check())
-                        <a href="{{ route('subscriptions.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Abonnement</a>
+                        <a href="{{ route('subscriptions.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Abonnements</a>
                     @endif
                 </div>
             </div>

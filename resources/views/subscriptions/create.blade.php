@@ -384,9 +384,9 @@
                 // alert("Paiement initié. Vérifiez votre téléphone 📱");
                 popup.classList.add("hidden");
                 popup_confirm.classList.remove("hidden");
-                // setTimeout(() => {
-                //     window.location.href = "{{ route('home') }}";
-                // }, 300);
+                setTimeout(() => {
+                    window.location.href = "{{ route('home') }}";
+                }, 300);
             })
             .catch(error => {
                 console.error("Erreur :", error);

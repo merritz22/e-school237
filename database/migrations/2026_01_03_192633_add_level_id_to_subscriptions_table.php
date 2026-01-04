@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('subscriptions', function (Blueprint $table) {
-            $table->foreignId('level_id')
-                ->nullable()
-                ->after('subject_id')
-                ->constrained('levels')
-                ->nullOnDelete();
+            // $table->foreignId('level_id')
+            //     ->nullable()
+            //     ->after('subject_id')
+            //     ->constrained('levels')
+            //     ->nullOnDelete();
             
-            $table->unique(['user_id', 'subject_id', 'level_id', 'starts_at']);
+            // $table->unique(['user_id', 'subject_id', 'level_id', 'starts_at']);
         });
     }
 

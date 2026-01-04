@@ -93,33 +93,40 @@
         <!-- Subjects list -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($subjects as $subject)
-            <a href="{{ route('subjects.show', $subject) }}" 
-            class="block bg-white rounded-lg shadow-sm hover:shadow-md border border-gray-200 overflow-hidden transition">
-            <div class="p-6">
-                <div class="relative w-full h-48 mb-4 border rounded overflow-hidden">
-                    <iframe 
-                        src="{{ url('/pdf/' . $subject->id) }}#toolbar=0&navpanes=0"
-                        class="w-full h-full"
-                        loading="lazy">
-                    </iframe>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span class="text-blue-600/20 text-5xl font-bold rotate-[-30deg] select-none">
-                            E-School237
+            <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200">
+                <div class="w-full h-32 bg-green-100 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded uppercase">
+                            {{ $subject->type }}
                         </span>
+                        @if($subject->subject->name)
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $subject->subject->name }}</span>
+                        @endif
+                        @if($subject->level->name)
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $subject->level->name }}</span>
+                        @endif
+                    </div>
+                    
+                    <h3 class="font-semibold mb-2 line-clamp-2">
+                        <a href="{{ route('subjects.show', $subject->id) }}" class="text-gray-900 hover:text-green-600">
+                            {{ $subject->title }}
+                        </a>
+                        <p class="text-gray-700 line-clamp-3">{{ Str::limit($subject->description, 140) }}</p>
+                    </h3>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>{{ number_format($subject->file_size / 1024, 0) }} KB</span>
+                        <span>{{ $subject->downloads_count }} téléchargements</span>
                     </div>
                 </div>
-                <h3 class="font-semibold text-xl mb-2 line-clamp-2">{{ $subject->title }}</h3>
-                <div class="text-sm text-gray-600 mb-3 space-y-1">
-                    {{-- @dd($subject) --}}
-                    <div><strong>Niveau :</strong> {{ $subject->level->name ?? 0 }}</div>
-                    <div><strong>Matière :</strong> {{ $subject->subject->name ?? 'N/A' }}</div>
-                    <div><strong>Type :</strong> {{ $subject->type }}</div>
-                    {{-- <div><strong>Année :</strong> {{ $subject->exam_date ? $subject->exam_date->format('Y') : '-' }}</div> --}}
-                    <div><strong>Téléchargements :</strong> {{ $subject->downloads_count }}</div>
-                </div>
-                <p class="text-gray-700 line-clamp-3">{{ Str::limit($subject->description, 140) }}</p>
             </div>
-            </a>
+            
             @empty
                 <div class="col-span-3">
                     <div class="text-center py-12">

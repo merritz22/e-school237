@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    'orange' => [
+        'base_url' => env('ORANGE_BASE_URL', 'https://sandbox.orange.com'), // URL API
+        'token' => env('ORANGE_TOKEN'), // Token OAuth/API
+        'secret' => env('ORANGE_SECRET'), // clé pour signature webhook
+    ],
+
+    'mtn' => [
+        'base_url' => env('MTN_BASE_URL'), // URL API
+        'env' => env('MTN_ENV'),
+        'api_user' => env('MTN_API_USER'),
+        'api_key' => env('MTN_API_KEY'),
+        'subscription_key' => env('MTN_SUBSCRIPTION_KEY'), 
+    ],
+
 ];

@@ -108,7 +108,7 @@
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-2">
                             <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded uppercase">
-                                {{ $subject->file_type }}
+                                {{ $subject->type }}
                             </span>
                             @if($subject->subject->name)
                                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">{{ $subject->subject->name }}</span>
@@ -162,7 +162,7 @@
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-2">
                             <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded uppercase">
-                                {{ $support->file_type }}
+                                {{ $support->level->name }}
                             </span>
                             @if($support->category->name)
                                 <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">{{ $support->category->name }}</span>
@@ -191,7 +191,7 @@
 
 
     <!-- Categories Quick Access -->
-    <section>
+    {{-- <section>
         <h2 class="text-3xl font-bold text-gray-900 mb-8">Explorer par catégorie</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -203,7 +203,7 @@
                         @foreach($article_categories->take(5) as $subject)
                             <a href="{{ route('articles.subject', $subject->slug) }}" class="flex justify-between items-center py-2 text-sm text-gray-700 hover:text-blue-600">
                                 <span>{{ $subject->name }}</span>
-                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ $subject->subjects_count }}</span>
+                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ $subject->articles_count }}</span>
                             </a>
                         @endforeach
                     </div>
@@ -240,7 +240,7 @@
                 </div>
             @endif
         </div>
-    </section>
+    </section> --}}
 </div>
 
 @push('styles')

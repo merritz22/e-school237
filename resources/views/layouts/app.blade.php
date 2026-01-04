@@ -44,11 +44,16 @@
                                 Articles
                             </a>
                             <a href="{{ route('resources.index') }}" class="@if(request()->routeIs('resources.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
-                                Supports pédagogiques
+                                Supports
                             </a>
                             <a href="{{ route('subjects.index') }}" class="@if(request()->routeIs('subjects.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
-                                Sujets d'évaluation
+                                Sujets
                             </a>
+                            @if(Auth::check())
+                                <a href="{{ route('subscriptions.index') }}" class="@if(request()->routeIs('subscriptions.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
+                                    Abonnement
+                                </a>
+                            @endif
                         </div>
                     </div>
 
@@ -119,8 +124,11 @@
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
                     <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Accueil</a>
                     <a href="{{ route('articles.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Articles</a>
-                    <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Sujets d'évaluation</a>
-                    <a href="{{ route('resources.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Supports pédagogiques</a>
+                    <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Sujets</a>
+                    <a href="{{ route('resources.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Supports</a>
+                    @if(Auth::check())
+                        <a href="{{ route('subscriptions.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Abonnement</a>
+                    @endif
                 </div>
             </div>
         </nav>

@@ -71,18 +71,20 @@ class HomeController extends Controller
         });
 
         // Catégories pour le menu de navigation
-        $categories = Cache::remember('home_categories', 3600, function () { // Cache pendant 1 heure
+        $categories = Cache::remember('home_categories', 300, function () { // Cache pendant 5 min
             return [
-                'article_categories' => \App\Models\Subject::whereHas('subjects')
-                ->withCount('subjects')
+                'article_categories' => \App\Models\Subject::whereHas('articles', function ($query){
+                    $query->where('status', 'published');
+                })->withCount('articles')
                 ->orderBy('name')
                 ->get(),
                 'subject_categories' => \App\Models\Subject::whereHas('subjects')
                 ->withCount('subjects')
                 ->orderBy('name')
                 ->get(),
-                'support_categories' => \App\Models\Category::whereHas('supports')
-                ->withCount('supports')
+                'support_categories' => \App\Models\Subject::whereHas('supports', function ($query){
+                    $query->where('is_approved', 1);
+                })->withCount('supports')
                 ->orderBy('name')
                 ->get(),
             ];

@@ -10,6 +10,8 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\EvaluationSubjectController;
 use App\Http\Controllers\EducationalResourceController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
@@ -126,10 +128,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     });
 });
 
+
 // Routes publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
+
+
+// Gestion des souscriptions
+Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+Route::get('/subscription/create', [SubscriptionController::class, 'create'])->name('subscriptions.create');
+Route::post('/subscription/create', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 
 // Routes publiques (hors admin)
 Route::prefix('resources')->group(function () {
@@ -229,3 +238,12 @@ Route::get('/pdf/{id}', function ($id) {
         storage_path('app/private/' . $subject->file_path)
     );
 });
+
+
+// Route pour le paiement par api - Orange Money / MTN
+
+// Initiation du paiement
+Route::post('/payments/initiate', [PaymentController::class, 'initiatePayment'])->name('initiate');
+// Orange Money appellera ton serveur après paiement.
+Route::post('/payments/callback', [OrangePaymentController::class, 'callback'])
+     ->name('mtn.callback');

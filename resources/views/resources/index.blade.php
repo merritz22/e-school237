@@ -11,6 +11,7 @@
 @endcomponent
 <div class="bg-white">
     <div class="px-4 sm:px-6 lg:px-8 py-3">
+        {{-- Fileter section --}}
         <div class="bg-gray-50 rounded-lg mb-3">
             <form action="{{ route('resources.index') }}" method="GET" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
@@ -77,31 +78,44 @@
     
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($resources as $resource)
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <div class="p-4">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-1">
-                                <a href="{{ route('resources.show', $resource) }}" class="hover:text-blue-600">{{ $resource->title }}</a>
-                            </h3>
-                            <p class="text-sm text-gray-500 mb-2">{{ Str::limit($resource->description, 100) }}</p>
+            <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200">
+                    @if($resource->preview_image)
+                        <img src="{{ Storage::url($resource->preview_image) }}" 
+                             alt="{{ $resource->title }}" 
+                             class="w-full h-32 object-cover">
+                    @else
+                        <div class="w-full h-32 bg-purple-100 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {{ strtoupper($resource->file_extension) }}
-                        </span>
-                    </div>
-                    <div class="mt-3 flex items-center justify-between">
-                        <span class="text-sm text-gray-500">{{ $resource->formatted_file_size }}</span>
-                        <span class="text-sm text-gray-500">{{ $resource->downloads_count }} téléchargements</span>
+                    @endif
+                    
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded uppercase">
+                                {{ $resource->level->name }}
+                            </span>
+                            @if($resource->category->name)
+                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">{{ $resource->category->name }}</span>
+                            @endif
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-semibold mb-2 line-clamp-2">
+                                <a href="{{ route('resources.show', $resource->id) }}" class="text-gray-900 hover:text-purple-600">
+                                    {{ $resource->title }}
+                                </a>
+                            </h3>
+                            <p class="text-sm text-gray-500 mb-2 text-wrap">{{ Str::limit($resource->description, 100) }}</p>
+                        </div>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span>{{ number_format($resource->file_size / 1024, 0) }} KB</span>
+                            <span>{{ $resource->downloads_count }} téléchargements</span>
+                        </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 flex justify-between items-center">
-                    <span class="text-sm text-gray-600">{{ $resource->subject->name }}</span>
-                    <a href="{{ route('resources.download', $resource) }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                        Télécharger
-                    </a>
-                </div>
-            </div>
             @empty
             <div class="col-span-full text-center py-12">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

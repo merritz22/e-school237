@@ -254,4 +254,19 @@ class ArticleController extends Controller
         $status = $article->status == 'published' ? 'publié' : 'dépublié';
         return redirect()->back()->with('success', "Article {$status} avec succès.");
     }
+    
+
+    /**
+     * Articles par sujet
+     */
+    public function bySubject(Subject $subject)
+    {
+        $articles = Article::with('author')
+            ->published()
+            ->where('subject_id', $subject->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        return view('articles.subject', compact('articles', 'subject'));
+    }
 }

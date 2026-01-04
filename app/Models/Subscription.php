@@ -6,6 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subscription extends Model
 {
+
+    protected $fillable = [
+        'user_id',
+        'subject_id',
+        'level_id',
+        'starts_at',
+        'ends_at',
+        'status',
+        'amount',
+        'currency',
+    ];
+
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
+
     /**
      * Relation Eloquent :
      * Cet élément (ex: inscription, abonnement, commande, etc.)
@@ -33,6 +50,20 @@ class Subscription extends Model
         // - clé étrangère : subject_id
         // - table cible : subjects
         return $this->belongsTo(Subject::class);
+    }
+
+    /**
+     * Relation Eloquent :
+     * Cet élément est associé à un niveau / un enregistrment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function level()
+    {
+        // Laravel suppose automatiquement :
+        // - clé étrangère : level_id
+        // - table cible : levels
+        return $this->belongsTo(Level::class);
     }
 
     /**

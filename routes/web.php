@@ -18,6 +18,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\FileController;
 use App\Models\EvaluationSubject;
+use App\Models\EducationalResource;
 
 /*
 |--------------------------------------------------------------------------
@@ -232,10 +233,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('files.destroy');
 });
 
-Route::get('/pdf/{id}', function ($id) {
+Route::get('/evaluation_subject/pdf/{id}', function ($id) {
     $subject = EvaluationSubject::findOrFail($id);
     return response()->file(
         storage_path('app/private/' . $subject->file_path)
+    );
+});
+
+Route::get('/support/pdf/{id}', function ($id) {
+    $support = EducationalResource::findOrFail($id);
+    return response()->file(
+        storage_path('app/private/' . $support->file_path)
     );
 });
 

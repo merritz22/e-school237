@@ -23,64 +23,108 @@ class EvaluationSubjectController extends Controller
      */
     public function index(Request $request)
     {
-        $query = EvaluationSubject::with('subject', 'level');
+        if (!Auth::check()) { //Visiteur sans compte
+            $subjects = EvaluationSubject::with('subject', 'level')
+                ->where('is_free',1)
+                ->latest()
+                ->paginate(15);
 
-        // Filtrage par niveau
-        if ($request->filled('level_id')) {
-            $query->where('level_id', $request->level_id);
+            $subject_names = [];
+            $types = [];
+            $authors = [];
+            $years = [];
+            $filter_subjects = [];
+            $levels = [];
+
+            return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
         }
+        else{
+            $userId = Auth::user()->id;
 
-        // Filtrage par matière
-        if ($request->filled('subject_id')) {
-            $query->where('subject_id', $request->subject_id);
+            $query = EvaluationSubject::with('subject', 'level');
+    
+            // Filtrage par niveau
+            if ($request->filled('level_id')) {
+                $query->where('level_id', $request->level_id);
+            }
+            // Filtrage par matière
+            if ($request->filled('subject_id')) {
+                $query->where('subject_id', $request->subject_id);
+            }
+            // Filtrage par type
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
+            // Filtrage par année
+            if ($request->filled('year')) {
+                $query->whereYear('created_at', $request->year);
+            }
+            // Tri
+            $sort = $request->get('sort', 'latest');
+            switch ($sort) {
+                case 'popular':
+                    $query->orderBy('downloads_count', 'desc');
+                    break;
+                case 'title':
+                    $query->orderBy('title', 'asc');
+                    break;
+                case 'level_id':
+                    $query->orderBy('level_id', 'asc');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+            }
+            
+            // dd($request->filled('level_id'));
+            if (!$request->filled('level_id') && !$request->filled('subject_id')){
+                // Liste des sujets disponnibles dans mon abonement
+                $subjectIds = Subject::whereHas('subscriptions', function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->whereDate('ends_at', '>=', now())
+                        ->where('status', 'active');
+                })->pluck('id');
+
+                // Liste des niveaux disponnibles dans mon abonement
+                $levelIds = Level::whereHas('subscriptions', function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->whereDate('ends_at', '>=', now())
+                        ->where('status', 'active');
+                })->pluck('id');
+
+                $subjects = $query->whereIn('subject_id', $subjectIds)
+                    ->whereIn('level_id', $levelIds)
+                    ->latest()
+                    ->paginate(15);
+            }else{
+                $subjects = $query->latest()->paginate(15);
+            }
+
+            // Données pour les filtres
+            $subject_names = [];
+            $types = EvaluationSubject::distinct()->pluck('type')->filter()->sort();
+            $authors = [];
+            $years = EvaluationSubject::selectRaw('YEAR(created_at) as year')
+                ->whereNotNull('created_at')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            // Liste des sujets disponnibles dans mon abonement
+            $filter_subjects = Subject::whereHas('subscriptions', function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->whereDate('ends_at', '>=', now())
+                    ->where('status', 'active');
+            })->get();
+
+            // Liste des niveaux disponnibles dans mon abonement
+            $levels = Level::whereHas('subscriptions', function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->whereDate('ends_at', '>=', now())
+                    ->where('status', 'active');
+            })->get();
+            
+            return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
         }
-
-
-        // Filtrage par type
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        // Filtrage par année
-        if ($request->filled('year')) {
-            $query->whereYear('created_at', $request->year);
-        }
-
-        // Tri
-        $sort = $request->get('sort', 'latest');
-        switch ($sort) {
-            case 'popular':
-                $query->orderBy('downloads_count', 'desc');
-                break;
-            case 'title':
-                $query->orderBy('title', 'asc');
-                break;
-            case 'level_id':
-                $query->orderBy('level_id', 'asc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-        }
-
-        $subjects = $query->paginate(15);
-
-        // Données pour les filtres
-        $levels = EvaluationSubject::distinct()->pluck('level_id')->filter()->sort();
-        $subject_names = EvaluationSubject::distinct()->pluck('subject_id')->filter()->sort();
-        $types = EvaluationSubject::distinct()->pluck('type')->filter()->sort();
-        $authors = [];
-        $years = [];
-        $years = EvaluationSubject::selectRaw('YEAR(created_at) as year')
-            ->whereNotNull('created_at')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
-        $filter_subjects = Subject::all()->where('is_active', 1);
-        $levels = Level::all()->where('is_active', 1);
-
-        // dd($subjects[0]->level_id);
-        
-        return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
     }
 
     /**
@@ -92,7 +136,7 @@ class EvaluationSubjectController extends Controller
         $related_subjects = EvaluationSubject::where('id', '!=', $subject->id)
             ->where(function ($query) use ($subject) {
                 $query->where('level_id', $subject->level_id)
-                      ->orWhere('subject_id', $subject->subject_id);
+                      ->where('subject_id', $subject->subject_id);
                     //   ->orWhere('category_id', $subject->category_id);
             })
             ->orderBy('created_at', 'desc')

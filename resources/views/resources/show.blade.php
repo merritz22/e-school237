@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
+@section('title', $resource->title)
+
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
+<div class="container mx-auto px-4 py-4">
+    <div class="mx-auto">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-start">
@@ -14,10 +16,17 @@
                         </div>
                     </div>
                     <span class="px-3 py-1 rounded-full text-sm font-semibold 
-                              {{ $resource->is_approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                        {{ $resource->is_approved ? 'Validé' : 'En attente' }}
+                              {{ $resource->is_free ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                        {{ $resource->is_free ? 'Gratuit' : 'Premium' }}
                     </span>
                 </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-2 text-sm text-gray-500 px-5">
+                <p><span class="font-medium">Niveau :</span> {{ $resource->level->name ?? $resource->level_id }}</p>
+                <p><span class="font-medium">Matière :</span> {{ $resource->subject->name ?? 'N/A' }}</p>
+                <p>.</p>
+                {{-- <p><span class="font-medium">Type :</span> {{ $resource->type }}</p> --}}
             </div>
 
             <div class="p-6">
@@ -25,7 +34,7 @@
                     <p class="text-gray-700">{{ $resource->description }}</p>
                 </div>
 
-                <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                {{-- <div class="mt-6 bg-gray-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             @if($resource->isImage())
@@ -46,6 +55,26 @@
                                 Télécharger
                             </a>
                         </div>
+                    </div>
+                </div> --}}
+            </div>
+
+            <div class="p-0 overflow-hidden">
+                <div class="relative w-full h-100 mb-4 overflow-hidden bg-none">
+                    <iframe 
+                        src="{{ url('/support/pdf/' . $resource->id) }}
+                            #page=1
+                            &view=FitH
+                            &scrollbar=0
+                            &toolbar=0
+                            &navpanes=0"
+                        class="w-full h-full"
+                        loading="lazy">
+                    </iframe>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span class="text-blue-600/20 text-base md:text-9xl font-bold select-none">
+                            E-School237
+                        </span>
                     </div>
                 </div>
             </div>

@@ -224,4 +224,18 @@ class User extends Authenticatable
             ->exists();                       // true/false selon l'existence
     }
 
+    public function subjects()
+    {
+        return $this->belongsToMany(
+            Subject::class,
+            'subscriptions'
+        )->withPivot([
+            'starts_at',
+            'ends_at',
+            'status',
+            'amount',
+            'currency'
+        ]);
+    }
+
 }

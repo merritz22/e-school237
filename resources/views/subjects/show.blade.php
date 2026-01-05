@@ -3,91 +3,100 @@
 @section('title', $subject->title)
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-8">
-    
-    <!-- Titre -->
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ $subject->title }}</h1>
-    <div class="p-6">
-        <div class="relative w-full h-100 mb-4 border rounded overflow-hidden">
-            <iframe 
-                src="{{ url('/pdf/' . $subject->id) }}#toolbar=0&navpanes=0"
-                class="w-full h-full"
-                loading="lazy">
-            </iframe>
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span class="text-blue-600/20 text-5xl font-bold rotate-[-30deg] select-none">
-                    E-School237
-                </span>
+<div class="container mx-auto px-4 py-4">
+    <div class="mx-auto">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">{{ $subject->title }}</h1>
+                        <div class="flex items-center mt-2 text-sm text-gray-500">
+                            <span class="mr-4">Posté par {{ $subject->author->name }}</span>
+                            <span>{{ $subject->created_at->format('d/m/Y') }}</span>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold 
+                              {{ $subject->is_free ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                        {{ $subject->is_free ? 'Gratuit' : 'Premium' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-2 text-sm text-gray-500 px-5">
+                <p><span class="font-medium">Niveau :</span> {{ $subject->level->name ?? $subject->level_id }}</p>
+                <p><span class="font-medium">Matière :</span> {{ $subject->subject->name ?? 'N/A' }}</p>
+                <p><span class="font-medium">Type :</span> {{ $subject->type }}</p>
+            </div>
+
+            <div class="p-6">
+                <div class="prose max-w-none">
+                    <p class="text-gray-700">{{ $subject->description }}</p>
+                </div>
+
+                {{-- <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            @if($subject->isImage())
+                                <img class="h-12 w-12 object-cover rounded" src="{{ $subject->getFileUrl() }}" alt="">
+                            @else
+                                <div class="h-12 w-12 rounded bg-blue-100 flex items-center justify-center">
+                                    <span class="text-blue-600 font-bold">{{ strtoupper($subject->file_extension) }}</span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">{{ $subject->file_name }}</div>
+                            <div class="text-sm text-gray-500">{{ $subject->formatted_file_size }}</div>
+                        </div>
+                        <div class="ml-auto">
+                            <a href="{{ route('subjects.download', $subject) }}" 
+                               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Télécharger
+                            </a>
+                        </div>
+                    </div>
+                </div> --}}
+            </div>
+
+            <div class="p-0 overflow-hidden">
+                <div class="relative w-full h-100 mb-4 overflow-hidden bg-none">
+                    <iframe 
+                        src="{{ url('/evaluation_subject/pdf/' . $subject->id) }}
+                            #page=1
+                            &view=FitH
+                            &scrollbar=0
+                            &toolbar=0
+                            &navpanes=0"
+                        class="w-full h-full"
+                        loading="lazy">
+                    </iframe>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span class="text-blue-600/20 text-base md:text-9xl font-bold select-none">
+                            E-School237
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Ressources similaires</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($related_subjects as $related)
+                    <div class="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+                        <a href="{{ route('subjects.show', $related) }}" class="block">
+                            <h4 class="font-medium text-gray-900">{{ $related->title }}</h4>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <span>{{ $related->category->name }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ $related->downloads_count }} téléchargements</span>
+                            </div>
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
-    <!-- Description -->
-    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-700 mb-2">Description</h2>
-        <p class="text-gray-600">{{ $subject->description ?: 'Aucune description.' }}</p>
-    </div>
-
-    <!-- Informations principales -->
-    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Informations</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-700">
-            <p><span class="font-medium">Niveau :</span> {{ $subject->level->name ?? $subject->level_id }}</p>
-            {{-- <p><span class="font-medium">Matière :</span> {{ $subject->subject_name ?? $subject->subject_id }}</p> --}}
-            <p><span class="font-medium">Matière :</span> {{ $subject->subject->name ?? 'N/A' }}</p>
-            <p><span class="font-medium">Type :</span> {{ $subject->type }}</p>
-            <p><span class="font-medium">Durée :</span> {{ $subject->formatted_duration ?? '-' }}</p>
-            {{-- <p><span class="font-medium">Année :</span> {{ $subject->exam_date ? $subject->exam_date->format('Y') : '-' }}</p> --}}
-            <p><span class="font-medium">Téléchargements :</span> {{ $subject->downloads_count }}</p>
-        </div>
-    </div>
-
-    <!-- Boutons de téléchargement -->
-    <div class="flex items-center gap-3 mb-8">
-        @auth
-            <a href="{{ route('subjects.download', $subject) }}" 
-               class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
-                📄 Télécharger le sujet
-            </a>
-            {{-- @if($subject->correction_file_path)
-                <a href="{{ route('subjects.download', ['subject' => $subject->id, 'file' => 'correction']) }}" 
-                   class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow">
-                    📝 Télécharger la correction
-                </a>
-            @endif --}}
-        @else
-            <p class="text-gray-600">
-                <a href="{{ route('login') }}" class="text-blue-600 underline">Connectez-vous</a> 
-                pour télécharger ce sujet.
-            </p>
-        @endauth
-    </div>
-
-    <!-- Sujets similaires -->
-    <div class="bg-white rounded-xl shadow-sm border p-6">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Sujets similaires</h2>
-        @if($related_subjects->count())
-            <ul class="divide-y divide-gray-200">
-                @foreach($related_subjects as $related)
-                    <li class="py-3 flex justify-between items-center">
-                        <div>
-                            <a href="{{ route('subjects.show', $related) }}" 
-                               class="text-blue-600 font-medium hover:underline">
-                                {{ $related->title }}
-                            </a>
-                            <p class="text-sm text-gray-500">
-                                {{ $related->type }}, {{ $related->level->name ?? $related->level_id }}
-                            </p>
-                        </div>
-                        <a href="{{ route('subjects.show', $related) }}" 
-                           class="text-sm text-gray-400 hover:text-gray-600">
-                            ➜ Voir
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        @else
-            <p class="text-gray-500">Aucun sujet similaire trouvé.</p>
-        @endif
-    </div>
 </div>
+
 @endsection

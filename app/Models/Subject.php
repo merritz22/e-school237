@@ -50,4 +50,9 @@ class Subject extends Model
         return $this->hasMany(EvaluationSubject::class, 'subject_id');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
 }

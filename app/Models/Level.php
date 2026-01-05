@@ -42,4 +42,9 @@ class Level extends Model
     {
         return $this->hasMany(EvaluationSubject::class, 'level_id');
     }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
 }

@@ -86,7 +86,7 @@
                         <a href="{{ route('subjects.show', $related) }}" class="block">
                             <h4 class="font-medium text-gray-900">{{ $related->title }}</h4>
                             <div class="mt-2 flex items-center text-sm text-gray-500">
-                                <span>{{ $related->category->name }}</span>
+                                <span>{{ $related->category->name ?? '' }}</span>
                                 <span class="mx-2">•</span>
                                 <span>{{ $related->downloads_count }} téléchargements</span>
                             </div>

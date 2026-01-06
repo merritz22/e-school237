@@ -25,7 +25,7 @@
 <body class="h-full" x-data="{ open: false }">
     <div class="min-h-full">
         <!-- Sidebar -->
-        <div :class="{'translate-x-0': open, '-translate-x-full': !open}" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900">
+        <div :class="{'block': open, 'hidden': !open}" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 lg:block">
             <!-- Mobile menu button -->
             <div class="absolute top-0 right-0 -mr-12 pt-2 lg:hidden">
                 <button @click="open = !open" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">

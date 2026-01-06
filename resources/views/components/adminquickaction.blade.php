@@ -1,11 +1,11 @@
 
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div>
     <!-- Quick Actions -->
     <div class=" bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Actions rapides</h3>
         
-        <div class="grid grid-cols-1 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
             <a href="{{ route('admin.users.create') }}" 
                 class="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 group">

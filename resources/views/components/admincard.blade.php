@@ -2,7 +2,7 @@
 @props(['stats'])
 
 
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
     <!-- Utilisateurs -->
     <div class="bg-white overflow-hidden shadow rounded-lg">
         <div class="p-5">

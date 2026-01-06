@@ -315,7 +315,7 @@ class EducationalResourceController extends Controller
             $rules['resource_file'] = [
                 'required',
                 'file',
-                'max:20480', // 20MB
+                'max:102400', // 100MB
                 'mimetypes:' . implode(',', EducationalResource::allowedMimeTypes()),
             ];
         }

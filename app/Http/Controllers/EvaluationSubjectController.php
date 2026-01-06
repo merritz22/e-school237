@@ -261,8 +261,8 @@ class EvaluationSubjectController extends Controller
             'type' => 'required|max:50',
             // 'exam_date' => 'nullable|date',
             // 'is_free' => 'nullable|integer|min:1',
-            'file' => 'required|file|mimes:pdf,doc,docx|max:10240',
-            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'file' => 'required|file|mimes:pdf,doc,docx|max:102400',
+            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
         ]);
 
         $data = $request->only([
@@ -334,8 +334,8 @@ class EvaluationSubjectController extends Controller
             'type' => 'required|max:50',
             // 'exam_date' => 'nullable|date',
             // 'duration_minutes' => 'nullable|integer|min:1',
-            'file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
+            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
         ]);
         // dd($request);
         $data = $request->only([

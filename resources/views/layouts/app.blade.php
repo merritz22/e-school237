@@ -28,8 +28,8 @@
                     <div class="flex items-center">
                         <a href="{{ route('home') }}" class="flex items-center">
                             <div class="flex-shrink-0 flex items-center">
-                                <img src="{{ Vite::asset('resources/images/e-school-logo.jpg') }}" alt="" class="w-10 h-10 rounded bg-blue" srcset="">
-                                <h1 class="text-xl font-bold text-primary">{{ config('app.name', 'EduSite') }}</h1>
+                                <img src="{{ Vite::asset('resources/images/e-school-logo.jpg') }}" alt="" class="w-5 h-5 md:w-10 md:h-10 rounded bg-blue" srcset="">
+                                <h1 class="text-sm md:text-xl font-bold text-primary">{{ config('app.name', 'EduSite') }}</h1>
                             </div>
                         </a>
                     </div>
@@ -60,10 +60,10 @@
                     <!-- Auth Links -->
                     <div class="flex items-center space-x-4">
                         @guest
-                            <a href="{{ route('login') }}" class="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium">
+                            <a href="{{ route('login') }}" class="text-gray-600 hover:text-primary px-2 py-2 text-sm font-medium">
                                 Connexion
                             </a>
-                            <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg text-sm font-medium transition-colors">
                                 Inscription
                             </a>
                         @else

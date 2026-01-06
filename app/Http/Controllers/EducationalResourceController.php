@@ -56,68 +56,26 @@ class EducationalResourceController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::check()) { //Visiteur sans compte
-            $resources = EducationalResource::with('subject', 'level')
-                ->where('is_free',1)
-                ->latest()
-                ->paginate(15);
-
-            $subjects = [];
-            $levels = [];
-            return view('resources.index', compact('resources', 'subjects', 'levels'));
-        }else{
-            $userId = Auth::user()->id;
-
             $query = EducationalResource::with('subject', 'level');
     
             // Filtrage par niveau
-            if ($request->filled('level')) {
+            if ($request->filled('level_id')) {
                 $query->where('level_id', $request->level_id);
             }
             // Filtrage par matière
-            if ($request->filled('subject')) {
+            if ($request->filled('subject_id')) {
                 $query->where('subject_id', $request->subject_id);
             }
             
-            if (!$request->filled('level') && !$request->filled('subject')){
-                // Liste des sujets disponnibles dans mon abonement
-                $subjectIds = Subject::whereHas('subscriptions', function ($query) use ($userId) {
-                    $query->where('user_id', $userId)
-                        ->whereDate('ends_at', '>=', now())
-                        ->where('status', 'active');
-                })->pluck('id');
-
-                // Liste des niveaux disponnibles dans mon abonement
-                $levelIds = Level::whereHas('subscriptions', function ($query) use ($userId) {
-                    $query->where('user_id', $userId)
-                        ->whereDate('ends_at', '>=', now())
-                        ->where('status', 'active');
-                })->pluck('id');
-
-                $resources = $query->whereIn('subject_id', $subjectIds)
-                    ->whereIn('level_id', $levelIds)
-                    ->latest()
-                    ->paginate(15);
-            }else{
-                $resources = $query->where('is_approved', 1)->latest()->paginate(15);
-            }
+            $resources = $query->where('is_approved', 1)->latest()->paginate(15);
 
             // Liste des sujets disponnibles dans mon abonement
-            $subjects = Subject::whereHas('subscriptions', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->whereDate('ends_at', '>=', now())
-                    ->where('status', 'active');
-            })->get();
+            $subjects = Subject::all()->where('is_active', 1);
 
             // Liste des niveaux disponnibles dans mon abonement
-            $levels = Level::whereHas('subscriptions', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->whereDate('ends_at', '>=', now())
-                    ->where('status', 'active');
-            })->get();
+            $levels = Level::all()->where('is_active', 1);
             
             return view('resources.index', compact('resources', 'subjects', 'levels'));
-        }
     }
 
     /**
@@ -140,6 +98,8 @@ class EducationalResourceController extends Controller
         $file = $request->file('resource_file');
         $filePath = $file->store('educational_resources', 'private');
 
+        // dd($request);
+
         $resource = EducationalResource::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
@@ -153,6 +113,7 @@ class EducationalResourceController extends Controller
             'subject_id' => $validated['subject_id'],
             'level_id' => $validated['level_id'],
             'is_approved' => 0,
+            'is_free' => $request->boolean('is_free'),
         ]);
 
         return redirect()->route('admin.resources.index')
@@ -168,7 +129,7 @@ class EducationalResourceController extends Controller
         // if (!$resource->canBeDownloadedBy(Auth::user())) {
         //     abort(403, 'Cette ressource n\'est pas encore approuvée.');
         // }
-
+        
         return view('resources.show', [
             'resource' => $resource->load(['category', 'uploader', 'likes']),
             'relatedResources' => EducationalResource::where('category_id', $resource->category_id)
@@ -276,6 +237,7 @@ class EducationalResourceController extends Controller
             'category_id' => $validated['subject_id'],
             'subject_id' => $validated['subject_id'],
             'level_id' => $validated['level_id'],
+            'is_free' => $request->boolean('is_free'),
         ];
 
         if ($request->hasFile('resource_file')) {

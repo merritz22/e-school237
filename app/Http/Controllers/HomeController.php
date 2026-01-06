@@ -21,128 +21,57 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $data = null;
-        $latestArticles = Article::with('subject', 'author')
-            ->where('status','published')
-            ->latest()
-            ->take(6)
-            ->get();
+        $data = Cache::remember('home_data', 300, function () { // Cache pendant 10 minutes
+            return [
+                // Derniers articles (6 plus récents)
+                'latest_articles' => Article::with('subject', 'author')
+                    ->where('status','published')
+                    ->latest()
+                    ->take(6)
+                    ->get(),
 
-        if (!Auth::check()) { //Visiteur sans compte
-            // Utilisation du cache pour optimiser les performances
-            $data = Cache::remember('home_data', 300, function () use ($latestArticles) { // Cache pendant 10 minutes
-                return [
-                    // Derniers articles (6 plus récents)
-                    'latest_articles' => $latestArticles,
+                // Derniers sujets d'évaluation (6 plus récents)
+                'latest_subjects' => EvaluationSubject::latest()
+                    ->take(6)
+                    ->get(),
 
-                    // Derniers sujets d'évaluation (6 plus récents)
-                    'latest_subjects' => EvaluationSubject::latest()
-                        ->where('is_free',1)
-                        ->take(6)
-                        ->get(),
+                // Derniers supports pédagogiques (6 plus récents)
+                'latest_supports' => EducationalResource::latest()
+                    ->where('is_approved', 1)
+                    ->take(6)
+                    ->get(),
 
-                    // Derniers supports pédagogiques (6 plus récents)
-                    'latest_supports' => EducationalResource::latest()
-                        ->where('is_free',1)
-                        ->where('is_approved', 1)
-                        ->take(6)
-                        ->get(),
+                // Derniers posts de blog (3 plus récents)
+                'latest_blog_posts' => ForumTopic::with('author')
+                    // ->published()
+                    ->latest()
+                    ->take(3)
+                    ->get(),
 
-                    // Derniers posts de blog (3 plus récents)
-                    'latest_blog_posts' => ForumTopic::with('author')
-                        // ->published()
-                        ->latest()
-                        ->take(3)
-                        ->get(),
+                // Articles les plus populaires (par nombre de vues)
+                'popular_articles' => Article::with('subject', 'author')
+                    ->where('status','published')
+                    ->orderBy('views_count', 'desc')
+                    ->take(3)
+                    ->get(),
 
-                    // Articles les plus populaires (par nombre de vues)
-                    'popular_articles' => Article::with('subject', 'author')
-                        ->where('status','published')
-                        ->orderBy('views_count', 'desc')
-                        ->take(3)
-                        ->get(),
+                // Supports les plus téléchargés
+                'popular_supports' => EducationalResource::with('subject')
+                    ->orderBy('downloads_count', 'desc')
+                    ->where('is_approved', 1)
+                    ->take(3)
+                    ->get(),
 
-                    // Supports les plus téléchargés
-                    'popular_supports' => EducationalResource::with('subject')
-                        ->orderBy('downloads_count', 'desc')
-                        ->where('is_approved', 1)
-                        ->take(3)
-                        ->get(),
-
-                    // Statistiques générales
-                    'stats' => [
-                        'total_articles' => Article::where('status','published')->count(),
-                        'total_subjects' => EvaluationSubject::count(),
-                        'total_supports' => EducationalResource::where('is_approved', 1)->count(),
-                        'total_users' => User::where('is_active', true)->count(),
-                        'total_downloads' => EducationalResource::sum('downloads_count') + EvaluationSubject::sum('downloads_count'),
-                    ],
-                ];
-            });
-        }
-        else
-        {
-            $userId = Auth::user()->id;
-            //Visiteur avec un compte utilisateur, on liste les article gratuits + ceux de son abonement
-            // Liste des sujets disponnibles dans mon abonement
-            $subjectIds = Subject::whereHas('subscriptions', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->whereDate('ends_at', '>=', now())
-                    ->where('status', 'active');
-            })->pluck('id');
-
-            // Liste des niveaux disponnibles dans mon abonement
-            $levelIds = Level::whereHas('subscriptions', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->whereDate('ends_at', '>=', now())
-                    ->where('status', 'active');
-            })->pluck('id');
-
-            $latestSubjects = EvaluationSubject::query()
-                ->whereIn('subject_id', $subjectIds)
-                ->whereIn('level_id', $levelIds)
-                ->latest()
-                ->take(6)
-                ->get();
-
-            $latestSupports = EducationalResource::query()
-                ->whereIn('subject_id', $subjectIds)
-                ->whereIn('level_id', $levelIds)
-                ->latest()
-                ->take(6)
-                ->get();
-            // dd($subjectIds, $levelIds, $latestSubjects);
-            $data = Cache::remember('home_data_user_{$userId}', 300, function () use($latestArticles, $latestSubjects, $latestSupports) { // Cache pendant 10 minutes
-                return [
-                    // Derniers articles (6 plus récents)
-                    'latest_articles' => $latestArticles,
-
-                    // Derniers sujets d'évaluation (6 plus récents)
-                    'latest_subjects' => $latestSubjects,
-
-                    // Derniers supports pédagogiques (6 plus récents)
-                    'latest_supports' => $latestSupports,
-
-                    // Derniers posts de blog (3 plus récents)
-                    'latest_blog_posts' => [],
-
-                    // Articles les plus populaires (par nombre de vues)
-                    'popular_articles' => [],
-
-                    // Supports les plus téléchargés
-                    'popular_supports' => [],
-
-                    // Statistiques générales
-                    'stats' => [
-                        'total_articles' => Article::where('status','published')->count(),
-                        'total_subjects' => EvaluationSubject::count(),
-                        'total_supports' => EducationalResource::where('is_approved', 1)->count(),
-                        'total_users' => User::where('is_active', true)->count(),
-                        'total_downloads' => EducationalResource::sum('downloads_count') + EvaluationSubject::sum('downloads_count'),
-                    ],
-                ];
-            });
-        }
+                // Statistiques générales
+                'stats' => [
+                    'total_articles' => Article::where('status','published')->count(),
+                    'total_subjects' => EvaluationSubject::count(),
+                    'total_supports' => EducationalResource::where('is_approved', 1)->count(),
+                    'total_users' => User::where('is_active', true)->count(),
+                    'total_downloads' => EducationalResource::sum('downloads_count') + EvaluationSubject::sum('downloads_count'),
+                ],
+            ];
+        });
         
 
         // Catégories pour le menu de navigation

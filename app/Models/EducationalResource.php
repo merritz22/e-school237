@@ -48,6 +48,7 @@ class EducationalResource extends Model
         'level_id',
         'downloads_count',
         'is_approved',
+        'is_free',
     ];
 
     protected $casts = [

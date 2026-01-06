@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'subject_subscription' => \App\Http\Middleware\CheckSubjectSubscription::class,//Vérifie si l'utilisateur à un abonnement en cours ou pas 
+            'resource_subscription' => \App\Http\Middleware\CheckResourceSubscription::class,//Vérifie si l'utilisateur à un abonnement en cours ou pas
         ]);
     })
     

@@ -1,10 +1,10 @@
-@props(['resource' => null, 'subjects', 'levels'])
+@props(['resource', 'subjects', 'levels'])
 
 <div class="space-y-6">
     <div>
         <label for="title" class="block text-sm font-medium text-gray-700">Titre *</label>
         <input type="text" name="title" id="title" value="{{ old('title', $resource->title ?? '') }}" 
-               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2" required>
         @error('title')
             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
         @enderror
@@ -12,7 +12,7 @@
 
     <div>
         <label for="subject_id" class="block text-sm font-medium text-gray-700">matière *</label>
-        <select name="subject_id" id="subject_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+        <select name="subject_id" id="subject_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('subject_id') border-red-500 @enderror" required>
             <option value="">Sélectionnez une matière</option>
             @foreach($subjects as $subject)
                 <option value="{{ $subject->id }}" {{ old('subject_id', $resource->subject_id ?? '') == $subject->id ? 'selected' : '' }}>
@@ -27,7 +27,7 @@
 
     <div>
         <label for="level_id" class="block text-sm font-medium text-gray-700">Niveau *</label>
-        <select name="level_id" id="level_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+        <select name="level_id" id="level_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('level_id') border-red-500 @enderror" required>
             <option value="">Sélectionnez un niveau</option>
             @foreach($levels as $level)
                 <option value="{{ $level->id }}" {{ old('level_id', $resource->level_id ?? '') == $level->id ? 'selected' : '' }}>
@@ -38,6 +38,16 @@
         @error('level_id')
             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
         @enderror
+    </div>
+
+    <div>
+        <label for="is_free" class="block text-sm font-medium text-gray-700 mb-2">Accès <span class="text-red-500">*</span></label>
+        <select name="is_free" id="is_free" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('is_free') border-red-500 @enderror">
+                <option value="1" @selected(old('is_free') == 1)>Gratuit</option>
+                <option value="0" @selected(old('is_free') == 0)>Premium</option>
+        </select>
+        @error('is_free') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
     <div>

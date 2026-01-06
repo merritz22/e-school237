@@ -85,11 +85,13 @@
         </div> --}}
 
         <div>
-            <label for="duration_minutes" class="block text-sm font-medium text-gray-700 mb-2">Durée (minutes)</label>
-            <input type="number" name="duration_minutes" id="duration_minutes" min="1" value="{{ old('duration_minutes', $subject->duration_minutes) }}"
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('duration_minutes') border-red-500 @enderror"
-                   placeholder="Durée en minutes">
-            @error('duration_minutes') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            <label for="is_free" class="block text-sm font-medium text-gray-700 mb-2">Accès <span class="text-red-500">*</span></label>
+            <select name="is_free" id="is_free"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('is_free') border-red-500 @enderror">
+                    <option value="1" @selected(old('is_free') == 1)>Gratuit</option>
+                    <option value="0" @selected(old('is_free') == 0)>Premium</option>
+            </select>
+            @error('is_free') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div class="block">

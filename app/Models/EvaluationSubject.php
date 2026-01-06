@@ -25,6 +25,7 @@ class EvaluationSubject extends Model
         'file_type',
         'correction_file_path',
         'downloads_count',
+        'is_free',
     ];
 
     protected $casts = [

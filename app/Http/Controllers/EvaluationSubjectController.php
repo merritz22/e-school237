@@ -23,108 +23,60 @@ class EvaluationSubjectController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::check()) { //Visiteur sans compte
-            $subjects = EvaluationSubject::with('subject', 'level')
-                ->where('is_free',1)
-                ->latest()
-                ->paginate(15);
 
-            $subject_names = [];
-            $types = [];
-            $authors = [];
-            $years = [];
-            $filter_subjects = [];
-            $levels = [];
+        $query = EvaluationSubject::with('subject', 'level');
 
-            return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
+        // Filtrage par niveau
+        if ($request->filled('level_id')) {
+            $query->where('level_id', $request->level_id);
         }
-        else{
-            $userId = Auth::user()->id;
-
-            $query = EvaluationSubject::with('subject', 'level');
-    
-            // Filtrage par niveau
-            if ($request->filled('level_id')) {
-                $query->where('level_id', $request->level_id);
-            }
-            // Filtrage par matière
-            if ($request->filled('subject_id')) {
-                $query->where('subject_id', $request->subject_id);
-            }
-            // Filtrage par type
-            if ($request->filled('type')) {
-                $query->where('type', $request->type);
-            }
-            // Filtrage par année
-            if ($request->filled('year')) {
-                $query->whereYear('created_at', $request->year);
-            }
-            // Tri
-            $sort = $request->get('sort', 'latest');
-            switch ($sort) {
-                case 'popular':
-                    $query->orderBy('downloads_count', 'desc');
-                    break;
-                case 'title':
-                    $query->orderBy('title', 'asc');
-                    break;
-                case 'level_id':
-                    $query->orderBy('level_id', 'asc');
-                    break;
-                default:
-                    $query->orderBy('created_at', 'desc');
-            }
-            
-            // dd($request->filled('level_id'));
-            if (!$request->filled('level_id') && !$request->filled('subject_id')){
-                // Liste des sujets disponnibles dans mon abonement
-                $subjectIds = Subject::whereHas('subscriptions', function ($query) use ($userId) {
-                    $query->where('user_id', $userId)
-                        ->whereDate('ends_at', '>=', now())
-                        ->where('status', 'active');
-                })->pluck('id');
-
-                // Liste des niveaux disponnibles dans mon abonement
-                $levelIds = Level::whereHas('subscriptions', function ($query) use ($userId) {
-                    $query->where('user_id', $userId)
-                        ->whereDate('ends_at', '>=', now())
-                        ->where('status', 'active');
-                })->pluck('id');
-
-                $subjects = $query->whereIn('subject_id', $subjectIds)
-                    ->whereIn('level_id', $levelIds)
-                    ->latest()
-                    ->paginate(15);
-            }else{
-                $subjects = $query->latest()->paginate(15);
-            }
-
-            // Données pour les filtres
-            $subject_names = [];
-            $types = EvaluationSubject::distinct()->pluck('type')->filter()->sort();
-            $authors = [];
-            $years = EvaluationSubject::selectRaw('YEAR(created_at) as year')
-                ->whereNotNull('created_at')
-                ->distinct()
-                ->orderBy('year', 'desc')
-                ->pluck('year');
-
-            // Liste des sujets disponnibles dans mon abonement
-            $filter_subjects = Subject::whereHas('subscriptions', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->whereDate('ends_at', '>=', now())
-                    ->where('status', 'active');
-            })->get();
-
-            // Liste des niveaux disponnibles dans mon abonement
-            $levels = Level::whereHas('subscriptions', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->whereDate('ends_at', '>=', now())
-                    ->where('status', 'active');
-            })->get();
-            
-            return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
+        // Filtrage par matière
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
         }
+        // Filtrage par type
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+        // Filtrage par année
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+        // Tri
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'popular':
+                $query->orderBy('downloads_count', 'desc');
+                break;
+            case 'title':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'level_id':
+                $query->orderBy('level_id', 'asc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+        
+        $subjects = $query->latest()->paginate(15);
+
+        // Données pour les filtres
+        $subject_names = [];
+        $types = EvaluationSubject::distinct()->pluck('type')->filter()->sort();
+        $authors = [];
+        $years = EvaluationSubject::selectRaw('YEAR(created_at) as year')
+            ->whereNotNull('created_at')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+
+        // Liste des sujets disponnibles dans mon abonement
+        $filter_subjects = Subject::all()->where('is_active', 1);
+
+        // Liste des niveaux disponnibles dans mon abonement
+        $levels = Level::all()->where('is_active', 1);
+        
+        return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
     }
 
     /**
@@ -308,7 +260,7 @@ class EvaluationSubjectController extends Controller
             'subject_id' => 'required|exists:subjects,id',
             'type' => 'required|max:50',
             // 'exam_date' => 'nullable|date',
-            'duration_minutes' => 'nullable|integer|min:1',
+            // 'is_free' => 'nullable|integer|min:1',
             'file' => 'required|file|mimes:pdf,doc,docx|max:10240',
             'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
@@ -320,8 +272,10 @@ class EvaluationSubjectController extends Controller
             'subject_id', 
             'type', 
             // 'exam_date', 
-            'duration_minutes'
+            'is_free'
         ]);
+
+        // dd($request->all());
         
         $data['author_id'] = Auth::id();
 
@@ -379,11 +333,22 @@ class EvaluationSubjectController extends Controller
             'subject_id' => 'required|exists:subjects,id',
             'type' => 'required|max:50',
             // 'exam_date' => 'nullable|date',
-            'duration_minutes' => 'nullable|integer|min:1',
+            // 'duration_minutes' => 'nullable|integer|min:1',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
         // dd($request);
+        $data = $request->only([
+            'title', 
+            'description', 
+            'level_id', 
+            'subject_id', 
+            'type', 
+            // 'exam_date', 
+            'is_free'
+        ]);
+
+        // dd($data, $request->all());
         $data = $request->except(['file', 'correction_file']);
 
         // Upload du nouveau fichier principal

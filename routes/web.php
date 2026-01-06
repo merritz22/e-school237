@@ -147,7 +147,7 @@ Route::prefix('resources')->group(function () {
     Route::get('/', [EducationalResourceController::class, 'index'])
          ->name('resources.index');
     Route::get('/{resource}', [EducationalResourceController::class, 'show'])
-         ->name('resources.show');
+         ->name('resources.show')->middleware('resource_subscription');
     
     // Téléchargement
     Route::get('/{resource}/download', [EducationalResourceController::class, 'download'])
@@ -177,7 +177,7 @@ Route::prefix('articles')->group(function () {
 // Sujets d'évaluation
 Route::prefix('subjects')->group(function () {
     Route::get('/', [EvaluationSubjectController::class, 'index'])->name('subjects.index');
-    Route::get('/{subject}', [EvaluationSubjectController::class, 'show'])->name('subjects.show');
+    Route::get('/{subject}', [EvaluationSubjectController::class, 'show'])->name('subjects.show')->middleware('subject_subscription');
     Route::get('/download/{subject}', [EvaluationSubjectController::class, 'download'])->name('subjects.download')->middleware('auth');
     Route::get('/level/{level}', [EvaluationSubjectController::class, 'byLevel'])->name('subjects.level');
     Route::get('/subject/{subject_name}', [EvaluationSubjectController::class, 'bySubject'])->name('subjects.subject');

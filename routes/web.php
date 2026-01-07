@@ -238,14 +238,14 @@ Route::get('/evaluation_subject/pdf/{id}', function ($id) {
     return response()->file(
         storage_path('app/private/' . $subject->file_path)
     );
-});
+})->middleware('subject_subscription');
 
 Route::get('/support/pdf/{id}', function ($id) {
     $support = EducationalResource::findOrFail($id);
     return response()->file(
         storage_path('app/private/' . $support->file_path)
     );
-});
+})->middleware('resource_subscription');
 
 
 // Route pour le paiement par api - Orange Money / MTN

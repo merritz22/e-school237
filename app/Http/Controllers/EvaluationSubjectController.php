@@ -127,7 +127,8 @@ class EvaluationSubjectController extends Controller
         $pdfPath = Storage::disk('private')->path($subject->file_path);
 
         // 👤 Infos du filigrane
-        $watermarkText = "E-School237";
+        $watermarkText = "© E-School237.com";
+        $watermarkLink = "https://e-school237.com";
 
         // 🧠 Création du PDF filigrané
         try {
@@ -142,13 +143,17 @@ class EvaluationSubjectController extends Controller
                 $pdf->useTemplate($tplId);
 
                 // 🎨 Filigrane
-                $pdf->SetFont('helvetica', 'B', 80);
-                $pdf->SetTextColor(30, 64, 175); // blue-600
-                $pdf->SetAlpha(0.12);
+                $pdf->SetFont('helvetica', 'B', 30);
+                $pdf->SetTextColor(30, 64, 175); // bleu
+                $pdf->SetAlpha(0.8);
 
-                $pdf->Rotate(45, $size['width'] / 2, $size['height'] / 2);
-                $pdf->Text(20, $size['height'] / 2, $watermarkText);
-                $pdf->Rotate(0);
+                // Y = hauteur page - marge basse
+                $footerY = 1;
+                $footerX = ($size['width'] / 4);
+
+                // Texte cliquable
+                $pdf->SetXY($footerX, $footerY);
+                $pdf->Write(5, $watermarkText, $watermarkLink);
             }
 
             // 📤 Téléchargement
@@ -163,7 +168,7 @@ class EvaluationSubjectController extends Controller
         } catch (\Exception $e) {
             // Ici tu peux gérer l’erreur comme tu veux
             \Log::error('Erreur lors de la génération du PDF : ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Impossible de télécharger ce fichier. Le PDF semble corrompu.');
+            return redirect()->back()->with('error', $e->getMessage() .' Impossible de télécharger ce fichier. Le PDF semble corrompu.');
         }
         // return Storage::disk('private')->download($subject->file_path, $subject->title . '.' . pathinfo($subject->file_path, PATHINFO_EXTENSION));
     }

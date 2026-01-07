@@ -43,16 +43,16 @@
                     <p class="text-gray-700">{{ $subject->description }}</p>
                 </div>
 
-                {{-- <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                <div class="mt-6 bg-gray-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            @if($subject->isImage())
+                            {{-- @if($subject->isImage())
                                 <img class="h-12 w-12 object-cover rounded" src="{{ $subject->getFileUrl() }}" alt="">
-                            @else
-                                <div class="h-12 w-12 rounded bg-blue-100 flex items-center justify-center">
-                                    <span class="text-blue-600 font-bold">{{ strtoupper($subject->file_extension) }}</span>
-                                </div>
-                            @endif
+                            @else --}}
+                            <div class="h-12 w-12 rounded bg-blue-100 flex items-center justify-center">
+                                <span class="text-blue-600 font-bold">{{ strtoupper($subject->file_extension) }}</span>
+                            </div>
+                            {{-- @endif --}}
                         </div>
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-900">{{ $subject->file_name }}</div>
@@ -65,7 +65,7 @@
                             </a>
                         </div>
                     </div>
-                </div> --}}
+                </div>
             </div>
 
             <div class="p-0 overflow-hidden">
@@ -81,9 +81,9 @@
                         loading="lazy">
                     </iframe>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span class="text-blue-600/20 text-base md:text-9xl font-bold select-none">
-                            E-School237
-                        </span>
+                        <a class="text-blue-700/50 text-base md:text-8xl font-bold select-none">
+                            E-School237.com
+                        </a>
                     </div>
                 </div>
             </div>

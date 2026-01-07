@@ -170,7 +170,8 @@ class EducationalResourceController extends Controller
         $pdfPath = Storage::disk('private')->path($resource->file_path);
 
         // 👤 Infos du filigrane
-        $watermarkText = "E-School237";
+        $watermarkText = "© E-School237.com";
+        $watermarkLink = "https://e-school237.com";
 
         // 🧠 Création du PDF filigrané
         try {
@@ -185,13 +186,17 @@ class EducationalResourceController extends Controller
                 $pdf->useTemplate($tplId);
 
                 // 🎨 Filigrane
-                $pdf->SetFont('helvetica', 'B', 80);
-                $pdf->SetTextColor(30, 64, 175); // blue-600
-                $pdf->SetAlpha(0.12);
+                $pdf->SetFont('helvetica', 'B', 30);
+                $pdf->SetTextColor(30, 64, 175); // bleu
+                $pdf->SetAlpha(0.8);
 
-                $pdf->Rotate(45, $size['width'] / 2, $size['height'] / 2);
-                $pdf->Text(20, $size['height'] / 2, $watermarkText);
-                $pdf->Rotate(0);
+                // Y = hauteur page - marge basse
+                $footerY = 1;
+                $footerX = ($size['width'] / 4);
+
+                // Texte cliquable
+                $pdf->SetXY($footerX, $footerY);
+                $pdf->Write(5, $watermarkText, $watermarkLink);
             }
 
             // 📤 Téléchargement

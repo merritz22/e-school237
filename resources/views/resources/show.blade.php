@@ -44,7 +44,7 @@
                     <p class="text-gray-700">{{ $resource->description }}</p>
                 </div>
 
-                {{-- <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                <div class="mt-6 bg-gray-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             @if($resource->isImage())
@@ -66,7 +66,7 @@
                             </a>
                         </div>
                     </div>
-                </div> --}}
+                </div>
             </div>
 
             <div class="p-0 overflow-hidden">
@@ -78,13 +78,13 @@
                             &scrollbar=0
                             &toolbar=0
                             &navpanes=0"
-                        class="w-full h-full"
+                        class="w-full h-full readonly"
                         loading="lazy">
                     </iframe>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span class="text-blue-600/20 text-base md:text-9xl font-bold select-none">
-                            E-School237
-                        </span>
+                        <a class="text-blue-700/50 text-base md:text-8xl font-bold select-none">
+                            E-School237.com
+                        </a>
                     </div>
                 </div>
             </div>

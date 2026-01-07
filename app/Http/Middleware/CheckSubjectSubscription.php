@@ -37,7 +37,7 @@ class CheckSubjectSubscription
             ->where('level_id', $subject->level_id)
             ->exists();
 
-        if (!$hasSubscription) {
+        if (!$hasSubscription && !$subject->is_free) {
             return redirect()
                 ->route('subscriptions.index')
                 ->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette ressource.');

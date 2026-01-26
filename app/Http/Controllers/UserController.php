@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\DownloadLog;
+use App\Models\Subscription;
 use App\Models\ForumTopic;
 use App\Models\Article;
 use Illuminate\Http\Request;
@@ -60,7 +61,9 @@ class UserController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        return view('user.profile', compact('user'));
+        $userSubscripritions = Subscription::where('user_id',$user->id)->paginate(15);
+        // dd($userSubscripritions);
+        return view('user.profile', compact('user','userSubscripritions'));
     }
 
     /**

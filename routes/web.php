@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\EvaluationSubjectController;
 use App\Http\Controllers\EducationalResourceController;
 use App\Http\Controllers\SupportController;
@@ -56,6 +58,30 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::put('/{article}', [ArticleController::class, 'update'])->name('admin.articles.update');
         Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy');
         Route::patch('/{article}/publish', [ArticleController::class, 'publish'])->name('admin.articles.publish');
+    });
+    
+    // Gestion des matières
+    Route::prefix('topics')->group(function () {
+        Route::get('/', [SubjectController::class, 'adminIndex'])->name('admin.topics.index');
+        Route::get('/create', [SubjectController::class, 'create'])->name('admin.topics.create');
+        Route::post('/', [SubjectController::class, 'store'])->name('admin.topics.store');
+        Route::get('/stats', [SubjectController::class, 'stats'])->name('admin.topics.stats');
+        Route::get('/{topic}/edit', [SubjectController::class, 'edit'])->name('admin.topics.edit');
+        Route::put('/{topic}', [SubjectController::class, 'update'])->name('admin.topics.update');
+        Route::delete('/{topic}', [SubjectController::class, 'destroy'])->name('admin.topics.destroy');
+        Route::patch('/{topic}/publish', [SubjectController::class, 'publish'])->name('admin.topics.publish');
+    });
+    
+    // Gestion des classes
+    Route::prefix('levels')->group(function () {
+        Route::get('/', [LevelController::class, 'adminIndex'])->name('admin.levels.index');
+        Route::get('/create', [LevelController::class, 'create'])->name('admin.levels.create');
+        Route::post('/', [LevelController::class, 'store'])->name('admin.levels.store');
+        Route::get('/stats', [LevelController::class, 'stats'])->name('admin.levels.stats');
+        Route::get('/{level}/edit', [LevelController::class, 'edit'])->name('admin.levels.edit');
+        Route::put('/{level}', [LevelController::class, 'update'])->name('admin.levels.update');
+        Route::delete('/{level}', [LevelController::class, 'destroy'])->name('admin.levels.destroy');
+        Route::patch('/{level}/publish', [LevelController::class, 'publish'])->name('admin.levels.publish');
     });
     
     // Gestion des sujets
@@ -108,16 +134,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/{support}/edit', [SupportController::class, 'edit'])->name('admin.supports.edit');
         Route::put('/{support}', [SupportController::class, 'update'])->name('admin.supports.update');
         Route::delete('/{support}', [SupportController::class, 'destroy'])->name('admin.supports.destroy');
-    });
-    
-    // Gestion des catégories
-    Route::prefix('categories')->group(function () {
-        Route::get('/', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
-        Route::get('/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
-        Route::post('/', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
-        Route::get('/{category}/edit', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
-        Route::put('/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
-        Route::delete('/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
     
     // Gestion des commentaires et posts de blog
@@ -247,11 +263,25 @@ Route::get('/support/pdf/{id}', function ($id) {
     );
 })->middleware('resource_subscription');
 
+Route::get('/show/subject/pdf/{id}', function ($id) {
+    $subject = EvaluationSubject::findOrFail($id);
+    return response()->file(
+        storage_path('app/private/' . $subject->file_path)
+    );
+});
+
+Route::get('/show/support/pdf/{id}', function ($id) {
+    $support = EducationalResource::findOrFail($id);
+    return response()->file(
+        storage_path('app/private/' . $support->file_path)
+    );
+});
+
 
 // Route pour le paiement par api - Orange Money / MTN
 
 // Initiation du paiement
 Route::post('/payments/initiate', [PaymentController::class, 'initiatePayment'])->name('initiate');
 // Orange Money appellera ton serveur après paiement.
-Route::post('/payments/callback', [OrangePaymentController::class, 'callback'])
+Route::post('/payments/callback', [PaymentController::class, 'callback'])
      ->name('mtn.callback');

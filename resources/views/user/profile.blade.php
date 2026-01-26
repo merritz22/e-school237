@@ -3,8 +3,16 @@
 @section('title', 'Profil utilisateur')
 
 @section('content')
+
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="text-2xl font-bold mb-6">Mon profil</h1>
+    @component('components.userinfos', ['user' =>$user])
+    @endcomponent
+
+    @component('components.usersubscription', ['subscriptions' =>$userSubscripritions])
+    @endcomponent
+
+    {{-- @dd($userSubscriprition) --}}
+    {{-- <h1 class="text-2xl font-bold mb-6">Mon profil</h1>
 
     @if(session('success'))
         <div class="mb-4 rounded bg-green-100 text-green-800 p-4">{{ session('success') }}</div>
@@ -104,6 +112,6 @@
 
             <button type="submit" class="bg-indigo-600 text-white rounded px-6 py-2 hover:bg-indigo-700 font-semibold">Mettre à jour le mot de passe</button>
         </form>
-    </div>
+    </div> --}}
 </div>
 @endsection

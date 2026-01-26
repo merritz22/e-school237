@@ -2,7 +2,7 @@
 @props(['stats'])
 
 
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-3">
     <!-- Utilisateurs -->
     <div class="bg-white overflow-hidden shadow rounded-lg">
         <div class="p-5">
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Articles -->
-    <div class="bg-white overflow-hidden shadow rounded-lg">
+    {{-- <div class="bg-white overflow-hidden shadow rounded-lg">
         <div class="p-5">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
@@ -65,11 +65,11 @@
                             <div class="text-2xl font-semibold text-gray-900">
                                 {{ $stats['total_articles'] ?? 0 }}
                             </div>
-                            {{-- @if(isset($stats['pending_articles']) && $stats['pending_articles'] > 0)
+                            @if(isset($stats['pending_articles']) && $stats['pending_articles'] > 0)
                             <div class="ml-2 flex items-baseline text-sm font-semibold text-orange-600">
                                 <span class="text-xs">{{ $stats['pending_articles'] }} en attente</span>
                             </div>
-                            @endif --}}
+                            @endif
                         </dd>
                     </dl>
                 </div>
@@ -82,7 +82,7 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Supports -->
     <div class="bg-white overflow-hidden shadow rounded-lg">

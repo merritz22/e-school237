@@ -63,7 +63,7 @@
                     </a>
 
                     <!-- Articles Section -->
-                    <div class="space-y-1">
+                    {{-- <div class="space-y-1">
                         <div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             Articles
                         </div>
@@ -76,14 +76,14 @@
                             Tous les articles
                         </a>
 
-                        {{-- <a href="{{ route('admin.articles.create') }}" 
+                        <a href="{{ route('admin.articles.create') }}" 
                            class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.articles.create') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
                             <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
                             Nouvel article
-                        </a> --}}
-                    </div>
+                        </a>
+                    </div> --}}
 
                     <!-- Educational resources Section -->
                     <div class="space-y-1">
@@ -93,8 +93,11 @@
                         
                         <a href="{{ route('admin.resources.index') }}" 
                            class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.resources.*') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
-                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            
+                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18v16H3V4z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6" />
                             </svg>
                             Supports pédagogiques
                         </a>
@@ -115,6 +118,35 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6" />
                             </svg>
                             Tous les sujets
+                        </a>
+                    </div>
+
+                    <!-- Sujets d'évaluations -->
+                    <div class="space-y-1">
+                        <div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Matières et classes
+                        </div>
+                        
+                        <a href="{{ route('admin.topics.index') }}" 
+                        class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.subjects.*') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
+                            <!-- Icone livre / document -->
+                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18v16H3V4z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6" />
+                            </svg>
+                            Toutes les matières
+                        </a>
+                        
+                        <a href="{{ route('admin.levels.index') }}" 
+                        class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.subjects.*') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
+                            <!-- Icone livre / document -->
+                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18v16H3V4z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6" />
+                            </svg>
+                            Toutes les classes
                         </a>
                     </div>
 

@@ -156,8 +156,8 @@
         // Tableaux de stockage
         let selectedLevels = [];
         let selectedSubjects = [];
-        let unit_price = 10000
-        let unit_price_reduction = 1000
+        let unit_price = 1000
+        let unit_price_reduction = 100
 
         addBtn.addEventListener("click", function(e) {
             e.preventDefault();

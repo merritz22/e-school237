@@ -72,12 +72,7 @@
             <div class="p-0 overflow-hidden">
                 <div class="relative w-full h-100 mb-4 overflow-hidden bg-none">
                     <iframe 
-                        src="{{ url('/support/pdf/' . $resource->id) }}
-                            #page=1
-                            &view=FitH
-                            &scrollbar=0
-                            &toolbar=0
-                            &navpanes=0"
+                        src="{{ url('/show/support/pdf/' . $resource->id) }}#page=1&toolbar=0&navpanes=0"
                         class="w-full h-full readonly"
                         loading="lazy">
                     </iframe>

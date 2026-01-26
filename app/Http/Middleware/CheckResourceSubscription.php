@@ -31,17 +31,22 @@ class CheckResourceSubscription
             abort(404, 'Ressource introuvable.');
         }
         
-        // 3. Vérifier l'abonnement
-        $hasSubscription = Subscription::where('user_id', Auth::id())
-        ->where('subject_id', $resource->subject_id)
-        ->where('level_id', $resource->level_id)
-        ->exists();
-        
-        if (!$hasSubscription && !$subject->is_free) {
-            return redirect()
-                ->route('subscriptions.index')
-                ->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette ressource.');
+
+        // Si l'utilisateur es admin alors pas de vérification
+        if(Auth::user()->role !== 'admin'){
+            // 3. Vérifier l'abonnement
+            $hasSubscription = Subscription::where('user_id', Auth::id())
+            ->where('subject_id', $resource->subject_id)
+            ->where('level_id', $resource->level_id)
+            ->exists();
+            
+            if (!$hasSubscription && !$resource->is_free) {
+                return redirect()
+                    ->route('subscriptions.index')
+                    ->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette ressource.');
+            }
         }
+
 
         // 4. Autoriser l'accès
         return $next($request);

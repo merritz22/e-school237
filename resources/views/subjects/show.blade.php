@@ -71,7 +71,7 @@
             <div class="p-0 overflow-hidden">
                 <div class="relative w-full h-100 mb-4 overflow-hidden bg-none">
                     <iframe 
-                        src="{{ url('/evaluation_subject/pdf/' . $subject->id) }}
+                        src="{{ url('/show/subject/pdf/' . $subject->id) }}
                             #page=1
                             &view=FitH
                             &scrollbar=0

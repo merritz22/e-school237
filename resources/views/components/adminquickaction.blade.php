@@ -5,7 +5,7 @@
     <div class=" bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Actions rapides</h3>
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
             <a href="{{ route('admin.users.create') }}" 
                 class="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 group">
@@ -22,7 +22,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('admin.articles.create') }}" 
+            {{-- <a href="{{ route('admin.articles.create') }}" 
                 class="block p-4 border border-gray-200 rounded-lg hover:border-[#05539a] hover:shadow-sm transition-all duration-200 group">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-blue-300 rounded-lg flex items-center justify-center group-hover:bg-blue-400 transition-colors">
@@ -35,7 +35,7 @@
                         <p class="text-xs text-gray-500">Créer du contenu</p>
                     </div>
                 </div>
-            </a>
+            </a> --}}
 
             <a href="{{ route('admin.resources.create') }}" 
                 class="block p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-sm transition-all duration-200 group">

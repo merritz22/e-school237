@@ -16,6 +16,9 @@
         </p>
     </div>
 
+    @component('components.alertmessage', ['message' =>'Des abonements par classe et pour les proffesseurs seront disponibles l\'année prochaine. Nous vous remercions de votre confiance.'])
+    @endcomponent
+
     <!-- Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full text-white">
         <!-- Élèves – Classique -->
@@ -29,7 +32,7 @@
             </p>
 
             <span class="flex justify-between">
-                <p class="text-gray-300 mb-6 font-bold">Prix : 10 000 XAF</p>
+                <p class="text-gray-300 mb-6 font-bold">Prix : 1 000 XAF</p>
                 <p class="text-gray-300 mb-6 font-bold">Durée : 1 an</p>
             </span>
 
@@ -40,12 +43,6 @@
                         Accès complet aux cours, articles pédagogiques et supports de révision
                     </span>
                 </li>
-                {{-- <li class="flex items-start gap-3">
-                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
-                    <span>
-                        Téléchargements illimités pour étudier même hors connexion
-                    </span>
-                </li> --}}
                 <li class="flex items-start gap-3">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
                     <span>
@@ -71,7 +68,7 @@
 
             <span class="flex justify-between">
                 <p class="text-gray-300 mb-6 font-bold">
-                    Prix : <span class="line-through">10 000 XAF</span> 9 000 XAF
+                    Prix : <span class="line-through">1 000 XAF</span> 900 XAF
                 </p>
                 <p class="text-gray-300 mb-6 font-bold">Durée : 1 an</p>
             </span>
@@ -89,12 +86,6 @@
                         Accès complet à tous les cours, supports et sujets
                     </span>
                 </li>
-                {{-- <li class="flex items-start gap-3">
-                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
-                    <span>
-                        Téléchargements illimités pour toutes les matières
-                    </span>
-                </li> --}}
                 <li class="flex items-start gap-3">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
                     <span>
@@ -108,7 +99,7 @@
             </a>
         </div>
 
-        <!-- Professeurs – Classique -->
+        {{-- <!-- Professeurs – Classique -->
         <div class="bg-gradient-to-b from-[#0e243a] to-[#03386a] rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold mb-2 text-center py-2">
                 Abonnement Classique Professeurs
@@ -136,12 +127,6 @@
                         Publication de tes articles, supports et sujets éducatifs
                     </span>
                 </li>
-                {{-- <li class="flex items-start gap-3">
-                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
-                    <span>
-                        Téléchargements illimités des ressources pédagogiques
-                    </span>
-                </li> --}}
                 <li class="flex items-start gap-3">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
                     <span>
@@ -191,12 +176,6 @@
                         Publication prioritaire de tes contenus pédagogiques
                     </span>
                 </li>
-                {{-- <li class="flex items-start gap-3">
-                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
-                    <span>
-                        Téléchargements illimités des supports et sujets
-                    </span>
-                </li> --}}
                 <li class="flex items-start gap-3">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm">✓</span>
                     <span>
@@ -208,7 +187,7 @@
             <a href="subscription/create" class="block mx-auto w-fit bg-[#ffb938] hover:bg-[#f0a928] text-black font-semibold p-4 rounded-full text-lg transition">
                 Activer le plan premium
             </a>
-        </div>
+        </div> --}}
 
 
     </div>

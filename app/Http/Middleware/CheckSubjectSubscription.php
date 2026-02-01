@@ -37,6 +37,7 @@ class CheckSubjectSubscription
             $hasSubscription = Subscription::where('user_id', Auth::id())
                 // ->where('subject_id', $subject->subject_id)
                 ->where('level_id', $subject->level_id)
+                ->where('status','active')
                 ->exists();
 
             if (!$hasSubscription && !$subject->is_free) {

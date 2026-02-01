@@ -38,6 +38,7 @@ class CheckResourceSubscription
             $hasSubscription = Subscription::where('user_id', Auth::id())
             // ->where('subject_id', $resource->subject_id)
             ->where('level_id', $resource->level_id)
+            ->where('status','active')
             ->exists();
             
             if (!$hasSubscription && !$resource->is_free) {

@@ -83,6 +83,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::delete('/{level}', [LevelController::class, 'destroy'])->name('admin.levels.destroy');
         Route::patch('/{level}/publish', [LevelController::class, 'publish'])->name('admin.levels.publish');
     });
+
+     // Gestion des abonnements
+    Route::prefix('subscriptions')->group(function () {
+        Route::get('/', [SubscriptionController::class, 'index'])->name('admin.subscriptions.index');
+        Route::patch('/{subscription}/publish', [SubscriptionController::class, 'publish'])->name('admin.subscription.publish');
+    });
+
     
     // Gestion des sujets
     Route::prefix('subjects')->group(function () {
@@ -153,7 +160,7 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 
 // Gestion des souscriptions
-Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+Route::get('/subscription', [SubscriptionController::class, 'userIndex'])->name('subscriptions.index');
 Route::get('/subscription/create', [SubscriptionController::class, 'create'])->name('subscriptions.create');
 Route::post('/subscription/create', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 

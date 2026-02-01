@@ -43,58 +43,38 @@
                     </div>
                 </div>
             </div>
-            
-            {{-- CAS 2 : Plusieurs matières --}}
-            <div id="multiple_subjects" class="mb-4">
-                <label class="block font-semibold mb-1">Matières</label>
-                <div id="subject_list">
-                    {{-- Une ligne de matière par défaut --}}
+
+            {{-- type d'abonnement --}}
+            <div id="multiple_subscription_types" class="mb-4">
+                <label class="block font-semibold mb-1">Abonnement</label>
+                <div id="subscription_type_list">
                     <div class="flex mb-2">
-                        <select name="subjects[]" class="border p-2 flex-1">
-                            <option value="">-- Sélectionnez une matière --</option>
-                            @foreach($subjects as $subject)
-                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                            @endforeach
+                        <select name="subscription_types[]" class="border p-2 flex-1">
+                            <option value="">-- Sélectionnez un abonnement --</option>
+                            <option value="CLASSIQUE">Classique (3 000 XAF)</option>
+                            <option value="PREMIUM">Premium (6 000 XAF)</option>
+                            <option value="EXCELLENCE">Excellence (8 000 XAF)</option>
                         </select>
                     </div>
                 </div>
             </div>
+
             {{-- Numéro de téléphone + mode de paiement --}}
             <div id="phone" class="mb-4">
-                <label class="block font-semibold mb-1">Téléphone</label>
+                <label class="block font-semibold mb-1">Téléphone (Il s'agit du numéro avec lequel vous allez faire le dépot)</label>
                 <input type="phone" name="phone" id="phone_val" class="font-bold" placeholder="237678905434">
             </div>
 
             
-            <div id="total_price" class="mb-4">
+            {{-- <div id="total_price" class="mb-4">
                 <label class="block font-semibold mb-1">Prix total</label>
                 <input type="text" name="total_price" id="total_price_val" class="font-bold" value="0 XAF">
-            </div>
+            </div> --}}
         </div>
-        <button class="add_chart cursor-pointer w-fit bg-[#03386a] hover:bg-[#0e243a] text-white font-semibold p-4 rounded text-lg transition">Ajouter l'abonnement</button>
-        
-        <div class="overflow-x-auto mt-8">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matière</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                        
-                </tbody>
-            </table>
-        </div>
-
-        <div>
-            <form id="subscriptionForm" action="{{ route('subscriptions.store') }}" method="POST" class="space-y-4 py-5 flex justify-center">
+        <form id="subscriptionForm" action="{{ route('subscriptions.store') }}" method="POST" class="space-y-4 py-5 flex justify-center">
                 @csrf
                 <button type="submit" class="cursor-pointer w-50 bg-[#03386a] hover:bg-[#0e243a] text-white font-semibold py-4 rounded text-lg transition">Soumettre</button>
             </form>
-        </div>
     </div>
 
 </div>
@@ -121,19 +101,72 @@
 </div>
 
 <!-- Pop-up Warning-->
-<div id="popup_warning" class="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+<div id="popup_warning" class="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 hidden"> 
     <div class="bg-white p-20 rounded-lg shadow-lg text-center">
-        <p class="mb-4 text-lg font-semibold">Abonnement déjà en cours.</p>
         <svg class="w-16 h-16 mx-auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#f8c81b"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-1.5-5.009c0-.867.659-1.491 1.491-1.491.85 0 1.509.624 1.509 1.491 0 .867-.659 1.509-1.509 1.509-.832 0-1.491-.642-1.491-1.509zM11.172 6a.5.5 0 0 0-.499.522l.306 7a.5.5 0 0 0 .5.478h1.043a.5.5 0 0 0 .5-.478l.305-7a.5.5 0 0 0-.5-.522h-1.655z" fill="#f8c81b"></path></g></svg>
-        <button class="close_warning cursor-pointer w-50 bg-[#b20101] hover:bg-red-500 text-white font-semibold py-4 rounded text-lg transition">Fermer</button>
+        <p class="mb-4 text-lg font-semibold">Abonnement en attente d'activation.</p>
+        <div class="mt-6 text-left space-y-6">
+
+            <!-- Étapes -->
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Étapes d’activation de l’abonnement</h3>
+                <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                    <li>Payer le montant de <b id="to_pay"></b><b> XAF</b> sur l’un des comptes ci-dessous.</li>
+                    <li>Une fois votre paiement effectué, veuillez patienter pendant l’activation.</li>
+                    <li>La validation de l’abonnement peut prendre jusqu’à <strong>24 heures</strong>.</li>
+                </ol>
+            </div>
+
+            <!-- Moyens de paiement -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Orange Money -->
+                <div class="border rounded-lg p-5 text-center shadow-sm hover:shadow-md transition">
+                    <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg"
+                        alt="Orange Money"
+                        class="h-12 mx-auto mb-4"
+                    >
+                    <p class="font-semibold text-gray-800">Orange Money</p>
+                    <p class="text-gray-600 mt-1">Numéro de paiement</p>
+                    <p class="text-lg font-bold text-orange-500 mt-2">
+                        696090236
+                    </p>
+                    <p class="text-gray-600 mt-1 font-bold">POUOKAM NGUEGUIM</p>
+                </div>
+
+                <!-- MTN Mobile Money -->
+                <div class="border rounded-lg p-5 text-center shadow-sm hover:shadow-md transition">
+                    <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/9/93/New-mtn-logo.jpg"
+                        alt="MTN Mobile Money"
+                        class="h-12 mx-auto mb-4"
+                    >
+                    <p class="font-semibold text-gray-800">MTN Mobile Money</p>
+                    <p class="text-gray-600 mt-1">Numéro de paiement</p>
+                    <p class="text-lg font-bold text-yellow-500 mt-2">
+                        651993749
+                    </p>
+                    <p class="text-gray-600 mt-1 font-bold">POUOKAM NGUEGUIM</p>
+                </div>
+
+            </div>
+
+            <!-- Note -->
+            <p class="text-sm text-gray-500 text-center mt-4">
+                ⚠️ Assurez-vous d’utiliser le même numéro que celui renseigner sur le formulaire pour faciliter la validation.
+            </p>
+
+        </div>
+
     </div>
 </div>
 
 <!-- Pop-up Error-->
 <div id="popup_error" class="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
     <div class="bg-white p-20 rounded-lg shadow-lg text-center">
-        <p class="mb-4 text-lg font-semibold">Une erreur est survenue, veuillez réessayer plus tard ou contacter l'administrateur.</p>
         <svg class="w-16 h-16 mx-auto" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#b20101" stroke="#b20101"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>error-filled</title> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="add" fill="#b20101" transform="translate(42.666667, 42.666667)"> <path d="M213.333333,3.55271368e-14 C331.136,3.55271368e-14 426.666667,95.5306667 426.666667,213.333333 C426.666667,331.136 331.136,426.666667 213.333333,426.666667 C95.5306667,426.666667 3.55271368e-14,331.136 3.55271368e-14,213.333333 C3.55271368e-14,95.5306667 95.5306667,3.55271368e-14 213.333333,3.55271368e-14 Z M262.250667,134.250667 L213.333333,183.168 L164.416,134.250667 L134.250667,164.416 L183.168,213.333333 L134.250667,262.250667 L164.416,292.416 L213.333333,243.498667 L262.250667,292.416 L292.416,262.250667 L243.498667,213.333333 L292.416,164.416 L262.250667,134.250667 Z" id="Combined-Shape"> </path> </g> </g> </g></svg>
+        <p class="mb-4 text-lg font-semibold">Une erreur est survenue, Vérifier que cet abonement n'est pas déjà en cour puis contacter l'administrateur.</p>
         <button class="close_error cursor-pointer w-50 bg-[#b20101] hover:bg-red-500 text-white font-semibold py-4 rounded text-lg transition">Fermer</button>
     </div>
 </div>
@@ -150,133 +183,39 @@
         const addBtn = document.querySelector(".add_chart"); // bouton ajouter
         const levelList = document.querySelector("#level_list");
         const subjectList = document.querySelector("#subject_list");
+        const phone = document.querySelector("#phone");
+        const subscriptionTypeList = document.querySelector("#subscription_type_list");
         const tbody = document.querySelector("tbody");
         const total_price_val = document.querySelector("#total_price_val");
 
-        // Tableaux de stockage
-        let selectedLevels = [];
-        let selectedSubjects = [];
-        let unit_price = 1000
-        let unit_price_reduction = 100
+        
 
-        addBtn.addEventListener("click", function(e) {
-            e.preventDefault();
-            
-
-            // Récupérer le niveau sélectionné
-            const levelSelect = levelList.querySelector("select");
-            const levelText = levelSelect.options[levelSelect.selectedIndex].text;
-            const levelValue = levelSelect.value;
-
-            // Récupérer la matière sélectionnée
-            const subjectSelect = subjectList.querySelector("select");
-            const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
-            const subjectValue = subjectSelect.value;
-
-            if(!levelValue || !subjectValue){
-                // alert("Veuillez sélectionner un niveau et une matière.");
-                return;
-            }
-
-            if (selectedLevels.includes(levelValue) && selectedSubjects.includes(subjectValue)) {
-                // alert("Cet abonnement existe déjà.");
-                return;
-            }
-
-            // Ajouter les IDs dans les tableaux
-            selectedLevels.push(levelValue);
-            selectedSubjects.push(subjectValue);
-
-            // Debug (optionnel)
-            // console.log("Niveaux sélectionnés :", selectedLevels);
-            // console.log("Matières sélectionnées :", selectedSubjects);
-
-            // Créer une nouvelle ligne
-            const tr = document.createElement("tr");
-            tr.classList.add("hover:bg-gray-50");
-            tr.dataset.levelId = levelValue;
-            tr.dataset.subjectId = subjectValue;
-            tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="text-sm font-medium text-gray-900">{{ auth()->user()->name?? '' }}</div>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                        ${levelText}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">${subjectText}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div class="flex items-center justify-center space-x-2 text-red-600">
-                        <a href="#" class="delete-row">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 
-                                        01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 
-                                        0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                        </a>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-
-            // Ajouter l'événement supprimer à ce nouvel élément
-            tr.querySelector(".delete-row").addEventListener("click", function(ev){
-                ev.preventDefault();
-                // Supprimer les IDs des tableaux
-                selectedLevels = selectedLevels.filter(id => id !== tr.dataset.levelId);
-                selectedSubjects = selectedSubjects.filter(id => id !== tr.dataset.subjectId);
-
-                tr.remove();
-
-                total_price_val.value = calculate_total_price();
-
-                // console.log("Niveaux après suppression :", selectedLevels);
-                // console.log("Matières après suppression :", selectedSubjects);
-                
-            });
-            
-            total_price_val.value = calculate_total_price();
-        });
-
-        // Supprimer une ligne existante
-        document.querySelectorAll(".delete-row").forEach(function(btn){
-            btn.addEventListener("click", function(e){
-                e.preventDefault();
-                btn.closest("tr").remove();
-            
-                total_price_val.value = calculate_total_price();
-            });
-            
-        });
-
-        function calculate_total_price() {
-            let unit = 0
-            if (selectedLevels.length <= 1) {
-                unit = unit_price
-            } else {
-                unit = unit_price - unit_price_reduction
-            }
-
-            return selectedLevels.length*unit
+        const prices = {
+            CLASSIQUE : 3000,
+            PREMIUM: 6000,
+            EXCELLENCE: 8000
         }
 
-        function form_data() {
+
+        function form_data(levelValue, subscriptionTypeValue, phone) {
              const formData = new FormData();
 
-            selectedLevels.forEach(id => {
-                formData.append('levels[]', id);
-            });
+            // selectedLevels.forEach(id => {
+            //     formData.append('levels[]', id);
+            // });
 
-            selectedSubjects.forEach(id => {
-                formData.append('subjects[]', id);
-            });
+            // selectedSubjects.forEach(id => {
+            //     formData.append('subjects[]', id);
+            // });
 
-            formData.append('unit_price', unit_price);
+            // selectedSubscriptions.forEach(id => {
+            //     formData.append('subscription_types[]', id);
+            // });
+
+            formData.append('level', levelValue);
+            formData.append('subscription_type', subscriptionTypeValue);
+            formData.append('phone', phone);
+            formData.append('price', prices[subscriptionTypeValue]);
 
             formData.append('payment_method', 'mtn');
 
@@ -286,15 +225,24 @@
         document.querySelector("#subscriptionForm").addEventListener("submit", function (e) {
             e.preventDefault();
             const phone_val = document.querySelector("#phone_val");
+            // Récupérer l'abonnement sélectionnée
+            const subscriptionTypeSelect = subscriptionTypeList.querySelector("select");
+            const subscriptionTypeText = subscriptionTypeSelect.options[subscriptionTypeSelect.selectedIndex].text;
+            const subscriptionTypeValue = subscriptionTypeSelect.value;
+            
+            const levelSelect = levelList.querySelector("select");
+            const levelText = levelSelect.options[levelSelect.selectedIndex].text;
+            const levelValue = levelSelect.value;
 
-            if (selectedLevels.length === 0 || selectedSubjects.length === 0) {
-                alert("Veuillez ajouter au moins un abonnement.");
+
+            if (levelValue.length === 0 || subscriptionTypeValue.length === 0) {
+                alert("Veuillez remplir tout les champs.");
                 return;
             }
 
             popup.classList.remove("hidden");
 
-            const formData = form_data();
+            const formData = form_data(levelValue, subscriptionTypeValue, phone_val.value);
 
             fetch(this.action, {
                 method: "POST",
@@ -323,71 +271,14 @@
                     throw errorData;
                 }
 
+                popup.classList.add("hidden");
+                document.querySelector('#to_pay').innerHTML = prices[subscriptionTypeList.querySelector("select").value]
+                popup_warning.classList.remove("hidden");
+
                 // ✅ Succès
                 return response.json();
             })
-            .then(data => {
-                if (!data) return;
-
-                console.log("Succès :", data);
-                return fetch("{{ route('initiate') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        // subscription_ids: data.subscription_ids,
-                        provider: "mtn", // ou "orange"
-                        phone: phone_val.value,
-                        payment_method: "mtn",
-                    })
-                });
-            })
-            .then(async response => {
-
-                if (!response) return;
-
-                if (response.status === 401) {
-                    window.location.href = "{{ route('login') }}";
-                    return;
-                }
-
-                if (response.status === 400) {
-                    closeWarning.addEventListener("click", function (e) {
-                        popup_warning.classList.add("hidden");
-                    })
-                    popup.classList.add("hidden");
-                    popup_warning.classList.remove("hidden");
-                    return;
-                }
-
-                // ❌ Autres erreurs HTTP
-                if (!response.ok) {
-                    closeError.addEventListener("click", function (e) {
-                        popup_error.classList.add("hidden");
-                    })
-                    popup.classList.add("hidden");
-                    popup_error.classList.remove("hidden");
-                    const errorData = await response.json();
-                    throw errorData;
-                }
-
-                return response.json();
-            })
-            .then(paymentData => {
-                if (!paymentData) return;
-
-                console.log("Paiement lancé :", paymentData);
-
-                // alert("Paiement initié. Vérifiez votre téléphone 📱");
-                popup.classList.add("hidden");
-                popup_confirm.classList.remove("hidden");
-                setTimeout(() => {
-                    window.location.href = "{{ route('home') }}";
-                }, 300);
-            })
+            
             .catch(error => {
                 console.error("Erreur :", error);
             })

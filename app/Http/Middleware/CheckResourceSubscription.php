@@ -36,7 +36,7 @@ class CheckResourceSubscription
         if(Auth::user()->role !== 'admin'){
             // 3. Vérifier l'abonnement
             $hasSubscription = Subscription::where('user_id', Auth::id())
-            ->where('subject_id', $resource->subject_id)
+            // ->where('subject_id', $resource->subject_id)
             ->where('level_id', $resource->level_id)
             ->exists();
             

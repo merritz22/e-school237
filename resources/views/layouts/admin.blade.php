@@ -63,7 +63,7 @@
                     </a>
 
                     <!-- Articles Section -->
-                    {{-- <div class="space-y-1">
+                    <div class="space-y-1">
                         <div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             Articles
                         </div>
@@ -83,7 +83,7 @@
                             </svg>
                             Nouvel article
                         </a>
-                    </div> --}}
+                    </div>
 
                     <!-- Educational resources Section -->
                     <div class="space-y-1">

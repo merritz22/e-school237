@@ -143,17 +143,23 @@ class EvaluationSubjectController extends Controller
                 $pdf->useTemplate($tplId);
 
                 // 🎨 Filigrane
-                $pdf->SetFont('helvetica', 'B', 30);
+                $pdf->SetFont('helvetica', 'B', 40);
                 $pdf->SetTextColor(30, 64, 175); // bleu
                 $pdf->SetAlpha(0.8);
 
                 // Y = hauteur page - marge basse
-                $footerY = 1;
+                $footerY = $size['height'] / 2;
                 $footerX = ($size['width'] / 4);
+
+
+                $pdf->StartTransform();
+                $pdf->Rotate(30,$footerX, $footerY);
 
                 // Texte cliquable
                 $pdf->SetXY($footerX, $footerY);
                 $pdf->Write(5, $watermarkText, $watermarkLink);
+                
+                $pdf->StopTransform();
             }
 
             // 📤 Téléchargement

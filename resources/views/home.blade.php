@@ -12,11 +12,11 @@
 <!-- Stats Section -->
 <div class="bg-white py-3">
     <div class="px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-2 gap-2">
-            {{-- <div class="text-center">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+            <div class="text-center">
                 <div class="text-3xl md:text-4xl font-bold text-[#03386a] mb-2">{{ number_format($stats['total_articles']) }}</div>
                 <div class="text-gray-600">Articles</div>
-            </div> --}}
+            </div>
             <div class="text-center">
                 <div class="text-3xl md:text-4xl font-bold text-green-600 mb-2">{{ number_format($stats['total_subjects']) }}</div>
                 <div class="text-gray-600">Sujets</div>
@@ -31,7 +31,7 @@
 
 <div class="px-4 sm:px-6 lg:px-8 py-3">
     <!-- Latest Articles -->
-    {{-- <section class="mb-12">
+    <section class="mb-12">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Derniers Articles</h2>
             <a href="{{ route('articles.index') }}" class="text-[#03386a] hover:text-blue-800 font-medium">
@@ -85,7 +85,7 @@
                 </div>
             @endforelse
         </div>
-    </section> --}}
+    </section>
 
     <!-- Latest Subjects -->
     <section class="mb-12">

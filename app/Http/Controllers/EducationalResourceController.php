@@ -109,7 +109,7 @@ class EducationalResourceController extends Controller
             'file_type' => $file->getClientOriginalExtension(),
             'mime_type' => $file->getMimeType(),
             'uploader_id' => Auth::id(),
-            'category_id' => $validated['subject_id'],
+            'category_id' => null,
             'subject_id' => $validated['subject_id'],
             'level_id' => $validated['level_id'],
             'is_approved' => 0,
@@ -186,17 +186,23 @@ class EducationalResourceController extends Controller
                 $pdf->useTemplate($tplId);
 
                 // 🎨 Filigrane
-                $pdf->SetFont('helvetica', 'B', 30);
+                $pdf->SetFont('helvetica', 'B', 40);
                 $pdf->SetTextColor(30, 64, 175); // bleu
                 $pdf->SetAlpha(0.8);
 
                 // Y = hauteur page - marge basse
-                $footerY = 1;
+                $footerY = $size['height'] / 2;
                 $footerX = ($size['width'] / 4);
+
+                $pdf->StartTransform();
+                $pdf->Rotate(30,$footerX, $footerY);
 
                 // Texte cliquable
                 $pdf->SetXY($footerX, $footerY);
                 $pdf->Write(5, $watermarkText, $watermarkLink);
+                
+                $pdf->StopTransform();
+
             }
 
             // 📤 Téléchargement
@@ -239,7 +245,7 @@ class EducationalResourceController extends Controller
         $updateData = [
             'title' => $validated['title'],
             'description' => $validated['description'],
-            'category_id' => $validated['subject_id'],
+            'category_id' => null,
             'subject_id' => $validated['subject_id'],
             'level_id' => $validated['level_id'],
             'is_free' => $request->boolean('is_free'),

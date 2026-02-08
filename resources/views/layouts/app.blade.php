@@ -40,9 +40,9 @@
                             <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
                                 Accueil
                             </a>
-                            {{-- <a href="{{ route('articles.index') }}" class="@if(request()->routeIs('articles.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
+                            <a href="{{ route('articles.index') }}" class="@if(request()->routeIs('articles.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
                                 Articles
-                            </a> --}}
+                            </a>
                             <a href="{{ route('resources.index') }}" class="@if(request()->routeIs('resources.*')) text-primary border-b-2 border-[#03386a] @else text-gray-600 hover:text-primary @endif px-3 py-2 text-sm font-medium transition-colors">
                                 Supports
                             </a>
@@ -123,7 +123,7 @@
             <div class="md:hidden" x-data="{ open: false }" @toggle-mobile-menu.window="open = !open" x-show="open" x-transition>
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
                     <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Accueil</a>
-                    {{-- <a href="{{ route('articles.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Articles</a> --}}
+                    <a href="{{ route('articles.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Articles</a>
                     <a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Sujets</a>
                     <a href="{{ route('resources.index') }}" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-primary">Supports</a>
                     @if(Auth::check())
@@ -179,7 +179,7 @@
                     <div>
                         <h4 class="font-semibold mb-4">Navigation</h4>
                         <ul class="space-y-2 text-gray-300">
-                            {{-- <li><a href="{{ route('articles.index') }}" class="hover:text-white">Articles</a></li> --}}
+                            <li><a href="{{ route('articles.index') }}" class="hover:text-white">Articles</a></li>
                             <li><a href="{{ route('resources.index') }}" class="hover:text-white">Supports pédagogiques</a></li>
                             <li><a href="{{ route('subjects.index') }}" class="hover:text-white">Sujets</a></li>
                             {{-- <li><a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a></li> --}}

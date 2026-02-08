@@ -160,6 +160,7 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{-- @dd($latest_supports) --}}
             @forelse($latest_supports as $support)
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200">
                     @if($support->preview_image)
@@ -194,8 +195,8 @@
                             <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded uppercase">
                                 {{ $support->level->name }}
                             </span>
-                            @if($support->category->name)
-                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">{{ $support->category->name }}</span>
+                            @if($support->subject->name)
+                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">{{ $support->subject->name }}</span>
                             @endif
                         </div>
                         

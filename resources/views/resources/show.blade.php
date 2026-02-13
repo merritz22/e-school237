@@ -69,21 +69,6 @@
                 </div>
             </div>
 
-            <div class="p-0 overflow-hidden">
-                <div class="relative w-full h-100 mb-4 overflow-hidden bg-none">
-                    <iframe 
-                        src="{{ url('/show/support/pdf/' . $resource->id) }}#page=1&toolbar=0&navpanes=0"
-                        class="w-full h-full readonly"
-                        loading="lazy">
-                    </iframe>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <a class="text-blue-700/50 text-base md:text-8xl font-bold select-none">
-                            E-School237.com
-                        </a>
-                    </div>
-                </div>
-            </div>
-
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Ressources similaires</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -269,4 +269,24 @@ class ArticleController extends Controller
 
         return view('articles.subject', compact('articles', 'subject'));
     }
+
+    public function toggleLike(Request $request, Article $article)
+    {
+        $user = auth()->user();
+
+        $liked = $article->likes()->where('user_id', $user->id)->exists();
+
+        if ($liked) {
+            $article->likes()->detach($user->id);
+            $liked = false;
+        } else {
+            $article->likes()->attach($user->id);
+            $liked = true;
+        }
+
+        return response()->json([
+            'liked' => $liked,
+            'count' => $article->likes()->count()
+        ]);
+    }
 }

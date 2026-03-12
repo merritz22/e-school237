@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class Article extends Model
 {
@@ -198,8 +199,11 @@ class Article extends Model
      */
     public function isLikedByUser()
     {
-        // $this->authorize('create', Article::class);
-        return 1;
+        if (!Auth::check()) {
+            return false;
+        }
+
+        return $this->likes()->where('user_id', Auth::id())->exists();
     }
 
     /**

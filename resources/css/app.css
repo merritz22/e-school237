@@ -1,22 +1,12 @@
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@import '../../vendor/livewire/flux/dist/flux.css';
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../pages/**/*.blade.php';
+@source '../livewire/**/*.blade.php';
+@source '../js/app.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-}
-
-:root {
-  --color-primary: #03386a;
-  --color-secondary: #196fc0;
-  --color-danger: #B20101;
-  --color-warning: #F59E0B;
-}
-
-.text-primary {
-    color: var(--color-primary);
+    --font-sans: Inter, sans-serif;
 }

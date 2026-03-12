@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -21,6 +23,8 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\FileController;
 use App\Models\EvaluationSubject;
 use App\Models\EducationalResource;
+use Livewire\Component;
+use App\Models\Article;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,70 +154,92 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/comments', [CommentController::class, 'adminIndex'])->name('admin.comments.index');
         Route::delete('/comments/{comment}', [CommentController::class, 'adminDestroy'])->name('admin.comments.destroy');
     });
+
+    Route::fallback(function () {
+        return redirect()->route('admin.dashboard');
+    });
 });
 
 
 // Routes publiques
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return redirect()->route('home');
+});
+Route::view('/home', 'pages.home')->name('home');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
+// Authentification
+Route::prefix('auth')->group(function () {
+    Route::post('/logout', function(){
+        Auth::logout();
+        return redirect('/auth/login');
+    })->name('logout');
+    Route::view('/login', 'pages.auth.login')->name('login');
+    Route::view('/register', 'pages.auth.register')->name('register');
+    Route::view('/forgot-password', 'pages.auth.forgot-password')->name('password.request');
+    Route::view('/reset-password/{token}', 'pages.auth.reset-password')->name('password.reset');
+    Route::view('/verify-email', 'pages.auth.verify-email')->name('verification.notice');
+});
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+
+    return redirect('/home');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    
+    session()->flash('status', 'Email envoyé!');
+    
+    return redirect('/home');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 
-// Gestion des souscriptions
-Route::get('/subscription', [SubscriptionController::class, 'userIndex'])->name('subscriptions.index');
-Route::get('/subscription/create', [SubscriptionController::class, 'create'])->name('subscriptions.create');
-Route::post('/subscription/create', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+// Articles
+Route::prefix('articles')->group(function () {
+    Route::view('/', 'pages.articles.index')->name('articles.index');
+    Route::get('/{article:slug}', function (Article $article) {
+        return view('pages.articles.show', [
+            'article' => $article
+        ]);
+    })->name('articles.show');
+});
 
 // Routes publiques (hors admin)
 Route::prefix('resources')->group(function () {
     // Affichage public
-    Route::get('/', [EducationalResourceController::class, 'index'])
+    Route::view('/', 'pages.supports.index')
          ->name('resources.index');
-    Route::get('/{resource}', [EducationalResourceController::class, 'show'])
-         ->name('resources.show')->middleware('resource_subscription');
+    Route::get('/{resource}', function (EducationalResource $resource) {
+        return view('pages.supports.show', [
+            'resource' => $resource
+        ]);
+    })->name('resources.show')->middleware('resource_subscription');
     
     // Téléchargement
     Route::get('/{resource}/download', [EducationalResourceController::class, 'download'])
          ->name('resources.download');
 });
 
-// Authentification
-Route::prefix('auth')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-    Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
-    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
-});
-
-// Articles
-Route::prefix('articles')->group(function () {
-    Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
-    Route::get('/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
-    Route::get('/subject/{subject:slug}', [ArticleController::class, 'bySubject'])->name('articles.subject');
-});
-
 // Sujets d'évaluation
 Route::prefix('subjects')->group(function () {
-    Route::get('/', [EvaluationSubjectController::class, 'index'])->name('subjects.index');
-    Route::get('/{subject}', [EvaluationSubjectController::class, 'show'])->name('subjects.show')->middleware('subject_subscription');
+    Route::view('/', 'pages.subjects.index')->name('subjects.index');
+    Route::get('/{subject}', function (EvaluationSubject $subject) {
+        return view('pages.subjects.show', [
+            'subject' => $subject
+        ]);
+    })->name('subjects.show')->middleware('subject_subscription');
     Route::get('/download/{subject}', [EvaluationSubjectController::class, 'download'])->name('subjects.download')->middleware('auth');
-    Route::get('/level/{level}', [EvaluationSubjectController::class, 'byLevel'])->name('subjects.level');
-    Route::get('/subject/{subject_name}', [EvaluationSubjectController::class, 'bySubject'])->name('subjects.subject');
 });
 
-// Supports pédagogiques
-Route::prefix('supports')->group(function () {
-    Route::get('/', [SupportController::class, 'index'])->name('supports.index');
-    Route::get('/{support}', [SupportController::class, 'show'])->name('supports.show');
-    Route::get('/download/{support}', [SupportController::class, 'download'])->name('supports.download')->middleware('auth');
-    Route::get('/type/{type}', [SupportController::class, 'byType'])->name('supports.type');
-    Route::get('/preview/{support}', [SupportController::class, 'preview'])->name('supports.preview');
-});
+// Gestion des souscriptions
+Route::view('/subscription', 'pages.subscriptions.index')->name('subscriptions.index')->middleware('auth');
+Route::view('/subscription/create', 'pages.subscriptions.store')->name('subscriptions.store')->middleware('auth');
+
 
 // Blog/Forum
 Route::prefix('blog')->group(function () {
@@ -241,8 +267,7 @@ Route::middleware('auth')->group(function () {
 
 // Espace utilisateur
 Route::middleware('auth')->prefix('user')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
-    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::view('/profile', 'pages.user.profile')->name('user.profile');
     Route::put('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
     Route::put('/password', [UserController::class, 'updatePassword'])->name('user.password.update');
     Route::get('/downloads', [UserController::class, 'downloads'])->name('user.downloads');
@@ -292,3 +317,7 @@ Route::post('/payments/initiate', [PaymentController::class, 'initiatePayment'])
 // Orange Money appellera ton serveur après paiement.
 Route::post('/payments/callback', [PaymentController::class, 'callback'])
      ->name('mtn.callback');
+
+Route::fallback(function () {
+    return redirect()->route('home');
+});

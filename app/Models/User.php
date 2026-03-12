@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -236,6 +236,16 @@ class User extends Authenticatable
             'amount',
             'currency'
         ]);
+    }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(
+            \App\Models\Notification::class,
+            'user_notifications'
+        )
+        ->withPivot(['is_visible', 'read_at'])
+        ->withTimestamps();
     }
 
 }

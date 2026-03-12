@@ -291,54 +291,5 @@ Si vous rencontrez des problèmes :
 3. Consultez la documentation Laravel : https://laravel.com/docs
 
 
-
-
-notifications
-
-<div class="relative" x-data="{ open: false }">
-<button @click="open = !open" 
-        class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-    </svg>
-    @if($notifications = auth()->user()->unreadNotifications->count())
-        <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{{ $notifications > 9 ? '9+' : $notifications }}</span>
-    @endif
-</button>
-
-<!-- Notifications dropdown -->
-<div x-show="open" 
-        @click.away="open = false"
-        x-transition:enter="transition ease-out duration-100"
-        x-transition:enter-start="transform opacity-0 scale-95"
-        x-transition:enter-end="transform opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-75"
-        x-transition:leave-start="transform opacity-100 scale-100"
-        x-transition:leave-end="transform opacity-0 scale-95"
-        class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-    <div class="py-1">
-        <div class="px-4 py-2 text-sm font-medium text-gray-900 border-b border-gray-200">
-            Notifications
-        </div>
-        @forelse(auth()->user()->unreadNotifications->take(5) as $notification)
-            <div class="px-4 py-3 hover:bg-gray-50">
-                <p class="text-sm text-gray-900">{{ $notification->data['title'] ?? 'Nouvelle notification' }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
-            </div>
-        @empty
-            <div class="px-4 py-3">
-                <p class="text-sm text-gray-500">Aucune nouvelle notification</p>
-            </div>
-        @endforelse
-        
-        @if(auth()->user()->unreadNotifications->count() > 0)
-            <div class="px-4 py-2 border-t border-gray-200">
-                <a href="{{ route('admin.notifications.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
-                    Voir toutes les notifications
-                </a>
-            </div>
-        @endif
-    </div>
-</div>
-</div>
-
+php artisan db:seed --class=MailTemplateSeeder
+php artisan db:seed --class=NotificationSeeder

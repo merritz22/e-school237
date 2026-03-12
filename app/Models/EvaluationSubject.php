@@ -13,6 +13,7 @@ class EvaluationSubject extends Model
 
     protected $fillable = [
         'title',
+        'file_name',
         'description',
         'type',
         'subject_id',
@@ -32,6 +33,13 @@ class EvaluationSubject extends Model
         'duration_minutes' => 'integer',
         'downloads_count' => 'integer',
         'level_id' => 'integer',
+    ];
+
+    protected $appends = [
+        'formatted_file_size',
+        'file_extension',
+        'download_url',
+        'url',
     ];
 
     // Relations
@@ -174,5 +182,33 @@ class EvaluationSubject extends Model
     public function getUrlAttribute(): string
     {
         return route('subjects.show', $this->id);
+    }
+
+    /**
+     * Get the formatted file size (e.g., KB, MB).
+     */
+    public function getFormattedFileSizeAttribute(): ?string
+    {
+        if (!$this->file_size) return null;
+
+        if ($this->file_size >= 1024 * 1024) {
+            return number_format($this->file_size / (1024 * 1024), 2) . ' MB';
+        }
+
+        if ($this->file_size >= 1024) {
+            return number_format($this->file_size / 1024, 0) . ' KB';
+        }
+
+        return $this->file_size . ' B';
+    }
+
+    /**
+     * Get the file extension from file_path.
+     */
+    public function getFileExtensionAttribute(): ?string
+    {
+        if (!$this->file_path) return null;
+
+        return pathinfo($this->file_path, PATHINFO_EXTENSION);
     }
 }

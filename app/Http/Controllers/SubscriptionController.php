@@ -23,7 +23,9 @@ class SubscriptionController extends Controller
 
         $subscriptions = Subscription::latest()->paginate(15);
         return view('admin.subscriptions.index', compact('subscriptions'));
-    }/**
+    }
+    
+    /**
      * Display a listing of the resource.
      */
     public function userIndex()

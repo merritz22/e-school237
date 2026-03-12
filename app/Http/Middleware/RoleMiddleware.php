@@ -22,7 +22,7 @@ class RoleMiddleware
     {
         // Vérifie que l'utilisateur est connecté
         if (!Auth::check()) {
-            return redirect('/login');
+            return redirect('login');
         }
 
         // Vérifie que le rôle correspond

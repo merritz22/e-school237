@@ -31,6 +31,7 @@ new class extends Component
     {
         return Subscription::query()
             ->with('level')
+            ->where('user_id', auth()->id()) // <- filtre par utilisateur connecté
             ->when($this->sortBy, fn($query) => $query->orderBy($this->sortBy, $this->sortDirection))
             ->paginate(10);
     }

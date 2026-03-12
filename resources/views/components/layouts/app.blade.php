@@ -22,12 +22,14 @@
 <body class="min-h-screen bg-white dark:bg-zinc-800 antialiased">
     
     @php
-        $user = auth()->user();
-
-        $initials = strtoupper(substr($user->first_name,0,1) . substr($user->last_name,0,1));
-        $unreadNotifications = $user->notifications()
-            ->where('is_read', false)
-            ->count();
+        if(Auth::check()){
+            $user = auth()->user();
+    
+            $initials = strtoupper(substr($user->first_name,0,1) . substr($user->last_name,0,1));
+            $unreadNotifications = $user->notifications()
+                ->where('is_read', false)
+                ->count();
+        }
     @endphp
     <flux:header container class="sticky top-0 z-50 bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
@@ -98,9 +100,11 @@
     <flux:main container  class="bg-zinc-50 dark:bg-zinc-900 px-4 sm:px-6 lg:px-8">
         {{ $slot }}
     </flux:main>
-    <flux:modal name="user-notif" wire:ignore class="max-h-96 flex flex-col">
-        <livewire:notifications.show />
-    </flux:modal>
+    @if(Auth::check())
+        <flux:modal name="user-notif" wire:ignore class="max-h-96 flex flex-col">
+            <livewire:notifications.show />
+        </flux:modal>
+    @endif
     @fluxScripts
 </body>
 </html>

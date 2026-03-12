@@ -65,7 +65,9 @@ new class extends Component
                     <img src="{{ asset('storage/'.$user->avatar_url) }}" class="w-25 h-25 rounded-lg" />
                 </x-mary-file>
             @else
-                <flux:avatar size="lg" name="{{ $user->name }}" />
+                <x-mary-file wire:model="newAvatar" accept="image/png, image/jpeg">
+                    <flux:avatar size="lg" name="{{ $user->name }}" />
+                </x-mary-file>
             @endif
 
             <!-- Titre -->

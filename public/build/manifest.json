@@ -1,8 +1,9 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BAIZ_4SA.css",
+    "file": "assets/app-CctVFie1.css",
     "src": "resources/css/app.css",
     "isEntry": true,
+    "name": "app",
     "names": [
       "app.css"
     ]
@@ -12,7 +13,7 @@
     "src": "resources/images/e-school-logo.jpg"
   },
   "resources/js/app.js": {
-    "file": "assets/app-BfISbOzm.js",
+    "file": "assets/app-Daxm773U.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true

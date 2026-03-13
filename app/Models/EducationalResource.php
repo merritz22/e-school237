@@ -49,6 +49,7 @@ class EducationalResource extends Model
         'downloads_count',
         'is_approved',
         'is_free',
+        'preview_image',
     ];
 
     protected $casts = [

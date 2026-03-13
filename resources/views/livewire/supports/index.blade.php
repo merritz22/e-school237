@@ -34,8 +34,18 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($resources as $resource)
                 <flux:card >
-                    <div class="w-full h-32 flex items-center justify-center">
-                        <flux:icon name="book-open" class="w-12 h-12"/>
+                    <div class="w-full h-40 overflow-hidden rounded-md bg-gray-100">
+                        @if($resource->preview_image && Storage::disk('public')->exists($resource->preview_image))
+                            <img
+                                src="{{ Storage::url($resource->preview_image) }}"
+                                alt="Aperçu de {{ $resource->title }}"
+                                class="w-full h-full object-cover object-top"
+                            />
+                        @else
+                            <div class="w-full h-full flex items-center justify-center">
+                                <flux:icon name="book-open" class="w-12 h-12 text-gray-400"/>
+                            </div>
+                        @endif
                     </div>
                     <flux:heading size="xl" class="font-semibold mb-2 line-clamp-2">
                         <a href="{{ route('resources.show', $resource->id) }}">

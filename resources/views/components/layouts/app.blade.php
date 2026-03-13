@@ -68,6 +68,9 @@
                     </div>
                     <flux:navmenu.separator />
                     <flux:navmenu.item icon="user" href="{{ route('user.profile') }}">Profile</flux:navmenu.item>
+                    @if($user->role == 'admin')
+                        <flux:navmenu.item icon="cog-6-tooth" href="{{ route('admin.dashboard') }}">Administration</flux:navmenu.item>
+                    @endif
                     <flux:navmenu.item icon="information-circle" href="#">Help</flux:navmenu.item>
                     <flux:navmenu.separator />
                     <form method="POST" action="/auth/logout">

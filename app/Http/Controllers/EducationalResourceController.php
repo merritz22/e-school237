@@ -8,13 +8,13 @@ use App\Models\Subject;
 use App\Models\Level;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Services\PdfWatermarkService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\DownloadLog;
-use setasign\Fpdi\Tcpdf\Fpdi;
-use setasign\Fpdi\PdfParser\PdfParserException;
 
 class EducationalResourceController extends Controller
 {
@@ -95,30 +95,78 @@ class EducationalResourceController extends Controller
     {
         $validated = $this->validateResource($request);
 
-        $file = $request->file('resource_file');
-        $filePath = $file->store('educational_resources', 'private');
+        try {
 
-        // dd($request);
+            $file = $request->file('resource_file');
 
-        $resource = EducationalResource::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'file_name' => $file->getClientOriginalName(),
-            'file_path' => $filePath,
-            'file_size' => $file->getSize(),
-            'file_type' => $file->getClientOriginalExtension(),
-            'mime_type' => $file->getMimeType(),
-            'uploader_id' => Auth::id(),
-            'category_id' => null,
-            'subject_id' => $validated['subject_id'],
-            'level_id' => $validated['level_id'],
-            'is_approved' => 0,
-            'is_free' => $request->boolean('is_free'),
-        ]);
+            if (!$file->isValid()) {
+                throw new \Exception("Le fichier uploadé est invalide.");
+            }
 
-        return redirect()->route('admin.resources.index')
-            ->with('success', 'Support crée avec succès. ' . 
-                ($resource->is_approved ? '' : 'En attente d\'approbation.'));
+            // 📂 Chemin temporaire
+            $tempPath = $file->getRealPath();
+
+            if (!$tempPath || !file_exists($tempPath)) {
+                throw new \Exception("Impossible de lire le fichier temporaire.");
+            }
+
+            // 🧠 Texte filigrane
+            $watermarkText = "E-School237.com";
+            $watermarkLink = "https://e-school237.com";
+
+            // 🧠 Appliquer le filigrane
+            $watermarkedPdf = PdfWatermarkService::apply(
+                $tempPath,
+                $watermarkText,
+                $watermarkLink
+            );
+
+            // 📄 Nom fichier
+            $fileName = uniqid('resource_') . '.pdf';
+
+            $path = "educational_resources/" . $fileName;
+
+            // 💾 Sauvegarde du PDF final
+            Storage::disk('private')->put($path, $watermarkedPdf);
+
+            if (!Storage::disk('private')->exists($path)) {
+                throw new \Exception("Erreur lors de la sauvegarde du PDF.");
+            }
+                
+            // 💾 Enregistrement en base
+            $resource = EducationalResource::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'file_name' => $file->getClientOriginalName(),
+                'file_path' => $path,
+                'file_size' => $file->getSize(),
+                'file_type' => $file->getClientOriginalExtension(),
+                'mime_type' => $file->getMimeType(),
+                'uploader_id' => Auth::id(),
+                'category_id' => null,
+                'subject_id' => $validated['subject_id'],
+                'level_id' => $validated['level_id'],
+                'is_approved' => 0,
+                'is_free' => $request->boolean('is_free'),
+            ]);
+
+            return redirect()->route('admin.resources.index')
+                ->with('success', 'Support crée avec succès. ' . 
+                    ($resource->is_approved ? '' : 'En attente d\'approbation.'));
+
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur upload ressource : ' . $e->getMessage());
+
+            return back()->with(
+                'error',
+                "Une erreur est survenue lors de l'upload du PDF: "
+            );
+        }
+
+
+
+        
     }
 
     /**
@@ -166,59 +214,11 @@ class EducationalResourceController extends Controller
         // Incrémenter le compteur
         $resource->increment('downloads_count');
 
-        // 📄 Chemin réel du PDF
-        $pdfPath = Storage::disk('private')->path($resource->file_path);
-
-        // 👤 Infos du filigrane
-        $watermarkText = "© E-School237.com";
-        $watermarkLink = "https://e-school237.com";
-
-        // 🧠 Création du PDF filigrané
-        try {
-            $pdf = new Fpdi();
-            $pageCount = $pdf->setSourceFile($pdfPath);
-
-            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-                $tplId = $pdf->importPage($pageNo);
-                $size = $pdf->getTemplateSize($tplId);
-
-                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-                $pdf->useTemplate($tplId);
-
-                // 🎨 Filigrane
-                $pdf->SetFont('helvetica', 'B', 40);
-                $pdf->SetTextColor(30, 64, 175); // bleu
-                $pdf->SetAlpha(0.8);
-
-                // Y = hauteur page - marge basse
-                $footerY = $size['height'] / 2;
-                $footerX = ($size['width'] / 4);
-
-                $pdf->StartTransform();
-                $pdf->Rotate(30,$footerX, $footerY);
-
-                // Texte cliquable
-                $pdf->SetXY($footerX, $footerY);
-                $pdf->Write(5, $watermarkText, $watermarkLink);
-                
-                $pdf->StopTransform();
-
-            }
-
-            // 📤 Téléchargement
-            $fileName = $resource->title . '.pdf';
-
-            return response($pdf->Output($fileName, 'S'))
-                ->header('Content-Type', 'application/pdf')
-                ->header(
-                    'Content-Disposition',
-                    'attachment; filename="' . $fileName . '"'
-            );
-        } catch (\Exception $e) {
-            // Ici tu peux gérer l’erreur comme tu veux
-            \Log::error('Erreur lors de la génération du PDF : ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage() .' Impossible de télécharger ce fichier. Le PDF semble corrompu.');
-        }
+        // Télécharger le fichier déjà filigrané
+        return Storage::disk('private')->download(
+            $resource->file_path,
+            $resource->file_name
+        );
     }
 
     /**
@@ -250,29 +250,72 @@ class EducationalResourceController extends Controller
             'level_id' => $validated['level_id'],
             'is_free' => $request->boolean('is_free'),
         ];
+        try {
 
-        if ($request->hasFile('resource_file')) {
-            // Supprimer l'ancien fichier
-            $resource->deleteFile();
-
-            // Enregistrer le nouveau fichier
             $file = $request->file('resource_file');
-            $filePath = $file->store('educational-resources');
 
+            // 📂 Chemin temporaire
+            $tempPath = $file->getRealPath();
+
+            if (!$tempPath || !file_exists($tempPath)) {
+                throw new \Exception("Impossible de lire le fichier temporaire.");
+            }
+
+            // 🧠 Texte filigrane
+            $watermarkText = "E-School237.com";
+            $watermarkLink = "https://e-school237.com";
+
+            // 🧠 Appliquer le filigrane
+            $watermarkedPdf = PdfWatermarkService::apply(
+                $tempPath,
+                $watermarkText,
+                $watermarkLink
+            );
+
+            if (!$watermarkedPdf || strlen($watermarkedPdf) === 0) {
+                throw new \Exception("Le PDF généré est vide.");
+            }
+
+            if ($resource->file_path) {
+                Storage::disk('private')->delete($resource->file_path);
+            }
+
+            // 📄 Nom fichier
+            $fileName = uniqid('resource_') . '.pdf';
+
+            $path = "educational_resources/" . $fileName;
+
+            // 💾 Sauvegarde du PDF final
+            Storage::disk('private')->put($path, $watermarkedPdf);
+
+            if (!Storage::disk('private')->exists($path)) {
+                throw new \Exception("Erreur lors de la sauvegarde du PDF.");
+            }
+            
+                
             $updateData = array_merge($updateData, [
                 'file_name' => $file->getClientOriginalName(),
-                'file_path' => $filePath,
-                'file_size' => $file->getSize(),
-                'file_type' => $file->getClientOriginalExtension(),
-                'mime_type' => $file->getMimeType(),
+                'file_path' => $path,
+                'file_size' => strlen($watermarkedPdf),
+                'file_type' => 'pdf',
+                'mime_type' => 'application/pdf',
                 'is_approved' => Auth::user()->can('approve', EducationalResource::class),
             ]);
+
+            $resource->update($updateData);
+
+            return redirect()->route('admin.resources.index', $resource)
+                ->with('success', 'Support mis à jour avec succès.');
+
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur upload ressource : ' . $e->getMessage());
+
+            return back()->with(
+                'error',
+                "Une erreur est survenue lors de l'upload du PDF: "
+            );
         }
-
-        $resource->update($updateData);
-
-        return redirect()->route('admin.resources.index', $resource)
-            ->with('success', 'Support mis à jour avec succès.');
     }
 
     /**

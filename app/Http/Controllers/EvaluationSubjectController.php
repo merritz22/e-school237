@@ -11,9 +11,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Services\PdfWatermarkService;
 use Illuminate\Support\Facades\Response;
-use setasign\Fpdi\Tcpdf\Fpdi;
-use setasign\Fpdi\PdfParser\PdfParserException;
 
 
 class EvaluationSubjectController extends Controller
@@ -123,60 +123,11 @@ class EvaluationSubjectController extends Controller
         // Incrémenter le compteur
         $subject->increment('downloads_count');
 
-        // 📄 Chemin réel du PDF
-        $pdfPath = Storage::disk('private')->path($subject->file_path);
-
-        // 👤 Infos du filigrane
-        $watermarkText = "© E-School237.com";
-        $watermarkLink = "https://e-school237.com";
-
-        // 🧠 Création du PDF filigrané
-        try {
-            $pdf = new Fpdi();
-            $pageCount = $pdf->setSourceFile($pdfPath);
-
-            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-                $tplId = $pdf->importPage($pageNo);
-                $size = $pdf->getTemplateSize($tplId);
-
-                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-                $pdf->useTemplate($tplId);
-
-                // 🎨 Filigrane
-                $pdf->SetFont('helvetica', 'B', 40);
-                $pdf->SetTextColor(30, 64, 175); // bleu
-                $pdf->SetAlpha(0.8);
-
-                // Y = hauteur page - marge basse
-                $footerY = $size['height'] / 2;
-                $footerX = ($size['width'] / 4);
-
-
-                $pdf->StartTransform();
-                $pdf->Rotate(30,$footerX, $footerY);
-
-                // Texte cliquable
-                $pdf->SetXY($footerX, $footerY);
-                $pdf->Write(5, $watermarkText, $watermarkLink);
-                
-                $pdf->StopTransform();
-            }
-
-            // 📤 Téléchargement
-            $fileName = $subject->title . '.pdf';
-
-            return response($pdf->Output($fileName, 'S'))
-                ->header('Content-Type', 'application/pdf')
-                ->header(
-                    'Content-Disposition',
-                    'attachment; filename="' . $fileName . '"'
-            );
-        } catch (\Exception $e) {
-            // Ici tu peux gérer l’erreur comme tu veux
-            \Log::error('Erreur lors de la génération du PDF : ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage() .' Impossible de télécharger ce fichier. Le PDF semble corrompu.');
-        }
-        // return Storage::disk('private')->download($subject->file_path, $subject->title . '.' . pathinfo($subject->file_path, PATHINFO_EXTENSION));
+        // Télécharger le fichier déjà filigrané
+        return Storage::disk('private')->download(
+            $subject->file_path,
+            $subject->file_name
+        );
     }
 
     /**
@@ -272,8 +223,8 @@ class EvaluationSubjectController extends Controller
             'type' => 'required|max:50',
             // 'exam_date' => 'nullable|date',
             // 'is_free' => 'nullable|integer|min:1',
-            'file' => 'required|file|mimes:pdf,doc,docx|max:102400',
-            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
+            'file' => 'required|file|mimes:pdf|max:102400',
+            'correction_file' => 'nullable|file|mimes:pdf|max:102400',
         ]);
 
         $data = $request->only([
@@ -286,28 +237,103 @@ class EvaluationSubjectController extends Controller
             'is_free'
         ]);
 
-        // dd($request->all());
-        
         $data['author_id'] = Auth::id();
 
-        // Upload du fichier principal
-        if ($request->hasFile('file')) {
-            $data['file_path'] = $request->file('file')->store('subjects', 'private');
-            $data['file_size'] = $request->file('file')->getSize();
-            $data['file_type'] = $request->file('file')->getClientOriginalExtension();
-        }
-
-        // Upload du fichier de correction
-        if ($request->hasFile('correction_file')) {
-            $data['correction_file_path'] = $request->file('correction_file')->store('subjects/corrections', 'private');
-        }
-
         try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Traitement du fichier principal
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('file')) {
+
+                $file = $request->file('file');
+
+                if (!$file->isValid()) {
+                    throw new \Exception("Le fichier principal est invalide.");
+                }
+
+                $tempPath = $file->getRealPath();
+
+                $watermarkText = "E-School237.com";
+                $watermarkLink = "https://e-school237.com";
+
+                // Générer le PDF filigrané
+                $watermarkedPdf = PdfWatermarkService::apply(
+                    $tempPath,
+                    $watermarkText,
+                    $watermarkLink
+                );
+
+                if (!$watermarkedPdf || strlen($watermarkedPdf) === 0) {
+                    throw new \Exception("Le PDF généré est vide.");
+                }
+
+                $fileName = uniqid('sujet_') . '.pdf';
+                $path = 'subjects/' . $fileName;
+
+                Storage::disk('private')->put($path, $watermarkedPdf);
+
+                if (!Storage::disk('private')->exists($path)) {
+                    throw new \Exception("Erreur lors de la sauvegarde du PDF.");
+                }
+
+                $data['file_name'] = $file->getClientOriginalName();
+                $data['file_path'] = $path;
+                $data['file_size'] = strlen($watermarkedPdf);
+                $data['file_type'] = 'pdf';
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Traitement du fichier correction
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('correction_file')) {
+
+                $correctionFile = $request->file('correction_file');
+
+                if (!$correctionFile->isValid()) {
+                    throw new \Exception("Le fichier de correction est invalide.");
+                }
+
+                $tempPath = $correctionFile->getRealPath();
+
+                $watermarkedPdf = PdfWatermarkService::apply(
+                    $tempPath,
+                    $watermarkText 
+                );
+
+                $fileName = uniqid('sujet_') . '.pdf';
+                $path = 'subjects/corrections/' . $fileName;
+
+                Storage::disk('private')->put($path, $watermarkedPdf);
+
+                $data['correction_file_path'] = $path;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Création du sujet
+            |--------------------------------------------------------------------------
+            */
+
             $subject = EvaluationSubject::create($data);
-            return redirect()->route('admin.subjects.index')
+
+            return redirect()
+                ->route('admin.subjects.index')
                 ->with('success', 'Sujet créé avec succès.');
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Une erreur est survenue: ' . $e->getMessage());
+
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur création sujet : ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue : ' . $e->getMessage());
         }
     }
 
@@ -346,7 +372,7 @@ class EvaluationSubjectController extends Controller
             // 'exam_date' => 'nullable|date',
             // 'duration_minutes' => 'nullable|integer|min:1',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
-            'correction_file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
+            'correction_file' => 'nullable|file|mimes:pdf|max:102400',
         ]);
         // dd($request);
         $data = $request->only([
@@ -359,35 +385,102 @@ class EvaluationSubjectController extends Controller
             'is_free'
         ]);
 
-        // dd($data, $request->all());
-        $data = $request->except(['file', 'correction_file']);
+        try {
 
-        // Upload du nouveau fichier principal
-        if ($request->hasFile('file')) {
-            // Supprimer l'ancien fichier
-            if ($subject->file_path) {
-                Storage::disk('private')->delete($subject->file_path);
+            /*
+            |--------------------------------------------------------------------------
+            | Traitement du fichier principal
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('file')) {
+
+                $file = $request->file('file');
+
+                $tempPath = $file->getRealPath();
+
+                $watermarkText = "E-School237.com";
+                $watermarkLink = "https://e-school237.com";
+
+                // Générer le PDF filigrané
+                $watermarkedPdf = PdfWatermarkService::apply(
+                    $tempPath,
+                    $watermarkText,
+                    $watermarkLink
+                );
+
+                if (!$watermarkedPdf || strlen($watermarkedPdf) === 0) {
+                    throw new \Exception("Le PDF généré est vide.");
+                }
+
+                if ($subject->file_path) {
+                    Storage::disk('private')->delete($subject->file_path);
+                }
+
+                $fileName = uniqid('sujet_') . '.pdf';
+                $path = 'subjects/' . $fileName;
+
+                Storage::disk('private')->put($path, $watermarkedPdf);
+
+                if (!Storage::disk('private')->exists($path)) {
+                    throw new \Exception("Erreur lors de la sauvegarde du PDF.");
+                }
+
+                $data['file_name'] = $file->getClientOriginalName();
+                $data['file_path'] = $path;
+                $data['file_size'] = strlen($watermarkedPdf);
+                $data['file_type'] = 'pdf';
             }
-            
-            $data['file_path'] = $request->file('file')->store('subjects', 'private');
-            $data['file_size'] = $request->file('file')->getSize();
-            $data['file_type'] = $request->file('file')->getClientOriginalExtension();
-        }
 
-        // Upload du nouveau fichier de correction
-        if ($request->hasFile('correction_file')) {
-            // Supprimer l'ancien fichier
-            if ($subject->correction_file_path) {
-                Storage::disk('private')->delete($subject->correction_file_path);
+            /*
+            |--------------------------------------------------------------------------
+            | Traitement du fichier correction
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('correction_file')) {
+
+                $correctionFile = $request->file('correction_file');
+                $tempPath = $correctionFile->getRealPath();
+
+                $watermarkedPdf = PdfWatermarkService::apply(
+                    $tempPath,
+                    $watermarkText,
+                    $watermarkLink
+                );
+
+
+                if ($subject->correction_file_path) {
+                    Storage::disk('private')->delete($subject->correction_file_path);
+                }
+
+                $fileName = uniqid('sujet_') . '.pdf';
+                $path = 'subjects/corrections/' . $fileName;
+
+                Storage::disk('private')->put($path, $watermarkedPdf);
+
+                $data['correction_file_path'] = $path;
             }
-            
-            $data['correction_file_path'] = $request->file('correction_file')->store('subjects/corrections', 'private');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Mise à jour
+            |--------------------------------------------------------------------------
+            */
+
+            $subject->update($data);
+
+            return redirect()->route('admin.subjects.index')
+                ->with('success', 'Sujet mis à jour avec succès.');
+
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur création sujet : ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue : ' . $e->getMessage());
         }
-
-        $subject->update($data);
-
-        return redirect()->route('admin.subjects.index')
-            ->with('success', 'Sujet mis à jour avec succès.');
     }
 
     /**

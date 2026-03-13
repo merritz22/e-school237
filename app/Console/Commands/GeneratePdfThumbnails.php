@@ -36,7 +36,7 @@ class GeneratePdfThumbnails extends Command
         foreach ($subjects as $subject) {
             try {
                 $pdf = new Pdf(storage_path('app/private/' . $subject->file_path));
-                $path = 'thumbnails/' . $subject->id . '.jpg';
+                $path = 'thumbnails/' . $subject->file_name . '.jpg';
 
                 $pdf->selectPage(1)
                     ->save(storage_path('app/public/' . $path));
@@ -54,7 +54,7 @@ class GeneratePdfThumbnails extends Command
         foreach ($supports as $support) {
             try {
                 $pdf = new Pdf(storage_path('app/private/' . $support->file_path));
-                $path = 'thumbnails/' . $support->id . '.jpg';
+                $path = 'thumbnails/' . $support->file_name . '.jpg';
 
                 $pdf->selectPage(1)
                     ->save(storage_path('app/public/' . $path));

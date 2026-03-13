@@ -30,12 +30,12 @@ class GeneratePdfThumbnails extends Command
     {
 
         $this->info("-> Subjects section");
-        
+
         $subjects = EvaluationSubject::whereNull('preview_image')->get();
 
         foreach ($subjects as $subject) {
             try {
-                $pdf = new Pdf(storage_path('app/public/' . $subject->file_path));
+                $pdf = new Pdf(storage_path('app/private/' . $subject->file_path));
                 $path = 'thumbnails/' . $subject->id . '.jpg';
 
                 $pdf->selectPage(1)
@@ -53,7 +53,7 @@ class GeneratePdfThumbnails extends Command
 
         foreach ($supports as $support) {
             try {
-                $pdf = new Pdf(storage_path('app/public/' . $support->file_path));
+                $pdf = new Pdf(storage_path('app/private/' . $support->file_path));
                 $path = 'thumbnails/' . $support->id . '.jpg';
 
                 $pdf->selectPage(1)

@@ -4,6 +4,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Validate;
 
 new class extends Component
 {
@@ -21,6 +22,8 @@ new class extends Component
     public string $country    = '';
 
     // Contact
+    #[Validate('required', message: 'Le téléphone est un champs obligatoire')]
+    #[Validate('regex:/^6[0-9]{8}$/', message: 'Le numéro doit être un numéro camerounais valide (ex: 6XXXXXXXX)')]
     public string $whatsapp = '';
 
     // Réseaux sociaux
@@ -82,7 +85,6 @@ new class extends Component
             'bio'           => 'nullable|string|max:500',
             'city'          => 'nullable|string|max:100',
             'country'       => 'nullable|string|max:100',
-            'whatsapp'      => 'nullable|string|max:20',
             'facebook_url'  => 'nullable|url|max:255',
             'tiktok_url'    => 'nullable|url|max:255',
             'instagram_url' => 'nullable|url|max:255',
@@ -91,6 +93,8 @@ new class extends Component
             'linkedin_url'  => 'nullable|url|max:255',
             'website_url'   => 'nullable|url|max:255',
         ]);
+        
+        $this->validate();
 
         $this->user->update([
             'first_name'    => $this->first_name,
@@ -218,7 +222,7 @@ new class extends Component
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <flux:input wire:model="whatsapp"
                                 label="WhatsApp"
-                                placeholder="+237 6XX XXX XXX"
+                                placeholder="6XX XXX XXX"
                                 icon="chat-bubble-left-ellipsis" />
                 </div>
             </div>

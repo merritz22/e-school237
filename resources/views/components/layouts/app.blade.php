@@ -36,6 +36,8 @@
             $initials            = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1));
             $unreadNotifications = $user->notifications()->wherePivot('read_at', null)->count();
         }
+        if (!Auth::user()->whatsapp)
+            session()->flash('warning', 'Veuillez renseigner votre numéro whatsapp depuis votre profil !');
     @endphp
 
     {{-- ===== HEADER ===== --}}
@@ -255,14 +257,29 @@
     <flux:main container class="px-4 sm:px-6 lg:px-8 py-6">
 
         @if(session('success'))
-            <flux:callout icon="check-circle" color="{{ $theme['success'] }}" class="mb-6">
+            <flux:callout icon="check-circle" color="{{ $theme['success'] }}" class="mb-6" inline x-data="{ visible: true }" x-show="visible">
                 {{ session('success') }}
+                <x-slot name="controls">
+                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
+                </x-slot>
+            </flux:callout>
+        @endif
+
+        @if(session('warning'))
+            <flux:callout icon="exclamation-triangle" color="{{ $theme['warning'] }}" class="mb-6" inline x-data="{ visible: true }" x-show="visible">
+                {{ session('warning') }}
+                <x-slot name="controls">
+                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
+                </x-slot>
             </flux:callout>
         @endif
 
         @if(session('error'))
-            <flux:callout icon="x-circle" color="{{ $theme['danger'] }}" class="mb-6">
+            <flux:callout icon="x-circle" color="{{ $theme['danger'] }}" class="mb-6" inline x-data="{ visible: true }" x-show="visible">
                 {{ session('error') }}
+                <x-slot name="controls">
+                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
+                </x-slot>
             </flux:callout>
         @endif
 

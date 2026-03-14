@@ -201,7 +201,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     
-    session()->flash('status', 'Email envoyé!');
+    session()->flash('success', 'Email envoyé!');
     
     return redirect('/home');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

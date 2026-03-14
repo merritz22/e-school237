@@ -13,6 +13,7 @@ return [
         'logout'        => 'Logout',
         'login'         => 'Login',
         'register'      => 'Register',
+        'faq'      => 'FAQ',
     ],
     'notifications' => [
         'title'  => 'Notifications',
@@ -231,6 +232,12 @@ return [
             'message' => 'An email with instructions has been sent. Please check your inbox.',
             'close'   => 'Close',
         ],
+    ],
+    'faq' => [
+        'title' => 'Frequently Asked Questions',
+        'subtitle' => 'Everything you need to know about E-School237. Can\'t find the answer you\'re looking for? Contact us.',
+        'search' => 'Search for a question...',
+        'search_result' => 'result(s)',
     ],
     
 ];

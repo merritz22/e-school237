@@ -62,6 +62,7 @@
             @auth
                 <flux:navbar.item wire:navigate icon="banknotes" href="{{ route('subscriptions.index') }}">{{ __('app.nav.subscriptions') }}</flux:navbar.item>
             @endauth
+            <flux:navbar.item wire:navigate icon="question-mark-circle"  href="{{ route('faq') }}">{{ __('app.nav.faq') }}</flux:navbar.item>
         </flux:navbar>
 
         <flux:spacer />
@@ -203,6 +204,7 @@
             @auth
                 <flux:sidebar.item wire:navigate icon="banknotes" href="{{ route('subscriptions.index') }}">{{ __('app.nav.subscriptions') }}</flux:sidebar.item>
             @endauth
+            <flux:sidebar.item wire:navigate icon="question-mark-circle"  href="{{ route('faq') }}">{{ __('app.nav.faq') }}</flux:sidebar.item>
 
             @auth
                 <flux:separator />

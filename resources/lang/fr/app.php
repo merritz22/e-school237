@@ -13,6 +13,7 @@ return [
         'logout'        => 'Déconnexion',
         'login'         => 'Connexion',
         'register'      => 'Inscription',
+        'faq'      => 'FAQ',
     ],
     'notifications' => [
         'title'  => 'Notifications',
@@ -230,5 +231,11 @@ return [
             'message' => 'Un mail avec les instructions a été envoyé. Vérifiez votre boîte de réception.',
             'close'   => 'Fermer',
         ],
+    ],
+    'faq' => [
+        'title' => 'Questions fréquentes',
+        'subtitle' => 'Tout ce que vous devez savoir sur E-School237. Vous ne trouvez pas votre réponse ? Contactez-nous.',
+        'search' => 'rechercher une question...',
+        'search_result' => 'résultat(s)',
     ],
 ];

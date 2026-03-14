@@ -38,6 +38,7 @@ Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.swi
 // Option 1 — Pages statiques Blade simples
 Route::view('terms', 'pages.terms')->name('terms');
 Route::view('privacy', 'pages.privacy')->name('privacy');
+Route::view('/faq', 'pages.faq')->name('faq');
 
 // Administration
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {

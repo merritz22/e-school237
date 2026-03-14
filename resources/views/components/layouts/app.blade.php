@@ -36,7 +36,7 @@
             $initials            = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1));
             $unreadNotifications = $user->notifications()->wherePivot('read_at', null)->count();
         }
-        if (!Auth::user()->whatsapp)
+        if (!Auth::user()?->whatsapp)
             session()->flash('warning', 'Veuillez renseigner votre numéro whatsapp depuis votre profil !');
     @endphp
 

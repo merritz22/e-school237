@@ -327,9 +327,17 @@ class EducationalResourceController extends Controller
      */
     public function destroy(EducationalResource $resource)
     {
-        // $this->authorize('delete', $resource);
 
-        $resource->deleteFile();
+        // Supprimer les fichiers
+        if ($resource->file_path) {
+            Storage::disk('private')->delete($resource->file_path);
+        }
+
+        // Supprimer le thumbnail
+        if ($resource->preview_image && Storage::disk('public')->exists($resource->preview_image)) {
+            Storage::disk('public')->delete($resource->preview_image);
+            $this->warn("  → Thumbnail supprimé : {$resource->preview_image}");
+        }
         $resource->delete();
 
         return redirect()->route('resources.index')

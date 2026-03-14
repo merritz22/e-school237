@@ -39,7 +39,7 @@ class GeneratePdfThumbnails extends Command
                 $path = 'thumbnails/' . $subject->file_name . '.jpg';
 
                 $pdf->selectPage(1)
-                    ->save(storage_path('app/public/' . $path));
+                    ->save(storage_path('public/' . $path));
 
                 $subject->update(['preview_image' => $path]);
                 $this->info("✓ {$subject->title}");
@@ -57,7 +57,7 @@ class GeneratePdfThumbnails extends Command
                 $path = 'thumbnails/' . $support->file_name . '.jpg';
 
                 $pdf->selectPage(1)
-                    ->save(storage_path('app/public/' . $path));
+                    ->save(storage_path('public/' . $path));
 
                 $support->update(['preview_image' => $path]);
                 $this->info("✓ {$support->title}");

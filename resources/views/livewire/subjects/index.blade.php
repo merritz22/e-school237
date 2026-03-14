@@ -50,17 +50,11 @@
         @forelse($subjects as $subject)
             <flux:card >
                 <div class="w-full h-40 overflow-hidden rounded-md bg-gray-100">
-                    @if($subject->preview_image && Storage::disk('public')->exists($subject->preview_image))
-                        <img
-                            src="{{ Storage::url($subject->preview_image) }}"
-                            alt="Aperçu de {{ $subject->title }}"
-                            class="w-full h-full object-cover object-top"
-                        />
-                    @else
-                        <div class="w-full h-full flex items-center justify-center">
-                            <flux:icon name="book-open" class="w-12 h-12 text-gray-400"/>
-                        </div>
-                    @endif
+                    <img
+                        src="{{ Storage::url($subject->preview_image) }}"
+                        alt="Aperçu de {{ $subject->title }}"
+                        class="w-full h-full object-cover object-top"
+                    />
                 </div>
 
                 <flux:heading size="md" class="mt-1">

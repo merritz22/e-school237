@@ -33,7 +33,7 @@ class PdfThumbnailService
             }
 
             $thumbnailPath = 'thumbnails/' . $model->id . $model->file_name . '.jpg';
-            $destinationPath = storage_path('app/public/' . $thumbnailPath);
+            $destinationPath = storage_path('public/' . $thumbnailPath);
 
             // Créer le dossier si inexistant
             $dir = dirname($destinationPath);

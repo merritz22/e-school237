@@ -510,6 +510,12 @@ class EvaluationSubjectController extends Controller
             Storage::disk('private')->delete($subject->correction_file_path);
         }
 
+        // Supprimer le thumbnail
+        if ($subject->preview_image && Storage::disk('public')->exists($subject->preview_image)) {
+            Storage::disk('public')->delete($subject->preview_image);
+            $this->warn("  → Thumbnail supprimé : {$subject->preview_image}");
+        }
+
         $subject->delete();
 
         return redirect()->route('admin.subjects.index')

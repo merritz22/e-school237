@@ -30,6 +30,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'bio',
         'is_active',
         'last_login',
+        'whatsapp',
+        'facebook_url', 'tiktok_url', 'instagram_url',
+        'twitter_url', 'youtube_url', 'linkedin_url',
+        'website_url', 'city', 'country',
     ];
 
     /**

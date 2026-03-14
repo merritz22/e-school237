@@ -25,12 +25,19 @@ use App\Models\EvaluationSubject;
 use App\Models\EducationalResource;
 use Livewire\Component;
 use App\Models\Article;
+use App\Http\Controllers\LocaleController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
+// oute pour la gestion des langues
+Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
+// Option 1 — Pages statiques Blade simples
+Route::view('terms', 'pages.terms')->name('terms');
+Route::view('privacy', 'pages.privacy')->name('privacy');
 
 // Administration
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {

@@ -32,10 +32,12 @@ class PdfThumbnailService
                 return false;
             }
 
-            $thumbnailPath = 'thumbnails/' . $model->id . $model->file_name . '.jpg';
-            $destinationPath = storage_path('public/storage/' . $thumbnailPath);
+            $thumbnailPath = 'thumbnails/' . $model->id . '_' . $model->file_name . '.jpg';
 
-            // Créer le dossier si inexistant
+            // ✅ Storage::disk('public')->path() résout le bon chemin absolu
+            // → /home/u519676818/.../public/storage/thumbnails/1_fichier.jpg
+            $destinationPath = Storage::disk('public')->path($thumbnailPath);
+
             $dir = dirname($destinationPath);
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);

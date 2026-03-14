@@ -1,0 +1,236 @@
+<?php
+
+return [
+    'nav' => [
+        'home'          => 'Home',
+        'articles'      => 'Articles',
+        'resources'     => 'Resources',
+        'subjects'      => 'Subjects',
+        'subscriptions' => 'Subscriptions',
+        'profile'       => 'My profile',
+        'admin'         => 'Administration',
+        'help'          => 'Help',
+        'logout'        => 'Logout',
+        'login'         => 'Login',
+        'register'      => 'Register',
+    ],
+    'notifications' => [
+        'title'  => 'Notifications',
+        'unread' => 'unread',
+    ],
+    'theme' => [
+        'connected_as' => 'Logged in as',
+    ],
+    'flash' => [
+        'success' => 'Operation successful.',
+        'error'   => 'An error occurred.',
+    ],
+    'meta' => [
+        'description' => 'Educational platform with articles, evaluation subjects and teaching resources',
+    ],
+    'auth' => [
+        'fields' => [
+            'email'                => 'Email address',
+            'email_placeholder'    => 'your@email.com',
+            'password'             => 'Password',
+            'password_placeholder' => 'Your password',
+            'last_name'                    => 'Last name',
+            'last_name_placeholder'        => 'Your last name',
+            'first_name'                   => 'First name',
+            'first_name_placeholder'       => 'Your first name',
+            'confirm_password'             => 'Confirm password',
+            'confirm_password_placeholder' => 'Confirm your password',
+        ],
+        'login' => [
+            'title'           => 'Login',
+            'subtitle'        => 'Access your personal space',
+            'welcome'         => 'Welcome! Enter your credentials.',
+            'forgot_password' => 'Forgot password?',
+            'remember_me'     => 'Remember me',
+            'submit'          => 'Sign in',
+            'loading'         => 'Signing in...',
+            'create_account'  => 'Create an account',
+        ],
+        'register' => [
+            'title'          => 'Create your account',
+            'subtitle'       => 'Join our educational community',
+            'welcome'        => 'Fill in the form to get started.',
+            'submit'         => 'Create my account',
+            'loading'        => 'Creating account...',
+            'already_member' => 'Already a member? Sign in',
+            'terms_html'     => 'I agree to the <a href=":terms_url" class="underline text-blue-600 hover:text-blue-800">terms of use</a> and the <a href=":privacy_url" class="underline text-blue-600 hover:text-blue-800">privacy policy</a>',
+        ],
+        'forgot' => [
+            'title'         => 'Reset your password',
+            'subtitle'      => 'Recover access to your account',
+            'description'   => 'Enter your email and we\'ll send you a reset link.',
+            'submit'        => 'Send reset link',
+            'loading'       => 'Sending...',
+            'back_to_login' => 'Back to login',
+        ],
+        'reset' => [
+            'title'        => 'New password',
+            'subtitle'     => 'Choose a new secure password',
+            'description'  => 'Enter your email and your new password.',
+            'new_password' => 'New password',
+            'submit'       => 'Reset password',
+            'loading'      => 'Resetting...',
+        ],
+    ],
+    'home' => [
+        'hero' => [
+            'badge'          => '🎓 Educational platform',
+            'title'          => 'Welcome to E-School237',
+            'description'    => 'The educational platform that guides you to success. Access pedagogical articles, evaluation subjects and course materials to improve every day.',
+            'cta_subjects'   => 'Browse subjects',
+            'cta_articles'   => 'Read articles',
+        ],
+        'stats' => [
+            'articles'      => 'Articles',
+            'articles_desc' => 'Articles available on the platform',
+            'subjects'      => 'Subjects',
+            'subjects_desc' => 'Educational subjects available',
+            'supports'      => 'Resources',
+            'supports_desc' => 'Educational documents available',
+        ],
+        'latest_articles' => [
+            'title'   => 'Latest Articles',
+            'see_all' => 'View all articles',
+            'empty'   => 'No articles available.',
+        ],
+        'latest_subjects' => [
+            'title'   => 'Latest Evaluation Subjects',
+            'see_all' => 'View all subjects',
+            'empty'   => 'No subjects available.',
+        ],
+        'latest_supports' => [
+            'title'   => 'Latest Educational Resources',
+            'see_all' => 'View all resources',
+            'empty'   => 'No resources available.',
+        ],
+    ],
+    'common' => [
+        'free'    => 'Free',
+        'premium' => 'Premium',
+        'downloads' => 'downloads',
+    ],
+    'articles' => [
+        'hero' => [
+            'badge'       => 'Articles',
+            'title'       => 'Learn from true experts',
+            'description' => 'Dive into a library of articles written by experienced teachers and qualified trainers. Discover clear and enriching educational content to develop your skills.',
+        ],
+        'filters' => [
+            'all_subjects'       => 'All subjects',
+            'sort_latest'        => 'Most recent',
+            'sort_popular'       => 'Most popular',
+            'sort_oldest'        => 'Oldest first',
+            'sort_title'         => 'Title A → Z',
+            'search_placeholder' => 'Search an article...',
+        ],
+        'views' => 'views',
+        'empty' => 'No articles available.',
+        'show' => [
+            'published_at'  => 'Published on',
+            'reading_time'  => 'min read',
+            'copy_link'     => 'Copy link',
+            'link_copied'   => 'Link copied!',
+            'related_title' => 'Related articles',
+        ],
+    ],
+    'subjects' => [
+        'hero' => [
+            'badge'       => 'Evaluation Subjects',
+            'title'       => 'Prepare for your exams with confidence',
+            'description' => 'Explore a complete selection of evaluation subjects created by experienced teachers. Train effectively and prepare calmly to succeed in your exams.',
+        ],
+        'filters' => [
+            'subject'            => 'Subject',
+            'all_subjects'       => 'All subjects',
+            'level'              => 'Level',
+            'all_levels'         => 'All levels',
+            'type'               => 'Type',
+            'all_types'          => 'All types',
+            'year'               => 'Year',
+            'choose_year'        => 'Choose a year',
+            'search_label'       => 'Search by name',
+            'search_placeholder' => 'Search a subject...',
+        ],
+        'downloads' => 'downloads',
+        'empty'     => 'No subjects found.',
+        'show' => [
+            'download'      => 'Download',
+            'related_title' => 'Similar subjects',
+        ],
+    ],
+    'resources' => [
+        'hero' => [
+            'badge'       => 'Course Materials',
+            'title'       => 'Educational resources to better understand',
+            'description' => 'Access a collection of course materials designed by teachers and education specialists. Clear explanations, practical examples and adapted content to strengthen your knowledge.',
+        ],
+        'filters' => [
+            'subject'            => 'Subject',
+            'all_subjects'       => 'All subjects',
+            'level'              => 'Level',
+            'all_levels'         => 'All levels',
+            'search_label'       => 'Search by name',
+            'search_placeholder' => 'Search a resource...',
+        ],
+        'downloads' => 'downloads',
+        'empty'     => 'No resources found.',
+        'show' => [
+            'download'      => 'Download',
+            'related_title' => 'Similar resources',
+        ],
+        
+    ],
+    'notifications' => [
+        'title'  => 'Notifications',
+        'unread' => 'unread',
+        'empty'  => 'No notifications.',
+    ],
+    'subscriptions' => [
+        'create' => [
+            'title'    => 'Create a subscription',
+            'subtitle' => 'Choose your plan and access all content',
+            'level' => [
+                'label'       => 'Level',
+                'placeholder' => 'Choose a level',
+                'description' => 'The class you want to subscribe to',
+            ],
+            'plan' => [
+                'label'   => 'Subscription type',
+                'classic' => [
+                    'name'        => 'Classic',
+                    'description' => 'Access to basic content',
+                    'price'       => '3,000 XAF',
+                ],
+                'excellence' => [
+                    'name'        => 'Excellence',
+                    'description' => 'Extended access to resources',
+                    'price'       => '6,000 XAF',
+                    'badge'       => 'Popular',
+                ],
+                'premium' => [
+                    'name'        => 'Premium',
+                    'description' => 'Full unlimited access',
+                    'price'       => '8,000 XAF',
+                ],
+            ],
+            'phone' => [
+                'label'       => 'WhatsApp Phone',
+                'placeholder' => 'Ex: 6XXXXXXXX',
+                'description' => 'Your WhatsApp number to ensure follow-up',
+            ],
+            'security' => 'Secure payment via Mobile Money',
+            'submit'   => 'Create subscription',
+        ],
+        'modal' => [
+            'title'   => 'Subscription created!',
+            'message' => 'An email with instructions has been sent. Please check your inbox.',
+            'close'   => 'Close',
+        ],
+    ],
+    
+];

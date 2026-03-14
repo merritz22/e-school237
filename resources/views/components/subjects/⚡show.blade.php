@@ -2,18 +2,19 @@
 
 use Livewire\Component;
 use App\Models\EvaluationSubject;
+use Illuminate\Support\Collection;
 
 new class extends Component
 {
     public EvaluationSubject $subject;
-    public $relatedSubjects = [];
+    public Collection $relatedSubjects; // ✅ Collection typée
 
     public function mount(EvaluationSubject $subject)
     {
         $this->subject = $subject;
 
-        // Sujets similaires
-        $this->related_subjects = EvaluationSubject::where('id', '!=', $subject->id)
+        // ✅ Même nom que dans la vue
+        $this->relatedSubjects = EvaluationSubject::where('id', '!=', $subject->id)
             ->where(function ($query) use ($subject) {
                 $query->where('level_id', $subject->level_id)
                       ->where('subject_id', $subject->subject_id);

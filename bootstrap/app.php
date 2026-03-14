@@ -11,13 +11,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+
+        // ✅ Ajouter APRÈS StartSession via le groupe web
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
-            'subject_subscription' => \App\Http\Middleware\CheckSubjectSubscription::class,//Vérifie si l'utilisateur à un abonnement en cours ou pas 
-            'resource_subscription' => \App\Http\Middleware\CheckResourceSubscription::class,//Vérifie si l'utilisateur à un abonnement en cours ou pas
+            'role'                  => \App\Http\Middleware\RoleMiddleware::class,
+            'subject_subscription'  => \App\Http\Middleware\CheckSubjectSubscription::class,
+            'resource_subscription' => \App\Http\Middleware\CheckResourceSubscription::class,
         ]);
     })
-    
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

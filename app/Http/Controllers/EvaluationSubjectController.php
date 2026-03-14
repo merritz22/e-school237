@@ -512,7 +512,7 @@ class EvaluationSubjectController extends Controller
 
         // Supprimer le thumbnail
         if ($subject->preview_image && Storage::disk('public')->exists($subject->preview_image)) {
-            Storage::disk('public/storage')->delete($subject->preview_image);
+            Storage::disk('public')->delete($subject->preview_image);
             $this->warn("  → Thumbnail supprimé : {$subject->preview_image}");
         }
 

@@ -335,7 +335,7 @@ class EducationalResourceController extends Controller
 
         // Supprimer le thumbnail
         if ($resource->preview_image && Storage::disk('public')->exists($resource->preview_image)) {
-            Storage::disk('public')->delete($resource->preview_image);
+            Storage::disk('public/storage')->delete($resource->preview_image);
             $this->warn("  → Thumbnail supprimé : {$resource->preview_image}");
         }
         $resource->delete();

@@ -47,7 +47,7 @@
                             </div>
                         @endif
                     </div>
-                    <flux:heading size="xl" class="font-semibold mb-2 line-clamp-2">
+                    <flux:heading size="md" class="font-semibold mb-2 line-clamp-2">
                         <a href="{{ route('resources.show', $resource->id) }}">
                             {{ $resource->title }}
                         </a>

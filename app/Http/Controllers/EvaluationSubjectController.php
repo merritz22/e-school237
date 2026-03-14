@@ -14,10 +14,15 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Services\PdfWatermarkService;
 use Illuminate\Support\Facades\Response;
+use App\Services\PdfThumbnailService;
 
 
 class EvaluationSubjectController extends Controller
 {
+    public function __construct(
+        protected PdfThumbnailService $thumbnailService
+    ) {}
+
     /**
      * Liste des sujets d'évaluation
      */
@@ -322,6 +327,12 @@ class EvaluationSubjectController extends Controller
             */
 
             $subject = EvaluationSubject::create($data);
+
+            // Générer le thumbnail
+            $this->thumbnailService->generate(
+                model: $subject,
+                filePath: $subject->file_path,
+            );
 
             return redirect()
                 ->route('admin.subjects.index')

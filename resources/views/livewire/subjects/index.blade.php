@@ -63,7 +63,7 @@
                     @endif
                 </div>
 
-                <flux:heading size="xl" class="mt-1">
+                <flux:heading size="md" class="mt-1">
                     <a href="{{ route('subjects.show', $subject->id) }}">
                         {{ $subject->title }}
                     </a>

@@ -15,15 +15,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\DownloadLog;
+use App\Services\PdfThumbnailService;
 
 class EducationalResourceController extends Controller
 {
     // Middleware pour les méthodes nécessitant une authentification
-    public function __construct()
-    {
-        // $this->middleware('auth')->except(['index', 'show', 'download']);
-        // $this->middleware('can:approve,App\Models\EducationalResource')->only(['approve', 'reject']);
-    }
+    public function __construct(
+        protected PdfThumbnailService $thumbnailService
+    ) {}
 
     /**
      * Index d'administration
@@ -149,6 +148,11 @@ class EducationalResourceController extends Controller
                 'is_approved' => 0,
                 'is_free' => $request->boolean('is_free'),
             ]);
+
+            $this->thumbnailService->generate(
+                model: $subject,
+                filePath: $subject->file_path,
+            );
 
             return redirect()->route('admin.resources.index')
                 ->with('success', 'Support crée avec succès. ' . 

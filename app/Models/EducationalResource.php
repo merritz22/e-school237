@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Filesystem\FilesystemException;
 use Illuminate\Support\Facades\Log;
+use App\Traits\HasComments;
 
 class EducationalResource extends Model
 {
     use HasFactory;
+    use HasComments;
 
     const MIME_TYPES_DOCUMENTS = [
         'application/pdf',

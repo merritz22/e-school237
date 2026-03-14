@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Traits\HasComments;
 
 class EvaluationSubject extends Model
 {
     use HasFactory;
+    use HasComments;
 
     protected $fillable = [
         'title',
@@ -211,5 +213,10 @@ class EvaluationSubject extends Model
         if (!$this->file_path) return null;
 
         return pathinfo($this->file_path, PATHINFO_EXTENSION);
+    }
+
+    public function getDownloadUrlAttribute(): string
+    {
+        return route('subjects.download', $this);
     }
 }

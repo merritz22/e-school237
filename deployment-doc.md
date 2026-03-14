@@ -293,3 +293,6 @@ Si vous rencontrez des problèmes :
 
 php artisan db:seed --class=MailTemplateSeeder
 php artisan db:seed --class=NotificationSeeder
+
+
+php artisan app:create-default-users

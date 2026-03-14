@@ -17,7 +17,7 @@ new class extends Component
     {
         $this->stats['total_articles'] = Article::count();
         $this->stats['total_subjects'] = EvaluationSubject::count();
-        $this->stats['total_supports'] = EducationalResource::count();
+        $this->stats['total_supports'] = EducationalResource::where('is_approved',1)->count();
     }
 };
 ?>

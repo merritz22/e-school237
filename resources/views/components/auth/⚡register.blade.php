@@ -4,6 +4,7 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 new class extends Component
 {
@@ -45,6 +46,8 @@ new class extends Component
             'role' => 'member',
             'is_active' => true,
         ]);
+
+        event(new Registered($user)); // ← déclenche le listener
 
         Auth::login($user);
 

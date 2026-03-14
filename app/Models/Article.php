@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\HasComments;
 
 class Article extends Model
 {
     use HasFactory;
+    use HasComments;
 
     protected $fillable = [
         'title',

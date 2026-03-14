@@ -10,6 +10,7 @@ new class extends Component
     public function mount()
     {
         $this->latest_supports = EducationalResource::with(['subject', 'level'])
+            ->where('is_approved',1)
             ->latest()
             ->take(8)
             ->get();

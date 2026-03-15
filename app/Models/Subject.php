@@ -56,4 +56,9 @@ class Subject extends Model
         return $this->hasMany(Subscription::class);
     }
 
+    public function levels()
+    {
+        return $this->belongsToMany(Level::class, 'level_subject');
+    }
+
 }

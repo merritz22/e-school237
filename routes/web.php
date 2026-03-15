@@ -26,6 +26,7 @@ use App\Models\EducationalResource;
 use Livewire\Component;
 use App\Models\Article;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\Admin\LevelSubjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -317,15 +318,18 @@ Route::get('/show/support/pdf/{id}', function ($id) {
     );
 });
 
-
-// Route pour le paiement par api - Orange Money / MTN
-
-// Initiation du paiement
-Route::post('/payments/initiate', [PaymentController::class, 'initiatePayment'])->name('initiate');
-// Orange Money appellera ton serveur après paiement.
-Route::post('/payments/callback', [PaymentController::class, 'callback'])
-     ->name('mtn.callback');
-
 Route::fallback(function () {
     return redirect()->route('home');
 });
+
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('level-subjects', [LevelSubjectController::class, 'index'])
+            ->name('level-subjects.index');
+        Route::get('level-subjects/{level}/edit', [LevelSubjectController::class, 'edit'])
+            ->name('level-subjects.edit');
+        Route::put('level-subjects/{level}', [LevelSubjectController::class, 'update'])
+            ->name('level-subjects.update');
+    });

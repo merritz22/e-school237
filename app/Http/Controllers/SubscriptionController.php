@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
+use App\Models\Notification;
+use App\Models\UserNotification;
 
 class SubscriptionController extends Controller
 {
@@ -149,6 +152,24 @@ class SubscriptionController extends Controller
                 'updated_at' => now()
             ]);
         }
+
+        $notification = Notification::where('code', 'WAITING_PAYMENT')->first();
+
+        $user_notif = UserNotification::where('notification_id', $notification->id)
+            ->where('user_id', $subscription->user_id)
+            ->first();
+
+        if ($user_notif) {
+            $user_notif->is_visible = 0;
+            $user_notif->save();
+        }
+
+        // Création de la notification
+        NotificationService::send(
+            'SUBSCRIPTION_VALIDATED',
+            $subscription->user,
+            []
+        );
 
         $status = 'Activé';
         return redirect()->back()->with('success', "Abonnement {$status} avec succès.");

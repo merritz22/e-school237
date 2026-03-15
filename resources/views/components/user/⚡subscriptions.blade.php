@@ -38,7 +38,7 @@ new class extends Component
 
 };
 ?>
-
+{{-- wire:poll.visible.10s --}}
 <flux:card class="mt-5">
     <flux:heading size="lg">Liste des abonnements</flux:heading>
     <flux:table :paginate="$this->subscriptions">

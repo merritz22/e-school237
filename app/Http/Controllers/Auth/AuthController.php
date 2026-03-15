@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Middleware\TrackUserPresence;
 
 class AuthController extends Controller
 {
@@ -46,8 +48,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            
-            // Vérifier si l'utilisateur est actif
+
             if (!$user->is_active) {
                 Auth::logout();
                 return redirect()->back()->withErrors([
@@ -55,10 +56,11 @@ class AuthController extends Controller
                 ]);
             }
 
-            // Mettre à jour la dernière connexion
             $user->update(['last_login' => now()]);
 
-            // Redirection selon le rôle
+            // ✅ Marquer comme en ligne
+            TrackUserPresence::markOnline($user->id, session()->getId());
+
             if ($user->hasRole(['admin'])) {
                 return redirect()->intended(route('admin.dashboard'));
             }
@@ -120,7 +122,15 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        $userId = Auth::id(); // ✅ Récupérer AVANT le logout
+        $sessionId = session()->getId();
+
         Auth::logout();
+
+        // ✅ Marquer comme hors ligne — AVANT invalidate()
+        if ($userId) {
+            TrackUserPresence::markOffline($userId, $sessionId);
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

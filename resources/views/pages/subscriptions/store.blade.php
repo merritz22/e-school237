@@ -1,14 +1,10 @@
 <x-layouts.app>
-    <div>
-
-        <flux:heading size="xl" class="mb-4">
-            Démarrer avec un abonnement pour toute l'année scolaire.
-        </flux:heading>
-
-        <flux:text class="text-lg">
-            Profitez de toutes les ressources pour progresser à votre rythme.
-            Accédez librement aux contenus et résiliez à tout moment, sans engagement.
-        </flux:text>
+    @php $theme = config('theme'); @endphp
+    {{-- ===== HERO ===== --}}
+    <div class="text-center max-w-2xl mx-auto space-y-4">
+        <flux:badge color="{{ $theme['warning'] }}" class="mb-2">
+            🎓 {{ __('app.subscriptions.hero.badge') }}
+        </flux:badge>
     </div>
     <livewire:subscriptions.store lazy />
 </x-layouts.app>

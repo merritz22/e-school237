@@ -27,6 +27,7 @@ class NotificationService
         // Vérifie si la notification pour cet utilisateur existe déjà
         $exists = UserNotification::where('notification_id', $notification->id)
             ->where('user_id', $user->id)
+            ->whereNull('read_at')
             ->exists();
 
         if ($exists) {

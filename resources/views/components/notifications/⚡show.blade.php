@@ -11,7 +11,8 @@ new class extends Component
     {
         $this->userNotifs = Auth::user()
             ->notifications()
-            ->wherePivot('is_visible', true)
+            ->wherePivot('is_visible', 1)
+            ->wherePivot('read_at', null)
             ->latest()
             ->get();
     }
@@ -20,11 +21,15 @@ new class extends Component
     {
         Auth::user()
             ->notifications()
-            ->updateExistingPivot($notifId, ['read_at' => now()]); // ✅ read_at au lieu de is_read
+            ->updateExistingPivot($notifId, [
+                'read_at' => now(),
+                'is_visible' => 0
+            ]); // ✅ read_at au lieu de is_read
 
         $this->userNotifs = Auth::user()
             ->notifications()
-            ->wherePivot('is_visible', true)
+            ->wherePivot('is_visible', 1)
+            ->wherePivot('read_at', null)
             ->latest()
             ->get();
 
@@ -73,7 +78,7 @@ new class extends Component
         >
             {{-- Trigger --}}
             <button
-                x-on:click="open = !open; $wire.markAsRead({{ $notif->id }})"
+                x-on:click="open = !open; if (!open) $wire.markAsRead({{ $notif->id }})"
                 class="w-full flex items-center justify-between gap-3 px-4 py-3 text-left"
             >
                 <div class="flex items-center gap-2 min-w-0">

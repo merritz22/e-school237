@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Level;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -82,6 +83,8 @@ class LevelController extends Controller
         $data['slug'] = Str::slug($request->name);
 
         $level = Level::create($data);
+
+        $level->subjects()->syncWithoutDetaching([Subject::first()->id]);
 
         return redirect()->route('admin.levels.index')
             ->with('success', 'Classe créée avec succès.');

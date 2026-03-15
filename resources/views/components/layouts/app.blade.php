@@ -34,10 +34,11 @@
         if (Auth::check()) {
             $user                = auth()->user();
             $initials            = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1));
-            $unreadNotifications = $user->notifications()->wherePivot('read_at', null)->count();
+            $unreadNotifications = $user->notifications()
+                ->wherePivot('is_visible', 1)
+                ->wherePivot('read_at', null)
+                ->count();
         }
-        if (Auth::check() && !Auth::user()->whatsapp)
-            session()->flash('warning', 'Veuillez renseigner votre numéro whatsapp depuis votre profil !');
     @endphp
 
     {{-- ===== HEADER ===== --}}
@@ -66,6 +67,10 @@
             @endauth
             <flux:navbar.item wire:navigate icon="question-mark-circle"  href="{{ route('faq') }}">{{ __('app.nav.faq') }}</flux:navbar.item>
         </flux:navbar>
+
+        <flux:spacer />
+
+        <livewire:dashboard.user-stats-counter />
 
         <flux:spacer />
 
@@ -132,9 +137,19 @@
 
                 {{-- Profil --}}
                 <flux:dropdown position="bottom" align="end" wire:ignore>
-                    <div class="cursor-pointer ring-2 ring-{{ $theme['primary'] }}-200
+                    <div class="relative cursor-pointer ring-2 ring-{{ $theme['primary'] }}-200
                         dark:ring-{{ $theme['primary'] }}-800 rounded-full
                         hover:ring-{{ $theme['primary'] }}-400 transition-all">
+
+                        {{-- ✅ Point clignotant si profil incomplet --}}
+                        @if(!$user->isProfileComplete())
+                            <span class="absolute -top-0.5 -right-0.5 z-10 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full
+                                    rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                        @endif
+
                         @if($user->avatar_url)
                             <flux:profile circle avatar="{{ asset('storage/' . $user->avatar_url) }}" />
                         @else

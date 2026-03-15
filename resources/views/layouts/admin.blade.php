@@ -62,6 +62,16 @@
                         Statistiques
                     </a>
 
+                    <a href="{{ route('admin.level-subjects.index') }}" 
+                        class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.stats') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
+                        <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18v16H3V4z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6" />
+                        </svg>
+                        Sujets et classes
+                    </a>
+
                     <!-- Articles Section -->
                     <div class="space-y-1">
                         <div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">

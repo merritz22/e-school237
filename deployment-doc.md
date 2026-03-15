@@ -296,3 +296,11 @@ php artisan db:seed --class=NotificationSeeder
 
 
 php artisan app:create-default-users
+
+
+php artisan db:seed --class=ProfessionSeeder
+
+php artisan db:seed --class=LevelSubjectSeeder
+
+php artisan notification:insert SUBSCRIPTION_VALIDATED "Abonnement validé" "Votre (vos) demande(s) d'abonnement à été validé par contact@e-school237.com" "info"
+

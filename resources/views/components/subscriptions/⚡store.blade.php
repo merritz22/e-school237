@@ -94,7 +94,7 @@ new class extends Component
             'level' => Level::find($this->level)->name,
         ];
         Mail::to($user->email)->send(new GenericMail($template, $data));
-        Mail::to('contact@e-school237.com')->send(new GenericMail($templateAdmin, $data));
+        Mail::to('admin@e-school237.com')->send(new GenericMail($templateAdmin, $data));
 
         // 3️⃣ Afficher le modal de confirmation
         $this->showModal = true;

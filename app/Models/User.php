@@ -252,4 +252,33 @@ class User extends Authenticatable implements MustVerifyEmail
         ->withTimestamps();
     }
 
+    public function information()
+    {
+        return $this->hasOne(UserInformation::class);
+    }
+
+    public function bestSubjects()
+    {
+        return $this->belongsToMany(Subject::class, 'user_best_subjects');
+    }
+
+    public function worstSubjects()
+    {
+        return $this->belongsToMany(Subject::class, 'user_worst_subjects');
+    }
+
+    // Vérifie si le profil est complet
+    public function isProfileComplete(): bool
+    {
+        $info = $this->information;
+
+        if (!$info) return false;
+
+        return !empty($info->establishment)
+            && !empty($info->birth_date)
+            && !empty($info->gender)
+            && !empty($info->profession_id)
+            && !empty($info->current_level_id);
+    }
+
 }

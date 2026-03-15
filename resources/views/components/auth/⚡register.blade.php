@@ -5,6 +5,8 @@ use Livewire\Component;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewUserRegistered;
 
 new class extends Component
 {
@@ -47,13 +49,14 @@ new class extends Component
             'is_active' => true,
         ]);
 
-        event(new Registered($user)); // ← déclenche le listener
+        // event(new Registered($user)); // ← déclenche le listener
+        Mail::to('admin@e-school237.com')->send(new NewUserRegistered($user));
 
         Auth::login($user);
 
         $user->sendEmailVerificationNotification();
 
-        return $this->redirectRoute('verification.notice');
+        return $this->redirectRoute('user.profile');
     }
 
     public function render()

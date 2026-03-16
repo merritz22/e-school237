@@ -1,5 +1,5 @@
-
-reconfigurer le list de la section sujet et support avec ce filtre
+Réorganiser les bannières en ajoutant une section formations (plus bénéfiques pour moi...
+Les formatteurs feront des formations et l'administrateur touchera un pourcentage)=> Accueil - Archives scolaire - Formations - abonnements - FAQ
 Le Suivis particulier se fera à terme sur la plateforme
 Une notice avertissant que si la photo ne correspond pas à l'utilisateur, celui-ci sera supprimé
 
@@ -10,6 +10,7 @@ Une notice avertissant que si la photo ne correspond pas à l'utilisateur, celui
 
 
 15/03/2026
+reconfigurer le list de la section sujet et support avec ce filtre
 
 Dans la section profile, prévoir
     Renseigner les informations suivante stockée dans user_informations:

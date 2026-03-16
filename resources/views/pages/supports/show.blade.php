@@ -18,6 +18,22 @@
         .comments-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #0284c7;
         }
+
+        /* Sur mobile : panneau en bottom sheet */
+        @media (max-width: 640px) {
+            .chat-panel {
+                position: fixed !important;
+                right: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                top: auto !important;
+                transform: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: 70vh !important;
+                border-radius: 1.25rem 1.25rem 0 0 !important;
+            }
+        }
     </style>
 
     <script>
@@ -46,7 +62,7 @@
     {{-- Bouton flottant chat --}}
     <div
         x-data="chatPanelSupport()"
-        class="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-end gap-3"
+        class="fixed right-4 sm:right-6 bottom-6 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-50 flex flex-col items-end gap-3"
     >
         {{-- Bouton toggle --}}
         <button
@@ -70,21 +86,27 @@
         <div
             x-show="open"
             x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 translate-x-4 scale-95"
-            x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0 scale-100"
             x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 translate-x-0 scale-100"
-            x-transition:leave-end="opacity-0 translate-x-4 scale-95"
+            x-transition:leave-start="opacity-100 translate-y-0 sm:translate-x-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4 scale-95"
             x-cloak
-            class="absolute right-14 top-1/2 -translate-y-1/2
-                w-[380px] max-w-[90vw]
-                max-h-[75vh]
+            class="chat-panel
+                sm:absolute sm:right-14 sm:top-1/2 sm:-translate-y-1/2
+                w-[380px] max-w-[92vw] sm:max-w-[380px]
+                max-h-[70vh] sm:max-h-[75vh]
                 flex flex-col
                 bg-white dark:bg-zinc-900
                 border border-zinc-200 dark:border-zinc-700
                 rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/50
                 overflow-hidden"
         >
+            {{-- Handle mobile (glissière visuelle) --}}
+            <div class="sm:hidden flex justify-center pt-2.5 pb-1 shrink-0">
+                <div class="w-10 h-1 rounded-full bg-zinc-300 dark:bg-zinc-600"></div>
+            </div>
+
             {{-- Header panneau --}}
             <div class="flex items-center justify-between px-4 py-3 shrink-0
                 border-b border-zinc-100 dark:border-zinc-800

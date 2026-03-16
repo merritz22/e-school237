@@ -163,6 +163,9 @@ return [
         'show' => [
             'download'      => 'Télécharger',
             'related_title' => 'Sujets similaires',
+            'protected'      => 'Document protégé',
+            'preview'        => 'Aperçu',
+            'preview_notice' => 'Ce document est protégé — lecture seule.',
         ],
     ],
     'resources' => [
@@ -317,9 +320,9 @@ return [
             'special_support'     => 'J\'ai besoin d\'un suivi particulier',
             'best_subjects'       => 'Matières où je m\'en sors le mieux',
             'worst_subjects'      => 'Matières où j\'ai des difficultés',
-            'class_filter'        => 'Activer le filtre sur ma classe',
-            'class_filter_hint'   => 'Le contenu sera filtré selon votre classe actuelle.',
-            'class_filter_locked' => 'Le filtre par classe est réservé aux abonnés.',
+            'class_filter'        => 'Activer le filtre sur mes abonnements',
+            'class_filter_hint'   => 'Le contenu sera filtré selon vos abonnements actifs',
+            'class_filter_locked' => 'Le filtre par abonnements est réservé aux abonnés.',
         ],
         'gender' => [
             'male'   => 'Masculin',

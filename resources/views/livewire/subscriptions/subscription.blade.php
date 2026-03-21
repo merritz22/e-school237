@@ -145,49 +145,79 @@
             <div class="space-y-1">
                 <flux:heading size="lg" class="font-bold">{{ __('app.subscriptions.modal.title') }}</flux:heading>
                 <flux:text class="text-zinc-500">{{ __('app.subscriptions.modal.message') }}</flux:text>
-                <style>
-                    .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 30px; }
-                    .header svg { width: 60px; height: 60px; }
-                    h2 { color: #f8c81b; font-size: 22px; margin: 20px 0; }
-                    .step-box { background: #f3f4f6; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-                    ol { padding-left: 20px; }
-                    .payment-method { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 15px; }
-                    .payment-method img { height: 50px; margin-bottom: 10px; }
-                    .orange { color: #f97316; font-weight: bold; font-size: 18px; }
-                    .yellow { color: #facc15; font-weight: bold; font-size: 18px; }
-                    .note { font-size: 12px; color: #6b7280; text-align: center; margin-top: 15px; }
-                </style>
-                <div class="container">
-                    <div class="header" style="text-align:center;">
-                        <h2>Abonnement en attente d'activation</h2>
-                    </div>
+                <div class="w-full max-w-lg mx-auto px-4 py-6 space-y-6">
+                    {{-- Étapes --}}
+                    <flux:card class="w-full">
+                        <flux:heading size="sm" class="mb-3">
+                            Étapes d'activation
+                        </flux:heading>
 
-                    <div class="step-box">
-                        <h3>Étapes d’activation de l’abonnement</h3>
-                        <ol>
-                            <li>Payer le montant de <b id="to_pay">{{$price}} XAF</b>pour de la classe de <b>{{$level->name}}</b> sur l’un des comptes ci-dessous.</li>
-                            <li>Une fois votre paiement effectué, veuillez patienter pendant l’activation.</li>
-                            <li>La validation de l’abonnement peut prendre jusqu’à <strong>12 heures</strong>.</li>
+                        <ol class="list-decimal list-outside ml-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="leading-relaxed">
+                                Payer
+                                <flux:badge color="yellow" class="mx-1">{{ number_format($price) }} XAF</flux:badge>
+                                pour la classe
+                                <flux:badge color="zinc" class="mx-1">{{ $level->name }}</flux:badge>
+                                sur l'un des comptes ci-dessous.
+                            </li>
+                            <li class="leading-relaxed">
+                                Une fois votre paiement effectué, veuillez patienter pendant l'activation.
+                            </li>
+                            <li class="leading-relaxed">
+                                La validation peut prendre jusqu'à
+                                <flux:badge color="red" class="mx-1">12 heures</flux:badge>.
+                            </li>
                         </ol>
+                    </flux:card>
+
+                    {{-- Méthodes de paiement --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+
+                        {{-- Orange Money --}}
+                        <flux:card class="flex flex-col items-center text-center gap-2 p-4 w-full">
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg"
+                                alt="Orange Money"
+                                class="h-10 w-auto object-contain"
+                            />
+                            <flux:heading size="sm">Orange Money</flux:heading>
+                            <flux:text size="sm" class="text-gray-500 dark:text-gray-400">
+                                Numéro de paiement
+                            </flux:text>
+                            <p class="text-orange-500 font-bold text-2xl tracking-widest">
+                                696 090 236
+                            </p>
+                            <flux:text size="xs" class="text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                POUOKAM NGUEGUIM
+                            </flux:text>
+                        </flux:card>
+
+                        {{-- MTN Mobile Money --}}
+                        <flux:card class="flex flex-col items-center text-center gap-2 p-4 w-full">
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/9/93/New-mtn-logo.jpg"
+                                alt="MTN Mobile Money"
+                                class="h-10 w-auto object-contain"
+                            />
+                            <flux:heading size="sm">MTN Mobile Money</flux:heading>
+                            <flux:text size="sm" class="text-gray-500 dark:text-gray-400">
+                                Numéro de paiement
+                            </flux:text>
+                            <p class="text-yellow-400 font-bold text-2xl tracking-widest">
+                                651 993 749
+                            </p>
+                            <flux:text size="xs" class="text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                POUOKAM NGUEGUIM
+                            </flux:text>
+                        </flux:card>
+
                     </div>
 
-                    <div class="payment-methods">
-                        <div class="payment-method">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" alt="Orange Money">
-                            <p class="font-semibold">Orange Money</p>
-                            <p>Numéro de paiement</p>
-                            <p class="orange">696090236</p>
-                            <p>POUOKAM NGUEGUIM</p>
-                        </div>
+                    {{-- Note --}}
+                    <flux:text size="xs" class="text-center text-gray-400 dark:text-gray-500 px-2">
+                        En cas de problème, contactez le support après 12 heures.
+                    </flux:text>
 
-                        <div class="payment-method">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/New-mtn-logo.jpg" alt="MTN Mobile Money">
-                            <p class="font-semibold">MTN Mobile Money</p>
-                            <p>Numéro de paiement</p>
-                            <p class="yellow">651993749</p>
-                            <p>POUOKAM NGUEGUIM</p>
-                        </div>
-                    </div>
                 </div>
             </div>
 

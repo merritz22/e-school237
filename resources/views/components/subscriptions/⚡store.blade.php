@@ -13,7 +13,7 @@ use App\Services\NotificationService;
 
 new class extends Component
 {
-    public $showModal = false;
+    public $showModal = true;
 
     #[Validate('required', message: 'Le niveau est un champs obligatoire')]
     public $level;

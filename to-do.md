@@ -1,3 +1,4 @@
+Ajouter une section tests avec des épreuves préfaites pour chaque niveau, chaque épreuves ayant une durée et sous forme d'agit par compétences. Un système de note et de classement sera également mis en place pour les meilleurs. Avec des avantages ?
 Réorganiser les bannières en ajoutant une section formations (plus bénéfiques pour moi...
 Les formatteurs feront des formations et l'administrateur touchera un pourcentage)=> Accueil - Archives scolaire - Formations - abonnements - FAQ
 Le Suivis particulier se fera à terme sur la plateforme

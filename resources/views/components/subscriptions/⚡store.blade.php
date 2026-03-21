@@ -37,6 +37,8 @@ new class extends Component
 
     public function closeModal()
     {
+
+        $this->reset(['level', 'phone', 'price']);
         $this->showModal = false;
 
         // Redirige vers /home
@@ -98,8 +100,6 @@ new class extends Component
 
         // 3️⃣ Afficher le modal de confirmation
         $this->showModal = true;
-
-        $this->reset(['level', 'phone', 'price']);
 
     }
 

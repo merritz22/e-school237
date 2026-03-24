@@ -16,7 +16,7 @@ new class extends Component
             $info = $user->information;
 
             $this->latest_subjects = EvaluationSubject::with('subject')
-            ->where('level_id',$info->current_level_id)
+            ->where('level_id',$info?->current_level_id)
             ->latest()
             ->take(10)
             ->get();

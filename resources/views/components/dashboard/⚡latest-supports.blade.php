@@ -16,7 +16,7 @@ new class extends Component
 
             $this->latest_supports = EducationalResource::with(['subject', 'level'])
             ->where('is_approved',1)
-            ->where('level_id',$info->current_level_id)
+            ->where('level_id',$info?->current_level_id)
             ->latest()
             ->take(10)
             ->get();

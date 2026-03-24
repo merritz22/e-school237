@@ -20,8 +20,8 @@ new class extends Component
             $user = Auth::user();
             $info = $user->information;
             $this->stats['total_articles'] = Article::count();
-            $this->stats['total_subjects'] = EvaluationSubject::where('level_id',$info->current_level_id)->count();
-            $this->stats['total_supports'] = EducationalResource::where('level_id',$info->current_level_id)->where('is_approved',1)->count();
+            $this->stats['total_subjects'] = EvaluationSubject::where('level_id',$info?->current_level_id)->count();
+            $this->stats['total_supports'] = EducationalResource::where('level_id',$info?->current_level_id)->where('is_approved',1)->count();
 
         }
         else{

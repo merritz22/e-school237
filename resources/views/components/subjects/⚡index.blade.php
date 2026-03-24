@@ -57,14 +57,14 @@ new class extends Component
             $info = $user->information;
 
             $this->filter_subjects = Subject::where('is_active', 1)->whereIn('id',
-                \App\Models\Level::where('id', $info->current_level_id)
+                \App\Models\Level::where('id', $info?->current_level_id)
                     ->with('subjects')
                     ->get()
                     ->flatMap(fn($level) => $level->subjects->pluck('id'))
                     ->unique()
                     ->toArray())
                 ->get();
-            $this->levels          = Level::where('is_active', 1)->where('id',$info->current_level_id)->get();
+            $this->levels          = Level::where('is_active', 1)->where('id',$info?->current_level_id)->get();
 
             // Filtre activé uniquement si abonné ET option cochée
             $hasSubscription = $user->subscriptions()
@@ -126,7 +126,7 @@ new class extends Component
         if (Auth::check()) {
             $user = Auth::user();
             $info = $user->information;
-            $query->where('level_id',$info->current_level_id);
+            $query->where('level_id',$info?->current_level_id);
         }
 
         // ===== FILTRE PAR CLASSE (si activé) =====

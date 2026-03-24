@@ -150,8 +150,8 @@ class EducationalResourceController extends Controller
             ]);
 
             $this->thumbnailService->generate(
-                model: $subject,
-                filePath: $subject->file_path,
+                model: $resource,
+                filePath: $resource->file_path,
             );
 
             return redirect()->route('admin.resources.index')
@@ -164,7 +164,7 @@ class EducationalResourceController extends Controller
 
             return back()->with(
                 'error',
-                "Une erreur est survenue lors de l'upload du PDF: "
+                "Une erreur est survenue lors de l'upload du PDF: " . $e->getMessage()
             );
         }
 

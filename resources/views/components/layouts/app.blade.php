@@ -60,8 +60,13 @@
         <flux:navbar class="-mb-px max-lg:hidden ml-6">
             <flux:navbar.item wire:navigate icon="home"          href="{{ route('home') }}">{{ __('app.nav.home') }}</flux:navbar.item>
             <flux:navbar.item wire:navigate icon="document-text" href="{{ route('articles.index') }}">{{ __('app.nav.articles') }}</flux:navbar.item>
-            <flux:navbar.item wire:navigate icon="book-open"     href="{{ route('resources.index') }}">{{ __('app.nav.resources') }}</flux:navbar.item>
-            <flux:navbar.item wire:navigate icon="academic-cap"  href="{{ route('subjects.index') }}">{{ __('app.nav.subjects') }}</flux:navbar.item>
+            <flux:dropdown class="max-lg:hidden">
+                <flux:navbar.item icon="puzzle-piece" icon:trailing="chevron-down">{{ __('app.nav.menu.title') }}</flux:navbar.item>
+                <flux:navmenu>
+                    <flux:navmenu.item wire:navigate icon="book-open"     href="{{ route('resources.index') }}">{{ __('app.nav.resources') }}</flux:navmenu.item>
+                    <flux:navmenu.item wire:navigate icon="academic-cap"  href="{{ route('subjects.index') }}">{{ __('app.nav.subjects') }}</flux:navmenu.item>
+                </flux:navmenu>
+            </flux:dropdown>
             @auth
                 <flux:navbar.item wire:navigate icon="banknotes" href="{{ route('subscriptions.index') }}">{{ __('app.nav.subscriptions') }}</flux:navbar.item>
             @endauth

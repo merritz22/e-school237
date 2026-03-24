@@ -14,6 +14,9 @@ return [
         'login'         => 'Connexion',
         'register'      => 'Inscription',
         'faq'      => 'FAQ',
+        'menu' =>[
+            'title' => 'Ressources'
+        ],
     ],
     'notifications' => [
         'title'  => 'Notifications',

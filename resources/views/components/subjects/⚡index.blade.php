@@ -56,6 +56,16 @@ new class extends Component
             $user = Auth::user();
             $info = $user->information;
 
+            $this->filter_subjects = Subject::where('is_active', 1)->whereIn('id',
+                \App\Models\Level::where('id', $info->current_level_id)
+                    ->with('subjects')
+                    ->get()
+                    ->flatMap(fn($level) => $level->subjects->pluck('id'))
+                    ->unique()
+                    ->toArray())
+                ->get();
+            $this->levels          = Level::where('is_active', 1)->where('id',$info->current_level_id)->get();
+
             // Filtre activé uniquement si abonné ET option cochée
             $hasSubscription = $user->subscriptions()
                 ->where('status', 'active')
@@ -111,6 +121,13 @@ new class extends Component
     public function render()
     {
         $query = EvaluationSubject::with('subject', 'level');
+
+        // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
+        if (Auth::check()) {
+            $user = Auth::user();
+            $info = $user->information;
+            $query->where('level_id',$info->current_level_id);
+        }
 
         // ===== FILTRE PAR CLASSE (si activé) =====
         if ($this->classFilterEnabled) {

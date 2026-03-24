@@ -9,10 +9,26 @@ new class extends Component
 
     public function mount()
     {
-        $this->latest_subjects = EvaluationSubject::with('subject')
+        
+        // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
+        if (Auth::check()) {
+            $user = Auth::user();
+            $info = $user->information;
+
+            $this->latest_subjects = EvaluationSubject::with('subject')
+            ->where('level_id',$info->current_level_id)
             ->latest()
-            ->take(8)
+            ->take(10)
             ->get();
+
+        }
+        else{
+            $this->latest_subjects = EvaluationSubject::with('subject')
+            ->latest()
+            ->take(10)
+            ->get();
+        }
+        
     }
 };
 ?>

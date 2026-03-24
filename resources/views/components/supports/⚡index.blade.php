@@ -71,7 +71,17 @@ new class extends Component
         $query = EducationalResource::with('subject', 'level')
             ->where('is_approved', 1);
 
-        // ===== FILTRE PAR CLASSE (si activé) =====
+        $user = null;
+        $info = null; // Déclaré ici pour être accessible dans tout le scope de la méthode
+
+        // Récupération de l'utilisateur connecté et de ses informations
+        if (Auth::check()) {
+            $user = Auth::user();
+            $info = $user->information;
+        }
+
+        // ===== FILTRE PAR CLASSE (abonnements) =====
+        // Priorité 1 : filtre par abonnement activé manuellement
         if ($this->classFilterEnabled) {
             if (!empty($this->subscribedLevelIds)) {
                 $query->whereHas('level', fn($q) =>
@@ -83,6 +93,10 @@ new class extends Component
                     $q->whereIn('id', $this->subscribedSubjectIds)
                 );
             }
+        }
+        // Priorité 2 : aucun filtre manuel de niveau → on applique le niveau courant de l'utilisateur
+        elseif ($info && empty($this->level_id)) {
+            $query->where('level_id', $info->current_level_id);
         }
 
         // ===== FILTRES MANUELS =====
@@ -102,14 +116,50 @@ new class extends Component
             );
         }
 
-        // Filtrer les options des dropdowns selon les abonnements
-        $subjects = $this->classFilterEnabled && !empty($this->subscribedSubjectIds)
-            ? Subject::where('is_active', 1)->whereIn('id', $this->subscribedSubjectIds)->get()
-            : Subject::where('is_active', 1)->get();
+        // ===== OPTIONS DES DROPDOWNS =====
 
-        $levels = $this->classFilterEnabled && !empty($this->subscribedLevelIds)
-            ? Level::where('is_active', 1)->whereIn('id', $this->subscribedLevelIds)->get()
-            : Level::where('is_active', 1)->get();
+        // Subjects : filtrés selon le contexte (abonnement > niveau courant > tous)
+        $subjects = match(true) {
+            // Filtre abonnement actif avec des matières définies
+            $this->classFilterEnabled && !empty($this->subscribedSubjectIds)
+                => Subject::where('is_active', 1)
+                    ->whereIn('id', $this->subscribedSubjectIds)
+                    ->get(),
+
+            // Utilisateur connecté sans filtre abonnement → matières liées à son niveau courant
+            $info !== null
+                => Subject::where('is_active', 1)
+                    ->whereIn('id',
+                        Level::where('id', $info->current_level_id)
+                            ->with('subjects')
+                            ->get()
+                            ->flatMap(fn($level) => $level->subjects->pluck('id'))
+                            ->unique()
+                            ->toArray()
+                    )
+                    ->get(),
+
+            // Visiteur non connecté → toutes les matières actives
+            default => Subject::where('is_active', 1)->get(),
+        };
+
+        // Levels : filtrés selon le contexte (abonnement > niveau courant > tous)
+        $levels = match(true) {
+            // Filtre abonnement actif avec des niveaux définis
+            $this->classFilterEnabled && !empty($this->subscribedLevelIds)
+                => Level::where('is_active', 1)
+                    ->whereIn('id', $this->subscribedLevelIds)
+                    ->get(),
+
+            // Utilisateur connecté sans filtre abonnement → uniquement son niveau courant
+            $info !== null
+                => Level::where('is_active', 1)
+                    ->where('id', $info->current_level_id)
+                    ->get(),
+
+            // Visiteur non connecté → tous les niveaux actifs
+            default => Level::where('is_active', 1)->get(),
+        };
 
         return view('livewire.supports.index', [
             'resources' => $query->latest()->paginate(15),

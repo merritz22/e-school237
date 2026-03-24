@@ -15,9 +15,20 @@ new class extends Component
 
     public function mount()
     {
-        $this->stats['total_articles'] = Article::count();
-        $this->stats['total_subjects'] = EvaluationSubject::count();
-        $this->stats['total_supports'] = EducationalResource::where('is_approved',1)->count();
+        // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
+        if (Auth::check()) {
+            $user = Auth::user();
+            $info = $user->information;
+            $this->stats['total_articles'] = Article::count();
+            $this->stats['total_subjects'] = EvaluationSubject::where('level_id',$info->current_level_id)->count();
+            $this->stats['total_supports'] = EducationalResource::where('level_id',$info->current_level_id)->where('is_approved',1)->count();
+
+        }
+        else{
+            $this->stats['total_articles'] = Article::count();
+            $this->stats['total_subjects'] = EvaluationSubject::count();
+            $this->stats['total_supports'] = EducationalResource::where('is_approved',1)->count();
+        }
     }
 };
 ?>

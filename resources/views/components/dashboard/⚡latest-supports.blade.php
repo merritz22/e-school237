@@ -93,7 +93,7 @@ new class extends Component
                 <a href="{{ route('resources.show', $resource->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($resource->preview_image)
-                            @if ($show_premium_preview || $subject->is_free)  
+                            @if ($show_premium_preview || $resource->is_free)  
                                 <img
                                     src="{{ asset('storage/' . $resource->preview_image) }}"
                                     alt="{{ $resource->title }}"
@@ -103,7 +103,7 @@ new class extends Component
                             @else
                                 <img
                                         src="{{ Vite::asset('resources/images/locked.png') }}"
-                                        alt="{{ $subject->title }}"
+                                        alt="{{ $resource->title }}"
                                         class="w-full h-full object-cover object-top
                                             hover:scale-105 transition-transform duration-300"
                                     />

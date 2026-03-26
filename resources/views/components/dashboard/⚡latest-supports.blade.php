@@ -7,10 +7,12 @@ new class extends Component
 {
     public $latest_supports = [];
 
+    public $show_premium_preview = false;
+
     public function mount()
     {
         // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
-        if (Auth::check()) {
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
 
@@ -20,6 +22,10 @@ new class extends Component
             ->latest()
             ->take(10)
             ->get();
+
+            $this->show_premium_preview = $user->subscriptions()
+                ->where('status', 'active')
+                ->exists();
 
         }
         else{
@@ -87,12 +93,21 @@ new class extends Component
                 <a href="{{ route('resources.show', $resource->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($resource->preview_image)
-                            <img
-                                src="{{ asset('storage/' . $resource->preview_image) }}"
-                                alt="{{ $resource->title }}"
-                                class="w-full h-full object-cover object-top
-                                    hover:scale-105 transition-transform duration-300"
-                            />
+                            @if ($show_premium_preview || $subject->is_free)  
+                                <img
+                                    src="{{ asset('storage/' . $resource->preview_image) }}"
+                                    alt="{{ $resource->title }}"
+                                    class="w-full h-full object-cover object-top
+                                        hover:scale-105 transition-transform duration-300"
+                                />
+                            @else
+                                <img
+                                        src="{{ Vite::asset('resources/images/locked.png') }}"
+                                        alt="{{ $subject->title }}"
+                                        class="w-full h-full object-cover object-top
+                                            hover:scale-105 transition-transform duration-300"
+                                    />
+                            @endif
                         @else
                             <div class="w-full h-full flex items-center justify-center
                                 bg-{{ config('theme.success') }}-50

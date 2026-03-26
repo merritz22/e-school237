@@ -16,7 +16,7 @@ new class extends Component
     public function mount()
     {
         // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
-        if (Auth::check()) {
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
             $this->stats['total_articles'] = Article::count();

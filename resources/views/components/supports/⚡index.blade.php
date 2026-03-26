@@ -28,7 +28,7 @@ new class extends Component
 
     public function mount(): void
     {
-        if (Auth::check()) {
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
 
@@ -75,10 +75,16 @@ new class extends Component
         $info = null; // Déclaré ici pour être accessible dans tout le scope de la méthode
 
         // Récupération de l'utilisateur connecté et de ses informations
-        if (Auth::check()) {
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
         }
+
+        
+
+        $this->show_premium_preview = $user->subscriptions()
+            ->where('status', 'active')
+            ->exists();
 
         // ===== FILTRE PAR CLASSE (abonnements) =====
         // Priorité 1 : filtre par abonnement activé manuellement
@@ -96,7 +102,7 @@ new class extends Component
         }
         // Priorité 2 : aucun filtre manuel de niveau → on applique le niveau courant de l'utilisateur
         elseif ($info && empty($this->level_id)) {
-            $query->where('level_id', $info->current_level_id);
+            $query->where('level_id', $info?->current_level_id);
         }
 
         // ===== FILTRES MANUELS =====
@@ -165,6 +171,7 @@ new class extends Component
             'resources' => $query->latest()->paginate(15),
             'subjects'  => $subjects,
             'levels'    => $levels,
+            'show_premium_preview' => $show_premium_preview
         ]);
     }
 };

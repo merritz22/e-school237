@@ -102,10 +102,10 @@ new class extends Component
                                 />
                             @else
                                 <img
-                                        src="{{ Vite::asset('resources/images/locked.png') }}"
-                                        alt="{{ $resource->title }}"
-                                        class="w-full h-full object-cover object-top
-                                            hover:scale-105 transition-transform duration-300"
+                                    src="{{ asset('images/locked.png') }}"
+                                    alt="{{ $resource->title }}"
+                                    class="w-full h-full object-cover object-top
+                                        hover:scale-105 transition-transform duration-300"
                                     />
                             @endif
                         @else

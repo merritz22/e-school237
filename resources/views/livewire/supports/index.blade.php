@@ -64,12 +64,21 @@
                 <a href="{{ route('resources.show', $resource->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($resource->preview_image)
-                            <img
-                                src="{{ asset('storage/' . $resource->preview_image) }}"
-                                alt="{{ $resource->title }}"
-                                class="w-full h-full object-cover object-top
-                                    hover:scale-105 transition-transform duration-300"
-                            />
+                            @if ($show_premium_preview || $resource->is_free) 
+                                <img
+                                    src="{{ asset('storage/' . $resource->preview_image) }}"
+                                    alt="{{ $resource->title }}"
+                                    class="w-full h-full object-cover object-top
+                                        hover:scale-105 transition-transform duration-300"
+                                />
+                            @else
+                                <img
+                                    src="{{ asset('images/locked.png') }}"
+                                    alt="{{ $resource->title }}"
+                                    class="w-full h-full object-cover object-top
+                                        hover:scale-105 transition-transform duration-300"
+                                    />
+                            @endif  
                         @else
                             <div class="w-full h-full flex items-center justify-center
                                 bg-sky-50 dark:bg-sky-900/20">

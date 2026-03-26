@@ -30,6 +30,8 @@ new class extends Component
     public array $subscribedLevelIds = [];
     public array $subscribedSubjectIds = [];
 
+    public bool $show_premium_preview = false;
+
     protected $queryString = [
         'subject_id' => ['except' => ''],
         'level_id'   => ['except' => ''],
@@ -38,8 +40,6 @@ new class extends Component
         'sort'       => ['except' => 'latest'],
         'search'     => ['except' => ''],
     ];
-
-    public $show_premium_preview = false;
 
     public function mount(): void
     {
@@ -124,16 +124,15 @@ new class extends Component
     {
         $query = EvaluationSubject::with('subject', 'level');
 
-        // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
         if (Auth::check()) {
             $user = Auth::user();
             $info = $user->information;
-            $query->where('level_id',$info?->current_level_id);
-        }
+            $query->where('level_id', $info?->current_level_id);
 
-        $this->show_premium_preview = $user->subscriptions()
-            ->where('status', 'active')
-            ->exists();
+            $this->show_premium_preview = !$user->subscriptions()  // ← ! si tu veux afficher le preview quand PAS abonné
+                ->where('status', 'active')
+                ->exists();
+        }
 
         // ===== FILTRE PAR CLASSE (si activé) =====
         if ($this->classFilterEnabled) {
@@ -173,8 +172,8 @@ new class extends Component
         $subjects = $query->paginate(15);
 
         return view('livewire.subjects.index', [
-            'subjects' => $subjects,
-            'show_premium_preview' => $show_premium_preview
+            'subjects'             => $subjects,
+            'show_premium_preview' => $this->show_premium_preview,  // ← $this->
         ]);
     }
 };

@@ -74,12 +74,21 @@
                 <a href="{{ route('subjects.show', $subject->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($subject->preview_image)
-                            <img
-                                src="{{ asset('storage/' . $subject->preview_image) }}"
-                                alt="{{ $subject->title }}"
-                                class="w-full h-full object-cover object-top
-                                    hover:scale-105 transition-transform duration-300"
-                            />
+                            @if ($show_premium_preview || $subject->is_free)  
+                                <img
+                                    src="{{ asset('storage/' . $subject->preview_image) }}"
+                                    alt="{{ $subject->title }}"
+                                    class="w-full h-full object-cover object-top
+                                        hover:scale-105 transition-transform duration-300"
+                                />
+                            @else
+                                <img
+                                    src="{{ asset('images/locked.png') }}"
+                                    alt="{{ $subject->title }}"
+                                    class="w-full h-full object-cover object-top
+                                        hover:scale-105 transition-transform duration-300"
+                                    />
+                            @endif 
                         @else
                             <div class="w-full h-full flex items-center justify-center
                                 bg-purple-50 dark:bg-purple-900/20">

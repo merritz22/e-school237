@@ -20,6 +20,8 @@ new class extends Component
     public array $subscribedLevelIds   = [];
     public array $subscribedSubjectIds = [];
 
+    public bool $show_premium_preview = false;
+
     protected $queryString = [
         'subject_id' => ['except' => ''],
         'level_id'   => ['except' => ''],
@@ -72,22 +74,19 @@ new class extends Component
             ->where('is_approved', 1);
 
         $user = null;
-        $info = null; // Déclaré ici pour être accessible dans tout le scope de la méthode
+        $info = null;
 
-        // Récupération de l'utilisateur connecté et de ses informations
         if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
+
+            // ← déplacé ici, là où $user est garanti non-null
+            $this->show_premium_preview = !$user->subscriptions()
+                ->where('status', 'active')
+                ->exists();
         }
 
-        
-
-        $this->show_premium_preview = $user->subscriptions()
-            ->where('status', 'active')
-            ->exists();
-
         // ===== FILTRE PAR CLASSE (abonnements) =====
-        // Priorité 1 : filtre par abonnement activé manuellement
         if ($this->classFilterEnabled) {
             if (!empty($this->subscribedLevelIds)) {
                 $query->whereHas('level', fn($q) =>
@@ -100,7 +99,6 @@ new class extends Component
                 );
             }
         }
-        // Priorité 2 : aucun filtre manuel de niveau → on applique le niveau courant de l'utilisateur
         elseif ($info && empty($this->level_id)) {
             $query->where('level_id', $info?->current_level_id);
         }
@@ -109,13 +107,11 @@ new class extends Component
         if ($this->search) {
             $query->where('title', 'like', '%' . $this->search . '%');
         }
-
         if ($this->subject_id) {
             $query->whereHas('subject', fn($q) =>
                 $q->where('slug', $this->subject_id)
             );
         }
-
         if ($this->level_id) {
             $query->whereHas('level', fn($q) =>
                 $q->where('slug', $this->level_id)
@@ -123,16 +119,12 @@ new class extends Component
         }
 
         // ===== OPTIONS DES DROPDOWNS =====
-
-        // Subjects : filtrés selon le contexte (abonnement > niveau courant > tous)
         $subjects = match(true) {
-            // Filtre abonnement actif avec des matières définies
             $this->classFilterEnabled && !empty($this->subscribedSubjectIds)
                 => Subject::where('is_active', 1)
                     ->whereIn('id', $this->subscribedSubjectIds)
                     ->get(),
 
-            // Utilisateur connecté sans filtre abonnement → matières liées à son niveau courant
             $info !== null
                 => Subject::where('is_active', 1)
                     ->whereIn('id',
@@ -145,33 +137,28 @@ new class extends Component
                     )
                     ->get(),
 
-            // Visiteur non connecté → toutes les matières actives
             default => Subject::where('is_active', 1)->get(),
         };
 
-        // Levels : filtrés selon le contexte (abonnement > niveau courant > tous)
         $levels = match(true) {
-            // Filtre abonnement actif avec des niveaux définis
             $this->classFilterEnabled && !empty($this->subscribedLevelIds)
                 => Level::where('is_active', 1)
                     ->whereIn('id', $this->subscribedLevelIds)
                     ->get(),
 
-            // Utilisateur connecté sans filtre abonnement → uniquement son niveau courant
             $info !== null
                 => Level::where('is_active', 1)
                     ->where('id', $info->current_level_id)
                     ->get(),
 
-            // Visiteur non connecté → tous les niveaux actifs
             default => Level::where('is_active', 1)->get(),
         };
 
         return view('livewire.supports.index', [
-            'resources' => $query->latest()->paginate(15),
-            'subjects'  => $subjects,
-            'levels'    => $levels,
-            'show_premium_preview' => $show_premium_preview
+            'resources'            => $query->latest()->paginate(15),
+            'subjects'             => $subjects,
+            'levels'               => $levels,
+            'show_premium_preview' => $this->show_premium_preview,  // ← $this->
         ]);
     }
 };

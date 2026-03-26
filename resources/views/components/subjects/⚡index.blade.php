@@ -39,6 +39,8 @@ new class extends Component
         'search'     => ['except' => ''],
     ];
 
+    public $show_premium_preview = false;
+
     public function mount(): void
     {
         // Charger les filtres
@@ -52,7 +54,7 @@ new class extends Component
             ->pluck('year');
 
         // Charger les infos de filtre classe si connecté
-        if (Auth::check()) {
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
 
@@ -126,8 +128,12 @@ new class extends Component
         if (Auth::check()) {
             $user = Auth::user();
             $info = $user->information;
-            $query->where('level_id',$info->current_level_id);
+            $query->where('level_id',$info?->current_level_id);
         }
+
+        $this->show_premium_preview = $user->subscriptions()
+            ->where('status', 'active')
+            ->exists();
 
         // ===== FILTRE PAR CLASSE (si activé) =====
         if ($this->classFilterEnabled) {
@@ -168,6 +174,7 @@ new class extends Component
 
         return view('livewire.subjects.index', [
             'subjects' => $subjects,
+            'show_premium_preview' => $show_premium_preview
         ]);
     }
 };

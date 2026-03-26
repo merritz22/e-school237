@@ -7,19 +7,25 @@ new class extends Component
 {
     public $latest_subjects = [];
 
+    public $show_premium_preview = false;
+
     public function mount()
     {
         
         // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
-        if (Auth::check()) {
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
 
             $this->latest_subjects = EvaluationSubject::with('subject')
-            ->where('level_id',$info->current_level_id)
+            ->where('level_id',$info?->current_level_id)
             ->latest()
             ->take(10)
             ->get();
+
+            $this->show_premium_preview = $user->subscriptions()
+                ->where('status', 'active')
+                ->exists();
 
         }
         else{
@@ -87,12 +93,21 @@ new class extends Component
                 <a href="{{ route('subjects.show', $subject->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($subject->preview_image)
-                            <img
-                                src="{{ asset('storage/' . $subject->preview_image) }}"
-                                alt="{{ $subject->title }}"
-                                class="w-full h-full object-cover object-top
-                                    hover:scale-105 transition-transform duration-300"
-                            />
+                            @if ($show_premium_preview || $subject->is_free)
+                                <img
+                                        src="{{ asset('storage/' . $subject->preview_image) }}"
+                                        alt="{{ $subject->title }}"
+                                        class="w-full h-full object-cover object-top
+                                            hover:scale-105 transition-transform duration-300"
+                                    />
+                            @else
+                                <img
+                                        src="{{ Vite::asset('resources/images/locked.png') }}"
+                                        alt="{{ $subject->title }}"
+                                        class="w-full h-full object-cover object-top
+                                            hover:scale-105 transition-transform duration-300"
+                                    />
+                            @endif    
                         @else
                             <div class="w-full h-full flex items-center justify-center
                                 bg-{{ config('theme.primary') }}-50

@@ -124,7 +124,8 @@ new class extends Component
     {
         $query = EvaluationSubject::with('subject', 'level');
 
-        if (Auth::check()) {
+        // Par défaut, on affiche les produits liés à la classe de l'utilisateur connecté
+        if (Auth::check() && Auth::user()->role != 'admin') {
             $user = Auth::user();
             $info = $user->information;
             $query->where('level_id', $info?->current_level_id);

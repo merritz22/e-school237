@@ -1,6 +1,7 @@
 Ajouter une section tests avec des épreuves préfaites pour chaque niveau, chaque épreuves ayant une durée et sous forme d'agit par compétences. Un système de note et de classement sera également mis en place pour les meilleurs. Avec des avantages ?
 Réorganiser les bannières en ajoutant une section formations (plus bénéfiques pour moi...
 Les formatteurs feront des formations et l'administrateur touchera un pourcentage)=> Accueil - Archives scolaire - Formations - abonnements - FAQ
+Comment faire bénéficier les professeurs. Ils vont faire des intitulés de formations qui seront suivis par des éleves/indépendants avec possibilité de souscrire à une formation comme sur Udemy. Chaque professeur devrat faire des publications gratuites et d'autres payantes afin d'attirer des intéressé. (Prévoir une section vidéo-éducative ?)
 Le Suivis particulier se fera à terme sur la plateforme
 Une notice avertissant que si la photo ne correspond pas à l'utilisateur, celui-ci sera supprimé
 
@@ -26,3 +27,4 @@ Dans la section profile, prévoir
         =>La classe actuel (qui devra être mise à jour chaque année), activé ou désactiver le filtre sur sa classe (seulement pour les abonnés) -> le bouton de filtre est désactiver si l'utilisateur n'est abonné à aucune classe, prendre en compte le fait que l'utilisateur peut être abonner à plusieurs classe.
     tant que le profile n'est pas encore compléter, il faut que l'icône du profile dans le layout app clignote, faire un fonction booléenne qui vérifie si le profile est complet ou non. Pareillement tout les champs obligatoire du profile doivent avoir une icone rouge en haut à droite pour faire comprendre à l'utilisateur qu'il doit remplit ces champs s'il sont vide. ajouter dans la table user_informations une colonne pour savoir si c'est un champs obligatoire.
     Améliorations UX recommandées
+

@@ -66,7 +66,7 @@ new class extends Component
                 <flux:table.row :key="$order->id">
                     <flux:table.cell variant="strong">{{ $order->created_at->format('d/m/Y') }}</flux:table.cell>
                     <flux:table.cell variant="strong">{{ $order->amount }} XAF</flux:table.cell>
-                    <flux:table.cell variant="strong">{{ $order->level->name }}</flux:table.cell>
+                    <flux:table.cell variant="strong">{{ $order->level?->name }}</flux:table.cell>
                     <flux:table.cell variant="strong" class="flex items-center gap-3">
                         <flux:badge size="sm" :color="$statusColors[$order->status]">{{ ucfirst($order->status) }}</flux:badge>
                     </flux:table.cell>

@@ -10,9 +10,9 @@
                 <tr>
                     <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Utilisateur</th>
                     <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Niveau</th>
-                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Téléphone</th>
+                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Téléphone (dépôt)</th>
+                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Whatsapp</th>
                     <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Montant</th>
-                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Date de fin</th>
                     <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Statut</th>
                     <th class="px-5 py-2 text-left text-xs font-semibold text-gray-600">Action</th>
                 </tr>
@@ -21,18 +21,24 @@
                 @forelse($subscriptions as $subscription)
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                         <td class="px-4 py-2">
-                            <span class="font-semibold">{{ $subscription->user->name }}</span>
+                            <span class="font-semibold">{{ $subscription->user?->name }}</span>
                         </td>
                         <td class="px-4 py-2">
-                            <span class="font-semibold">{{ $subscription->level->name }}</span>
+                            <span class="font-semibold">{{ $subscription->level?->name }}</span>
                         </td>
                         <td class="px-4 py-2">
                             <span class="font-semibold">{{ $subscription->currency}}</span>
                         </td>
                         <td class="px-4 py-2">
+                            @if($subscription->user?->whatsapp)
+                                <a href="https://wa.me/237{{ $subscription->user?->whatsapp }}">
+                                    {{ $subscription->user?->whatsapp }}
+                                </a>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2">
                             <span class="font-semibold">{{ $subscription->amount }} XAF</span>
                         </td>
-                        <td class="px-4 py-2">{{ $subscription->ends_at ? $subscription->ends_at->format('d/m/Y') : 'Jamais' }}</td>
                         <td class="px-4 py-2">
                             @if($subscription->status === 'active')
                                 <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Actif</span>

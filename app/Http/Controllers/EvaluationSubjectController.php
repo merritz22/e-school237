@@ -344,7 +344,7 @@ class EvaluationSubjectController extends Controller
 
             return back()
                 ->withInput()
-                ->with('error', 'Une erreur est survenue : ' . $e->getMessage());
+                ->with('error', 'Une erreur est survenue : ');
         }
     }
 
@@ -490,7 +490,7 @@ class EvaluationSubjectController extends Controller
 
             return back()
                 ->withInput()
-                ->with('error', 'Une erreur est survenue : ' . $e->getMessage());
+                ->with('error', 'Une erreur est survenue : ');
         }
     }
 

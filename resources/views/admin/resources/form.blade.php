@@ -2,7 +2,7 @@
 
 <div class="space-y-6">
     <div>
-        <label for="title" class="block text-sm font-medium text-gray-700">Titre *</label>
+        <label for="title" class="block text-sm font-medium text-gray-700">Titre  <span class="text-red-500">*</span></label>
         <input type="text" name="title" id="title" value="{{ old('title', $resource->title ?? '') }}" 
                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2" required>
         @error('title')
@@ -11,7 +11,7 @@
     </div>
 
     <div>
-        <label for="subject_id" class="block text-sm font-medium text-gray-700">matière *</label>
+        <label for="subject_id" class="block text-sm font-medium text-gray-700">matière  <span class="text-red-500">*</span></label>
         <select name="subject_id" id="subject_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('subject_id') border-red-500 @enderror" required>
             <option value="">Sélectionnez une matière</option>
             @foreach($subjects as $subject)
@@ -26,7 +26,7 @@
     </div>
 
     <div>
-        <label for="level_id" class="block text-sm font-medium text-gray-700">Niveau *</label>
+        <label for="level_id" class="block text-sm font-medium text-gray-700">Niveau  <span class="text-red-500">*</span></label>
         <select name="level_id" id="level_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('level_id') border-red-500 @enderror" required>
             <option value="">Sélectionnez un niveau</option>
             @foreach($levels as $level)
@@ -41,7 +41,7 @@
     </div>
 
     <div>
-        <label for="is_free" class="block text-sm font-medium text-gray-700 mb-2">Accès <span class="text-red-500">*</span></label>
+        <label for="is_free" class="block text-sm font-medium text-gray-700 mb-2">Accès <span class="text-red-500"> <span class="text-red-500">*</span></span></label>
         <select name="is_free" id="is_free" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('is_free') border-red-500 @enderror">
                 <option value="1" @selected(old('is_free') == 1)>Gratuit</option>
@@ -54,7 +54,7 @@
         <label for="resource_file" class="block text-sm font-medium text-gray-700">
             {{ $resource ? 'Nouveau fichier (laisser vide pour ne pas changer)' : 'Fichier *' }}
         </label>
-        <input type="file" name="resource_file" id="resource_file" 
+        <input type="file" name="resource_file" id="resource_file" accept=".pdf"
                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                {{ $resource ? '' : 'required' }}>
         @error('resource_file')
@@ -68,7 +68,7 @@
     </div>
 
     <div>
-        <label for="description" class="block text-sm font-medium text-gray-700">Description *</label>
+        <label for="description" class="block text-sm font-medium text-gray-700">Description  <span class="text-red-500">*</span></label>
         <textarea name="description" id="description" rows="3"
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>{{ old('description', $resource->description ?? '') }}</textarea>
         @error('description')

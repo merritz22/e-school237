@@ -107,7 +107,7 @@
                             </svg>
                             <span class="text-sm text-gray-700" id="file-name">Choisir un nouveau fichier</span>
                         </div>
-                        <input type="file" name="file" id="file" accept=".pdf,.doc,.docx" class="sr-only">
+                        <input type="file" name="file" id="file" accept=".pdf" class="sr-only">
                     </label>
                 </div>
                 <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>

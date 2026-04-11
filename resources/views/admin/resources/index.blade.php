@@ -173,9 +173,9 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Support</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auteur</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matière</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vues</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -184,8 +184,8 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
-                                    @if($resource->featured_image)
-                                        <img src="{{ Storage::url($resource->featured_image) }}" 
+                                    @if($resource->preview_image)
+                                        <img src="{{ Storage::url($resource->preview_image) }}" 
                                              alt="{{ $resource->title }}" 
                                              class="w-12 h-12 rounded-lg object-cover mr-4">
                                     @else
@@ -223,6 +223,12 @@
                                 </span>
                             </td>
                             
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-black-500">
+                                    {{ $resource->level->name }}
+                                </span>
+                            </td>
+                            
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($resource->is_approved === true)
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
@@ -239,22 +245,8 @@
                                 {{ number_format($resource->views_count) }}
                             </td>
                             
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div>{{ $resource->created_at->format('d/m/Y') }} {{ $resource->created_at->format('H:i') }}</div>
-                            </td>
-                            
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <!-- View Support -->
-                                    <a href="{{ route('admin.resources.index', $resource->slug) }}" 
-                                       target="_blank"
-                                       class="text-blue-600 hover:text-blue-900 p-1" 
-                                       title="Voir le Support pédagogique">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        </svg>
-                                    </a>
 
                                     <!-- Edit -->
                                     <a href="{{ route('admin.resources.edit', $resource) }}" 

@@ -304,3 +304,5 @@ php artisan db:seed --class=LevelSubjectSeeder
 
 php artisan notification:insert SUBSCRIPTION_VALIDATED "Abonnement validé" "Votre (vos) demande(s) d'abonnement à été validé par contact@e-school237.com" "info"
 
+
+php artisan app:send-verification-reminders

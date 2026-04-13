@@ -1,5 +1,12 @@
 <?php
 
+use App\Models\AppSettings;
+
+// Remplacer les 3 requêtes en haut par :
+$dailyLimit    = AppSettings::where('code', 'DAILY_DOWNLOAD_LIMIT')->value('value') ?? '?';
+$monthlyLimitP1 = AppSettings::where('code', 'MONTHLY_DOWNLOAD_LIMIT_P1')->value('value') ?? '?';
+$monthlyLimitP2 = AppSettings::where('code', 'MONTHLY_DOWNLOAD_LIMIT_P2')->value('value') ?? '?';
+
 return [
     'nav' => [
         'home'          => 'Home',
@@ -164,6 +171,7 @@ return [
         'downloads' => 'downloads',
         'empty'     => 'No subjects found.',
         'show' => [
+            'loading'      => 'Loading...',
             'download'      => 'Download',
             'related_title' => 'Similar subjects',
         ],
@@ -186,6 +194,7 @@ return [
         'empty'     => 'No resources found.',
         'show' => [
             'download'      => 'Download',
+            'loading'      => 'Loading...',
             'related_title' => 'Similar resources',
         ],
         
@@ -207,6 +216,7 @@ return [
         'classic' => [
             'name'    => 'Classic',
             'tagline' => 'Learn better and progress faster.',
+            'f0'      => 'Enjoy '. $monthlyLimitP1 .' downloads per month, limited to '. $dailyLimit .' per day.',
             'f1'      => 'Unlimited access to sequential subjects and corrections',
             'f2'      => 'Download TD worksheets',
             'f3'      => 'Past papers and regional tests',
@@ -216,6 +226,7 @@ return [
             'name'    => 'Premium',
             'tagline' => 'Recommended for students in exam classes.',
             'badge'   => 'Most popular',
+            'f0'      => 'Enjoy '. $monthlyLimitP2 .' downloads per month, limited to '. $dailyLimit .' per day.',
             'f1'      => 'Unlimited access to subjects and corrections',
             'f2'      => 'French-speaking Africa exams',
             'f3'      => 'TD worksheets and detailed corrections',
@@ -227,6 +238,7 @@ return [
         'excellence' => [
             'name'    => 'Excellence',
             'tagline' => 'A complete revision library.',
+            'f0'      => 'Enjoy unlimited downloads per month, limited to '. $dailyLimit .' per day.',
             'f1'      => 'All Premium subscription content',
             'f2'      => 'Complete teaching materials',
             'f3'      => 'Subject past papers',
@@ -285,6 +297,7 @@ return [
         'search_result' => 'result(s)',
     ],
     'profile' => [
+        'autosave_hint' => 'Changes are saved automatically',
         'incomplete_warning'  => 'Your profile is incomplete. Please fill in the required fields (*) to enjoy all features.',
         'email_unverified'    => 'Email not verified',
         'email_verified'      => 'Email verified',
@@ -335,5 +348,47 @@ return [
             'suggest_developers' => 'Leave a suggestion to the developers ?',
         ],
     ],
-    
+    'download_limit' => [
+        'free_download_limit' =>[
+            'title'       => 'Free download limit reached',
+            'description' => 'You have reached your daily limit of :limit free downloads. Subscribe to get more downloads.',
+        ],
+        'no_subscription' => [
+            'title'       => 'No active subscription',
+            'description' => 'You must subscribe to a plan to download resources.',
+        ],
+        'wrong_level' => [
+            'title'       => 'Level not covered',
+            'description' => 'Your active subscription does not cover the level of this resource. Contact the administrator to upgrade your subscription.',
+        ],
+        'monthly' => [
+            'title'       => 'Monthly limit reached',
+            'description' => 'You have reached your monthly quota of :count downloads. Your counter will reset on the 1st of next month.',
+        ],
+        'daily' => [
+            'title'       => 'Daily limit reached',
+            'description' => 'You have reached your quota of :limit downloads for today. Come back tomorrow to continue.',
+        ],
+        'stats' => [
+            'today'        => 'Today',
+            'this_month'   => 'This month',
+            'downloads'    => 'downloads',
+            'downloads_of' => '/ :limit downloads',
+        ],
+        'actions' => [
+            'title'         => 'What would you like to do?',
+            'subscribe'     => 'View subscriptions',
+            'contact_admin' => 'Contact administrator',
+            'back'          => 'Go back',
+        ],
+        'info' => [
+            'daily_reset'   => 'Your limit will automatically reset at <strong>midnight</strong> tonight.',
+            'monthly_reset' => 'Your monthly quota resets on <strong>the 1st of :date</strong>.',
+        ],
+        'footer' => [
+            'help' => 'Need help? Write to us at',
+        ],
+        'contact_subject' => 'Subscription upgrade request',
+        'contact_body'    => 'Hello,\n\nI would like to upgrade my subscription to get additional downloads.\n\nThank you.',
+    ],
 ];

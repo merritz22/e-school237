@@ -46,6 +46,7 @@
                 {{-- Features --}}
                 <ul class="space-y-3 flex-1">
                     @foreach([
+                        __('app.subscriptions.classic.f0'),
                         __('app.subscriptions.classic.f1'),
                         __('app.subscriptions.classic.f2'),
                         __('app.subscriptions.classic.f3'),
@@ -116,6 +117,7 @@
                 {{-- Features --}}
                 <ul class="space-y-3 flex-1">
                     @foreach([
+                        __('app.subscriptions.premium.f0'),
                         __('app.subscriptions.premium.f1'),
                         __('app.subscriptions.premium.f2'),
                         __('app.subscriptions.premium.f3'),
@@ -168,6 +170,7 @@
                 {{-- Features --}}
                 <ul class="space-y-3 flex-1">
                     @foreach([
+                        __('app.subscriptions.excellence.f0'),
                         __('app.subscriptions.excellence.f1'),
                         __('app.subscriptions.excellence.f2'),
                         __('app.subscriptions.excellence.f3'),

@@ -196,29 +196,22 @@ class EducationalResourceController extends Controller
     /**
      * Télécharger le fichier de la ressource
      */
-    public function download(EducationalResource $resource)
+    public function download(Request $request, EducationalResource $resource)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Vous devez être connecté pour télécharger.');
-        }
-
         if (!Storage::disk('private')->exists($resource->file_path)) {
             abort(404, 'Fichier non trouvé.');
         }
 
-        // Enregistrer le téléchargement
         DownloadLog::create([
-            'user_id' => Auth::id(),
+            'user_id'           => Auth::id(),
             'downloadable_type' => EducationalResource::class,
-            'downloadable_id' => $resource->id,
-            'ip_address' => request()->ip(),
-            'resource_id' => $resource->id
+            'downloadable_id'   => $resource->id,
+            'ip_address'        => $request->ip(),
+            'resource_id'       => $resource->id,
         ]);
 
-        // Incrémenter le compteur
         $resource->increment('downloads_count');
 
-        // Télécharger le fichier déjà filigrané
         return Storage::disk('private')->download(
             $resource->file_path,
             $resource->file_name

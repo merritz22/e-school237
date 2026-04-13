@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'                  => \App\Http\Middleware\RoleMiddleware::class,
             'subject_subscription'  => \App\Http\Middleware\CheckSubjectSubscription::class,
             'resource_subscription' => \App\Http\Middleware\CheckResourceSubscription::class,
+            'download' => \App\Http\Middleware\CanDownload::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

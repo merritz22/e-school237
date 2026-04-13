@@ -5,7 +5,28 @@ Comment faire bénéficier les professeurs. Ils vont faire des intitulés de for
 Le Suivis particulier se fera à terme sur la plateforme
 Une notice avertissant que si la photo ne correspond pas à l'utilisateur, celui-ci sera supprimé
 
+11/04/2026
+Mise à jour de la gestions des abonnements
+Limittations sur le nombre de téléchargement autorisés pour la durrée de l'abonnements.
+Valeur à défifinir dans l'administration ?. 
+Elle dure pour la période de l'abonnement en cours.
+3 000 => 60 téléchargements par mois (limité à 10 téléchargements par jour)
+6 000 => 150 téléchargements par mois (limité à 10 téléchargements par jour)
+8 000 => Téléchargement illimité (limité à 10 téléchargements par jour)
+Créer un middleware qui va gérer l'autorisation de téléchargement
+Mettre à jour les textes de suscription à un abonnement
+Prévoir le message à afficher dans la pop-up en cas d'incapacité de téléchargement.
+Rendre le numéro whatsapp obligatoire
+Mise à jour BD PROD
+=>...
+UPDATE subscriptions s SET s.type = 'CLASSIC'
+WHERE s.amount = 3000.0;
 
+UPDATE subscriptions s SET s.type = 'PREMIUM'
+WHERE s.amount = 6000.0;
+
+UPDATE subscriptions s SET s.type = 'ADVANCED'
+WHERE s.amount = 8000.0;
 
 
 

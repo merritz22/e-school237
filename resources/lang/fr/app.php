@@ -1,5 +1,12 @@
 <?php
 
+use App\Models\AppSettings;
+
+// Remplacer les 3 requêtes en haut par :
+$dailyLimit    = AppSettings::where('code', 'DAILY_DOWNLOAD_LIMIT')->value('value') ?? '?';
+$monthlyLimitP1 = AppSettings::where('code', 'MONTHLY_DOWNLOAD_LIMIT_P1')->value('value') ?? '?';
+$monthlyLimitP2 = AppSettings::where('code', 'MONTHLY_DOWNLOAD_LIMIT_P2')->value('value') ?? '?';
+
 return [
     'nav' => [
         'home'          => 'Accueil',
@@ -165,6 +172,7 @@ return [
         'empty'     => 'Aucun sujet trouvé.',
         'show' => [
             'download'      => 'Télécharger',
+            'loading'      => 'Chargement...',
             'related_title' => 'Sujets similaires',
             'protected'      => 'Document protégé',
             'preview'        => 'Aperçu',
@@ -189,6 +197,7 @@ return [
         'empty'     => 'Aucun support trouvé.',
         'show' => [
             'download'      => 'Télécharger',
+            'loading'      => 'Chargement...',
             'related_title' => 'Supports similaires',
         ],
     ],
@@ -209,6 +218,7 @@ return [
         'classic' => [
             'name'    => 'Classique',
             'tagline' => 'Apprends mieux et progresse plus vite.',
+            'f0'      => 'Bénéficiez de '. $monthlyLimitP1 .' téléchargements mensuel, limité à '. $dailyLimit .' par jour',
             'f1'      => 'Accès illimité aux sujets séquentiels et corrigés',
             'f2'      => 'Téléchargement des fiches de TD',
             'f3'      => 'Annales et épreuves régionales',
@@ -218,6 +228,7 @@ return [
             'name'    => 'Premium',
             'tagline' => 'Recommandé pour les élèves en classes d\'examen.',
             'badge'   => 'Le plus choisi',
+            'f0'      => 'Bénéficiez de '. $monthlyLimitP2 .' téléchargements mensuel, limité à '. $dailyLimit .' par jour',
             'f1'      => 'Accès illimité aux sujets et corrigés',
             'f2'      => 'Épreuves d\'Afrique francophone',
             'f3'      => 'Fiches TD et corrigés détaillés',
@@ -229,6 +240,7 @@ return [
         'excellence' => [
             'name'    => 'Excellence',
             'tagline' => 'Une bibliothèque complète de révision.',
+            'f0'      => 'Bénéficiez de téléchargements illimité, limité à '. $dailyLimit .' par jour',
             'f1'      => 'Tout le contenu de l\'abonnement Premium',
             'f2'      => 'Supports pédagogiques complets',
             'f3'      => 'Annales des matières',
@@ -287,6 +299,7 @@ return [
         'search_result' => 'résultat(s)',
     ],
     'profile' => [
+        'autosave_hint' => 'Modifications enregistrées automatiquement',
         'incomplete_warning'  => 'Votre profil est incomplet. Veuillez renseigner les champs obligatoires (*) pour profiter de toutes les fonctionnalités.',
         'email_unverified'    => 'Email non vérifié',
         'email_verified'      => 'Email vérifié',
@@ -336,5 +349,48 @@ return [
             'whatsapp_admin'     => 'Ouvrir une session WhatsApp avec l\'administrateur ?',
             'suggest_developers' => 'Laisser une suggestion aux développeurs ?',
         ],
+    ],
+    'download_limit' => [
+        'free_download_limit' =>[
+            'title'       => 'Limite gratuite atteinte',
+            'description' => 'Vous avez atteint votre limite de :limit téléchargements gratuits par jour. Abonnez-vous pour bénéficier de plus de téléchargements.',
+        ],
+        'no_subscription' => [
+            'title'       => 'Aucun abonnement actif',
+            'description' => 'Vous devez souscrire à un abonnement pour télécharger des ressources.',
+        ],
+        'wrong_level' => [
+            'title'       => 'Niveau non couvert',
+            'description' => 'Votre abonnement actif ne couvre pas le niveau de cette ressource. Contactez l\'administrateur pour faire évoluer votre abonnement.',
+        ],
+        'monthly' => [
+            'title'       => 'Limite mensuelle atteinte',
+            'description' => 'Vous avez atteint votre quota mensuel de :count téléchargements. Votre compteur sera réinitialisé le 1er du mois prochain.',
+        ],
+        'daily' => [
+            'title'       => 'Limite journalière atteinte',
+            'description' => 'Vous avez atteint votre quota de :limit téléchargements pour aujourd\'hui. Revenez demain pour continuer.',
+        ],
+        'stats' => [
+            'today'        => 'Aujourd\'hui',
+            'this_month'   => 'Ce mois',
+            'downloads'    => 'téléchargements',
+            'downloads_of' => '/ :limit téléchargements',
+        ],
+        'actions' => [
+            'title'         => 'Que souhaitez-vous faire ?',
+            'subscribe'     => 'Voir les abonnements',
+            'contact_admin' => 'Contacter l\'administrateur',
+            'back'          => 'Retour',
+        ],
+        'info' => [
+            'daily_reset'   => 'Votre limite sera réinitialisée automatiquement à <strong>minuit</strong> ce soir.',
+            'monthly_reset' => 'Votre quota mensuel se réinitialise le <strong>1<sup>er</sup> :date</strong>.',
+        ],
+        'footer' => [
+            'help' => 'Besoin d\'aide ? Écrivez-nous à',
+        ],
+        'contact_subject' => 'Demande d\'évolution d\'abonnement',
+        'contact_body'    => 'Bonjour,\n\nJe souhaite faire évoluer mon abonnement afin de bénéficier de téléchargements supplémentaires.\n\nMerci.',
     ],
 ];

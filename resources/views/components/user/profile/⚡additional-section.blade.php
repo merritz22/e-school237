@@ -28,6 +28,9 @@ new class extends Component
     #[Validate('required|exists:levels,id', message: 'Veuillez sélectionner votre classe.')]
     public $current_level_id = null;
 
+    #[Validate('required|regex:/^6[0-9]{8}$/', message: 'Numéro camerounais invalide (ex: 6XXXXXXXX).')]
+    public string $whatsapp = '';
+
     public bool $needs_special_support = false;
 
     public function mount(): void
@@ -43,6 +46,7 @@ new class extends Component
             $this->profession_id         = $info->profession_id;
             $this->current_level_id      = $info->current_level_id;
             $this->needs_special_support = $info->needs_special_support;
+            $this->whatsapp              = $this->user->whatsapp ?? '';
         }
     }
 
@@ -61,8 +65,16 @@ new class extends Component
             && !empty($this->birth_date)
             && !empty($this->gender)
             && !empty($this->profession_id)
-            && !empty($this->current_level_id);
+            && !empty($this->current_level_id)
+            && !empty($this->whatsapp);
 
+        // Sauvegarder whatsapp directement sur l'utilisateur
+
+        
+        $this->user->update([
+            'whatsapp' => $this->whatsapp,
+            ]);
+            
         $this->user->information()->updateOrCreate(
             ['user_id' => $this->user->id],
             [
@@ -152,7 +164,7 @@ new class extends Component
                 <span class="absolute -top-1 -right-1 z-10 w-3 h-3 rounded-full
                     bg-red-500 animate-pulse"></span>
             @endif
-            <flux:select wire:model.live="current_level_id"
+            <flux:select wire:model="current_level_id"
                          label="{{ __('app.profile.fields.current_level') }} *">
                 <option value="">{{ __('app.profile.fields.level_placeholder') }}</option>
                 @foreach($allLevels as $level)
@@ -162,6 +174,18 @@ new class extends Component
             <flux:error name="current_level_id" />
         </div>
 
+        {{-- whatsapp contact --}}
+        <div class="relative">
+            @if(empty($whatsapp))
+                <span class="absolute -top-1 -right-1 z-10 w-3 h-3 rounded-full
+                    bg-red-500 animate-pulse"></span>
+            @endif
+            <flux:input wire:model="whatsapp"
+                        label="WhatsApp *"
+                        placeholder="6XXXXXXXX"
+                        icon="chat-bubble-left-ellipsis" />
+            <flux:error name="whatsapp" />
+        </div>
     </div>
 
     {{-- Suivi particulier --}}

@@ -156,9 +156,7 @@
                             <li class="leading-relaxed">
                                 Payer
                                 <flux:badge color="yellow" class="mx-1">{{ number_format($price) }} XAF</flux:badge>
-                                pour la classe
-                                <flux:badge color="zinc" class="mx-1">{{ $level->name }}</flux:badge>
-                                sur l'un des comptes ci-dessous.
+                                 sur l'un des comptes ci-dessous.
                             </li>
                             <li class="leading-relaxed">
                                 Une fois votre paiement effectué, veuillez patienter pendant l'activation.

@@ -65,6 +65,16 @@ new class extends Component
             $this->addError('level', 'Abonnement déjà existant pour ce niveau.');
             return;
         }
+        
+        $type = '';
+
+        if ($this->price == 3000.0) {
+            $type = 'CLASSIC';
+        } elseif ($this->price == 6000.0) {
+            $type = 'PREMIUM';
+        } elseif ($this->price == 8000.0) {
+            $type = 'ADVANCED';
+        }
 
         $subscription = Subscription::create([
             'user_id' => $user->id,
@@ -75,6 +85,7 @@ new class extends Component
             'status' => 'pending',
             'amount' => $this->price,
             'currency' => $this->phone,
+            'type' => $type,
         ]);
 
         // Création de la notification

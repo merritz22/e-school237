@@ -108,10 +108,6 @@ class EvaluationSubjectController extends Controller
      */
     public function download(EvaluationSubject $subject)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Vous devez être connecté pour télécharger.');
-        }
-
         if (!Storage::disk('private')->exists($subject->file_path)) {
             abort(404, 'Fichier non trouvé.');
         }

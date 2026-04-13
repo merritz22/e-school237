@@ -55,39 +55,109 @@ new class extends Component
 
     <flux:card class="p-6 space-y-6">
 
-        <livewire:user.profile.avatar-section :user="$user" />
+        {{-- Avatar --}}
+        <livewire:user.profile.avatar-section :user="$user" lazy>
+            <x-slot:placeholder>
+                <div class="flex flex-col sm:flex-row items-center gap-6 animate-pulse">
+                    <div class="w-24 h-24 rounded-full bg-zinc-200 dark:bg-zinc-700 shrink-0"></div>
+                    <div class="space-y-3 flex-1">
+                        <div class="h-5 w-40 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="h-4 w-56 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="h-6 w-20 rounded-full bg-zinc-200 dark:bg-zinc-700"></div>
+                    </div>
+                </div>
+            </x-slot:placeholder>
+        </livewire:user.profile.avatar-section>
 
         <flux:separator />
 
         <div class="space-y-10">
-            <livewire:user.profile.personal-section    :user="$user" />
-            <flux:separator />
-            <livewire:user.profile.additional-section  :user="$user" />
-            <flux:separator />
-            <livewire:user.profile.contact-section     :user="$user" />
-            <flux:separator />
-            <livewire:user.profile.subjects-section    :user="$user" />
-            <flux:separator />
-            <livewire:user.profile.filter-section      :user="$user" />
-            <flux:separator />
-            <livewire:user.profile.social-section      :user="$user" />
 
-            {{-- ✅ Bouton qui appelle saveAll() — vraie action Livewire --}}
-            <div class="flex justify-end pt-2">
-                <flux:button
-                    wire:click="saveAll"
-                    variant="primary"
-                    icon="check"
-                    wire:loading.attr="disabled"
-                    wire:target="saveAll"
-                >
-                    <span wire:loading.remove wire:target="saveAll">
-                        {{ __('app.profile.save') }}
-                    </span>
-                    <span wire:loading wire:target="saveAll" class="flex items-center gap-2">
-                        <flux:icon name="arrow-path" class="w-4 h-4 animate-spin" />
-                        {{ __('app.profile.saving') }}
-                    </span>
+            <livewire:user.profile.personal-section :user="$user" lazy>
+                <x-slot:placeholder>
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 w-36 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @for($i = 0; $i < 4; $i++)
+                                <div class="space-y-1.5">
+                                    <div class="h-3 w-24 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                                    <div class="h-10 w-full rounded-lg bg-zinc-200 dark:bg-zinc-700"></div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                </x-slot:placeholder>
+            </livewire:user.profile.personal-section>
+
+            <flux:separator />
+
+            <livewire:user.profile.additional-section :user="$user" lazy>
+                <x-slot:placeholder>
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 w-36 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @for($i = 0; $i < 6; $i++)
+                                <div class="space-y-1.5">
+                                    <div class="h-3 w-24 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                                    <div class="h-10 w-full rounded-lg bg-zinc-200 dark:bg-zinc-700"></div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                </x-slot:placeholder>
+            </livewire:user.profile.additional-section>
+
+            <flux:separator />
+
+            <livewire:user.profile.contact-section :user="$user" lazy>
+                <x-slot:placeholder>
+                    <div class="space-y-3 animate-pulse">
+                        <div class="h-4 w-32 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="h-14 rounded-lg bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="h-14 rounded-lg bg-zinc-200 dark:bg-zinc-700"></div>
+                    </div>
+                </x-slot:placeholder>
+            </livewire:user.profile.contact-section>
+
+            <flux:separator />
+
+            <livewire:user.profile.subjects-section :user="$user" lazy>
+                <x-slot:placeholder>
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 w-36 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @for($i = 0; $i < 8; $i++)
+                                <div class="space-y-1.5">
+                                    <div class="h-3 w-24 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                                    <div class="h-10 w-full rounded-lg bg-zinc-200 dark:bg-zinc-700"></div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                </x-slot:placeholder>
+            </livewire:user.profile.subjects-section>
+
+            <flux:separator />
+
+            <livewire:user.profile.social-section :user="$user" lazy>
+                <x-slot:placeholder>
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 w-36 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @for($i = 0; $i < 8; $i++)
+                                <div class="space-y-1.5">
+                                    <div class="h-3 w-24 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                                    <div class="h-10 w-full rounded-lg bg-zinc-200 dark:bg-zinc-700"></div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                </x-slot:placeholder>
+            </livewire:user.profile.social-section>
+
+            <div class="flex justify-end items-center gap-3 pt-2">
+                <flux:button wire:click="saveAll" variant="primary" icon="check" size="sm">
+                    {{ __('app.profile.save') }}
                 </flux:button>
             </div>
         </div>

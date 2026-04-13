@@ -105,13 +105,41 @@
                 </div>
 
                 {{-- Bouton téléchargement --}}
-                <flux:button
+                <flux:button 
                     icon="arrow-down-tray"
-                    href="{{ route('subjects.download', $subject) }}"
                     variant="primary"
                     class="shrink-0"
+                    x-data="{ loading: false }"
+                    x-on:click="
+                        loading = true;
+                        fetch('{{ route('subjects.download', $subject) }}', {
+                            headers: { 
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                            },
+                            credentials: 'same-origin'  // envoie les cookies de session
+                        })
+                        .then(response => {
+                            // Vérifier que c'est bien un fichier et non une page HTML
+                            const contentType = response.headers.get('Content-Type') || '';
+                            if (!response.ok || contentType.includes('text/html')) {
+                                window.location.href = response.url;
+                                return; // ← stopper ici
+                            }
+                            return response.blob().then(blob => {
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = '{{ $subject->file_name }}';
+                                a.click();
+                                URL.revokeObjectURL(url);
+                            });
+                        })
+                        .finally(() => loading = false)
+                    "
                 >
-                    {{ __('app.subjects.show.download') }}
+                    <span x-show="!loading">{{ __('app.subjects.show.download') }}</span>
+                    <span x-show="loading">{{ __('app.subjects.show.loading') }}</span>
                 </flux:button>
             </div>
 

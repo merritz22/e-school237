@@ -304,5 +304,20 @@ php artisan db:seed --class=LevelSubjectSeeder
 
 php artisan notification:insert SUBSCRIPTION_VALIDATED "Abonnement validé" "Votre (vos) demande(s) d'abonnement à été validé par contact@e-school237.com" "info"
 
-
+## Envoie des mails de demande de vérificaton au utilisateurs qui ne l'ont pas encore fait
 php artisan app:send-verification-reminders
+
+## Gestions des mises à jour / corrections de bugs entre différentes branches
+git checkout master
+git checkout -b hotfix/login-crash
+
+# correction du bug
+
+git add .
+git commit -m "Hotfix: correction crash login"
+git push origin hotfix/login-crash
+
+# merge
+git checkout master
+git merge hotfix/login-crash
+git push origin master

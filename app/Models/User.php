@@ -278,6 +278,7 @@ class User extends Authenticatable implements MustVerifyEmail
             && !empty($info->birth_date)
             && !empty($info->gender)
             && !empty($info->profession_id)
+            && !empty($info->whatsapp)
             && !empty($info->current_level_id);
     }
 

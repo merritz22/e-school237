@@ -16,6 +16,7 @@ class Subscription extends Model
         'status',
         'amount',
         'currency',
+        'type'
     ];
 
     protected $casts = [

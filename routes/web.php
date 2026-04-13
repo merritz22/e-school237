@@ -218,6 +218,11 @@ Route::prefix('articles')->group(function () {
     })->name('articles.show');
 });
 
+
+
+// Page affichée quand un téléchargement est bloqué
+Route::view('/download/limit', 'pages.downloads.limit')->name('download.limit')->middleware('auth');
+
 // Routes publiques (hors admin)
 Route::prefix('resources')->group(function () {
     // Affichage public
@@ -231,7 +236,7 @@ Route::prefix('resources')->group(function () {
     
     // Téléchargement
     Route::get('/{resource}/download', [EducationalResourceController::class, 'download'])
-         ->name('resources.download');
+         ->name('resources.download')->middleware('download');
 });
 
 // Sujets d'évaluation
@@ -242,12 +247,14 @@ Route::prefix('subjects')->group(function () {
             'subject' => $subject
         ]);
     })->name('subjects.show')->middleware('subject_subscription');
-    Route::get('/download/{subject}', [EvaluationSubjectController::class, 'download'])->name('subjects.download')->middleware('auth');
+    Route::get('/download/{subject}', [EvaluationSubjectController::class, 'download'])->name('subjects.download')
+        ->middleware('download');
 });
 
 // Gestion des souscriptions
 Route::view('/subscription', 'pages.subscriptions.index')->name('subscriptions.index')->middleware('auth');
 Route::view('/subscription/create', 'pages.subscriptions.store')->name('subscriptions.store')->middleware('auth');
+
 
 
 // Blog/Forum

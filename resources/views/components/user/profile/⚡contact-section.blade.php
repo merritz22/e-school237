@@ -10,43 +10,18 @@ new class extends Component
     public User $user;
     public ?string $adminWhatsapp = null;
 
-    #[Validate('nullable|regex:/^6[0-9]{8}$/', message: 'Numéro camerounais invalide (ex: 6XXXXXXXX).')]
-    public string $whatsapp = '';
-
     public function mount(): void
     {
-        $this->whatsapp = $this->user->whatsapp ?? '';
-
         // Récupérer le whatsapp de l'admin
         $this->adminWhatsapp = User::where('role', 'admin')
             ->where('email', 'contact@e-school237.com')
             ->value('whatsapp');
     }
-
-    #[On('save-profile')]
-    public function save(): void
-    {
-        $this->validate();
-        $this->user->update(['whatsapp' => $this->whatsapp]);
-    }
 };
 ?>
 
 <div>
-    <div class="flex items-center gap-2 font-medium text-sm">
-        <flux:icon name="phone" class="w-4 h-4 text-zinc-400" />
-        {{ __('app.profile.sections.contact') }}
-    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        {{-- Champ WhatsApp --}}
-        <div>
-            <flux:input wire:model="whatsapp"
-                        label="WhatsApp"
-                        placeholder="6XX XXX XXX"
-                        icon="chat-bubble-left-ellipsis" />
-            <flux:error name="whatsapp" />
-        </div>
 
         {{-- Liens contact --}}
         <div class="flex flex-col gap-3 justify-center">

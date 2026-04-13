@@ -89,11 +89,24 @@ class CanDownload
             ->where('status', 'active')
             ->first();
 
+            // Un utilisateur doit pouvoir télécharger du contenu tant qu'il est de cette classe...
         if (!$subscription) {
             // L'utilisateur a un abonnement actif, mais pas pour ce niveau
-            return redirect()->route('download.limit', [
-                'reason' => 'wrong_level',
-            ]);
+            // Limite gratuite : 5 téléchargements par jour
+            $freeLimit = (int) AppSettings::where('code', 'FREE_DOWNLOAD_LIMIT')->value('value') ?: 5;
+
+            $freeDownloads = DownloadLog::where('user_id', $user->id)
+                ->whereDate('downloaded_at', Carbon::today())
+                ->count();
+
+            if ($freeDownloads >= $freeLimit) {
+                return redirect()->route('download.limit', [
+                    'reason' => 'free_download_limit',
+                ]);
+            }
+
+            // Sous la limite gratuite → on laisse passer, pas besoin de vérifier le niveau
+            return $next($request);
         }
 
         // Vérifier la limite mensuelle (sauf pour ADVANCED)

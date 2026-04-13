@@ -48,7 +48,7 @@
             <div class="flex items-center gap-3 ml-auto">
 
                 {{-- WhatsApp --}}
-                <a href="https://wa.me/?text={{ urlencode($article->title . ' - ' . url()->current()) }}"
+                <a href="https://wa.me/?text={{ urlencode($article->title . ' - ' . route('articles.show', $article->slug)) }}"
                    target="_blank"
                    title="Partager sur WhatsApp"
                    class="hover:opacity-80 transition-opacity">
@@ -60,7 +60,7 @@
                 </a>
 
                 {{-- LinkedIn --}}
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}"
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(route('articles.show', $article->slug)) }}"
                    target="_blank"
                    title="Partager sur LinkedIn"
                    class="hover:opacity-80 transition-opacity">
@@ -74,8 +74,10 @@
                     icon="link"
                     variant="ghost"
                     size="sm"
-                    onclick="navigator.clipboard.writeText('{{ url()->current() }}');
-                             this.innerText='{{ __('app.articles.show.link_copied') }}';"
+                    onclick="
+                        navigator.clipboard.writeText('{{ route('articles.show', $article->slug) }}');
+                        alert('{{ __('app.articles.show.link_copied') }}');
+                    "
                 >
                     {{ __('app.articles.show.copy_link') }}
                 </flux:button>

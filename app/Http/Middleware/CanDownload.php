@@ -25,6 +25,11 @@ class CanDownload
 
         $user = Auth::user();
 
+
+        if ($user->role == 'admin') {
+            return $next($request);
+        }
+
         
         // Limite journalière globale (tous abonnements confondus)
         $dailyLimit = (int) AppSettings::where('code', 'DAILY_DOWNLOAD_LIMIT')->value('value');

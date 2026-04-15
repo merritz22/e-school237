@@ -116,6 +116,10 @@
                             <span>{{ $article->author->name }}</span>
                         </div>
                         <div class="flex items-center gap-1">
+                            <flux:icon name="chat-bubble-left-right" class="w-4 h-4" />
+                            <span>{{ number_format($article->comments()->count()) }}
+                        </div>
+                        <div class="flex items-center gap-1">
                             <flux:icon name="eye" class="w-4 h-4" />
                             <span>{{ number_format($article->views_count) }}
                                 {{ __('app.articles.views') }}</span>

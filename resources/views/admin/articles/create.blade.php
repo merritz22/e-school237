@@ -117,18 +117,103 @@
 
                 <!-- Content -->
                 <div>
-                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-                        Contenu de l'article <span class="text-red-500">*</span>
-                    </label>
-                    <textarea id="content" 
-                              name="content" 
-                              rows="20"
-                              required
-                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('content') border-red-500 @enderror"
-                              placeholder="Rédigez le contenu de votre article...">{{ old('content') }}</textarea>
-                    @error('content')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <!-- Barre supérieure : label + import -->
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Contenu de l'article <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="file" id="html-file-import" accept=".html" class="hidden">
+                            <button type="button" onclick="document.getElementById('html-file-import').click()"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                </svg>
+                                Importer .html
+                            </button>
+                            <span id="import-filename" class="text-xs text-gray-400 italic"></span>
+                        </div>
+                    </div>
+
+                    <!-- Onglets -->
+                    <div class="border border-gray-300 rounded-lg overflow-hidden">
+                        
+                        <!-- Tab Headers -->
+                        <div class="flex border-b border-gray-300 bg-gray-50">
+                            <button type="button" id="tab-visual"
+                                    onclick="switchTab('visual')"
+                                    class="tab-btn active-tab px-4 py-2.5 text-sm font-medium flex items-center gap-1.5 border-b-2 border-blue-500 text-blue-600">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Visuel
+                            </button>
+                            <button type="button" id="tab-html"
+                                    onclick="switchTab('html')"
+                                    class="tab-btn px-4 py-2.5 text-sm font-medium flex items-center gap-1.5 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                </svg>
+                                HTML source
+                            </button>
+                            <button type="button" id="tab-preview"
+                                    onclick="switchTab('preview')"
+                                    class="tab-btn px-4 py-2.5 text-sm font-medium flex items-center gap-1.5 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                Aperçu
+                            </button>
+
+                            <!-- Indicateur de synchro -->
+                            <div class="ml-auto flex items-center pr-3">
+                                <span id="sync-indicator" class="text-xs text-gray-400 italic hidden">
+                                    ⟳ synchronisation...
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Onglet 1 : Éditeur visuel Summernote -->
+                        <div id="panel-visual" class="tab-panel">
+                            <textarea name="content" id="content" rows="20" required
+                                    class="@error('content') border-red-500 @enderror hidden"></textarea>
+                        </div>
+
+                        <!-- Onglet 2 : Éditeur HTML CodeMirror -->
+                        <div id="panel-html" class="tab-panel hidden">
+                            <div class="flex items-center justify-between px-3 py-2 bg-gray-900 border-b border-gray-700">
+                                <span class="text-xs text-gray-400 font-mono">HTML / CSS</span>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="formatHtml()"
+                                            class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 transition">
+                                        ✨ Formater
+                                    </button>
+                                    <button type="button" onclick="syncFromHtmlEditor()"
+                                            class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 transition">
+                                        ↺ Sync visuel
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="codemirror-wrapper"></div>
+                        </div>
+
+                        <!-- Onglet 3 : Aperçu iframe -->
+                        <div id="panel-preview" class="tab-panel hidden">
+                            <div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
+                                <span class="text-xs text-gray-500">Rendu final (styles inclus)</span>
+                                <button type="button" onclick="refreshPreview()"
+                                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                                    ↻ Actualiser
+                                </button>
+                            </div>
+                            <iframe id="preview-iframe"
+                                    class="w-full bg-white"
+                                    style="height: 600px; border: none;">
+                            </iframe>
+                        </div>
+                    </div>
+
+                    @error('content') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- SEO Section -->
@@ -252,7 +337,7 @@
                 <!-- Actions -->
                 <div class="bg-white border border-gray-200 rounded-lg p-6">
                     <div class="flex flex-col space-y-3">
-                        <button type="submit" 
+                        {{-- <button type="submit" 
                                 name="action" 
                                 value="save"
                                 class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
@@ -260,7 +345,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
                             Enregistrer l'article
-                        </button>
+                        </button> --}}
                         
                         <button type="submit" 
                                 name="action" 
@@ -269,7 +354,7 @@
                             <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
-                            Enregistrer et continuer l'édition
+                            Enregistrer
                         </button>
                         
                         <a href="{{ route('admin.articles.index') }}" 
@@ -285,139 +370,349 @@
 
 @push('styles')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" rel="stylesheet">
+<style>
+    /* Summernote */
+    .note-editor.note-frame {
+        border: none !important;
+        border-radius: 0 !important;
+    }
+    .note-editor.note-frame .note-statusbar {
+        background-color: #f3f4f6 !important;
+        border-top: 1px solid #d1d5db !important;
+    }
+    .note-toolbar { border-bottom: 1px solid #d1d5db !important; }
+
+    /* Onglets */
+    .tab-btn { transition: all 0.15s; }
+    .active-tab { border-bottom-color: #3b82f6 !important; color: #2563eb !important; background: white; }
+
+    /* CodeMirror */
+    .CodeMirror {
+        height: 550px !important;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+        font-size: 13px !important;
+        line-height: 1.7 !important;
+    }
+    .CodeMirror-scroll { padding-bottom: 20px; }
+</style>
 @endpush
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
-<script>
-$(document).ready(function() {
-    // Initialize Summernote editor
-    $('#content').summernote({
-        height: 400,
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'underline', 'clear']],
-            ['fontname', ['fontname']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']]
-        ],
-        placeholder: 'Rédigez le contenu de votre article...',
-        callbacks: {
-            onImageUpload: function(files) {
-                uploadImage(files[0]);
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ═══════════════════════════════════════════════
+        // ÉTAT GLOBAL
+        // ═══════════════════════════════════════════════
+        let htmlEditor = null;   // instance CodeMirror
+        let currentTab = 'visual';
+        let syncTimeout = null;
+
+        // ═══════════════════════════════════════════════
+        // 1. SUMMERNOTE
+        // ═══════════════════════════════════════════════
+        $('#content').summernote({
+            height: 500,
+            toolbar: [
+                ['style',    ['style']],
+                ['font',     ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['color',    ['color']],
+                ['para',     ['ul', 'ol', 'paragraph']],
+                ['table',    ['table']],
+                ['insert',   ['link', 'picture', 'video']],
+                ['view',     ['codeview', 'help']]
+            ],
+            callbacks: {
+                onChange: function (contents) {
+                    updateWordCount(contents);
+                }
             }
-        }
-    });
-
-    // Auto-generate slug from title
-    $('#title').on('input', function() {
-        const title = $(this).val();
-        // You could add slug generation logic here if needed
-    });
-
-    // Image upload preview
-    $('#featured_image').on('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                $('#preview-img').attr('src', e.target.result);
-                $('#image-preview').removeClass('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Remove image
-    $('#remove-image').on('click', function() {
-        $('#featured_image').val('');
-        $('#image-preview').addClass('hidden');
-        $('#preview-img').attr('src', '');
-    });
-
-    // Form submission handling
-    $('form').on('submit', function(e) {
-        const action = e.originalEvent.submitter.value;
-        
-        if (action === 'save_and_continue') {
-            // Add a hidden input to know we want to redirect to edit
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'redirect_to_edit',
-                value: '1'
-            }).appendTo(this);
-        }
-    });
-
-    // Auto-save draft functionality
-    let autoSaveTimeout;
-    $('#title, #content, #excerpt').on('input', function() {
-        clearTimeout(autoSaveTimeout);
-        autoSaveTimeout = setTimeout(function() {
-            autoSaveDraft();
-        }, 30000); // Auto-save after 30 seconds of inactivity
-    });
-});
-
-function uploadImage(file) {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
-    $.ajax({
-        url: ' route("admin.upload.image") ',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            $('#content').summernote('insertImage', response.url);
-        },
-        error: function() {
-            alert('Erreur lors du téléchargement de l\'image');
-        }
-    });
-}
-
-function autoSaveDraft() {
-    const formData = new FormData($('form')[0]);
-    formData.append('auto_save', '1');
-    
-    $.ajax({
-        url: ' route("admin.articles.auto-save") }}',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            // Show success indicator
-            showAutoSaveIndicator('Brouillon sauvegardé automatiquement');
-        },
-        error: function() {
-            // Show error indicator
-            showAutoSaveIndicator('Erreur de sauvegarde automatique', 'error');
-        }
-    });
-}
-
-function showAutoSaveIndicator(message, type = 'success') {
-    const indicator = $(`
-        <div class="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white text-sm ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}">
-            ${message}
-        </div>
-    `);
-    
-    $('body').append(indicator);
-    
-    setTimeout(function() {
-        indicator.fadeOut(300, function() {
-            $(this).remove();
         });
-    }, 3000);
-}
-</script>
+
+        // ═══════════════════════════════════════════════
+        // 2. CODEMIRROR
+        // ═══════════════════════════════════════════════
+        htmlEditor = CodeMirror(document.getElementById('codemirror-wrapper'), {
+            value: $('#content').summernote('code') || '',
+            mode: 'htmlmixed',
+            theme: 'dracula',
+            lineNumbers: true,
+            lineWrapping: true,
+            autoCloseTags: true,
+            foldGutter: true,
+            tabSize: 2,
+            indentWithTabs: false,
+            extraKeys: {
+                'Ctrl-S': function () { document.getElementById('article-form').requestSubmit(); },
+                'Ctrl-Space': 'autocomplete'
+            }
+        });
+
+        // Sync CodeMirror → textarea (pour le submit)
+        htmlEditor.on('change', function () {
+            showSyncIndicator();
+        });
+
+        // ═══════════════════════════════════════════════
+        // 3. GESTION DES ONGLETS
+        // ═══════════════════════════════════════════════
+        window.switchTab = function (tab) {
+            // Quitter l'onglet courant : sync vers CodeMirror si on quitte le visuel
+            if (currentTab === 'visual' && tab !== 'visual') {
+                const visualHtml = $('#content').summernote('code');
+                htmlEditor.setValue(visualHtml);
+            }
+            // Quitter HTML : sync vers Summernote
+            if (currentTab === 'html' && tab === 'visual') {
+                syncFromHtmlEditor();
+            }
+            // Passer en aperçu : rafraîchir
+            if (tab === 'preview') {
+                refreshPreview();
+            }
+
+            // Afficher/masquer les panneaux
+            ['visual', 'html', 'preview'].forEach(t => {
+                document.getElementById('panel-' + t).classList.add('hidden');
+                const btn = document.getElementById('tab-' + t);
+                btn.classList.remove('active-tab');
+                btn.style.borderBottomColor = 'transparent';
+                btn.style.color = '';
+            });
+
+            document.getElementById('panel-' + tab).classList.remove('hidden');
+            document.getElementById('tab-' + tab).classList.add('active-tab');
+
+            if (tab === 'html') htmlEditor.refresh();
+
+            currentTab = tab;
+        };
+
+        // Sync HTML editor → Summernote
+        window.syncFromHtmlEditor = function () {
+            const code = htmlEditor.getValue();
+            // Extraire le body si c'est un HTML complet
+            const bodyMatch = code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const bodyContent = bodyMatch ? bodyMatch[1] : code;
+            $('#content').summernote('code', bodyContent);
+            showSyncIndicator('✔ Synchronisé');
+        };
+
+        // Aperçu dans l'iframe
+        window.refreshPreview = function () {
+            const rawHtml = currentTab === 'html'
+                ? htmlEditor.getValue()
+                : `<!DOCTYPE html><html><head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width,initial-scale=1">
+                </head><body>${$('#content').summernote('code')}</body></html>`;
+
+            const iframe = document.getElementById('preview-iframe');
+
+            // Révoquer l'ancien blob URL si existant
+            if (iframe.dataset.blobUrl) {
+                URL.revokeObjectURL(iframe.dataset.blobUrl);
+            }
+
+            const blob = new Blob([rawHtml], { type: 'text/html; charset=utf-8' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            iframe.dataset.blobUrl = blobUrl;
+            iframe.src = blobUrl;
+        };
+
+        // Formater le HTML (indentation simple)
+        window.formatHtml = function () {
+            const raw = htmlEditor.getValue();
+            try {
+                // Formatage basique par regex (pas de dépendance externe)
+                let depth = 0;
+                const formatted = raw
+                    .replace(/>\s*</g, '>\n<')
+                    .split('\n')
+                    .map(line => {
+                        line = line.trim();
+                        if (!line) return '';
+                        if (line.match(/^<\/[^>]+>/)) depth = Math.max(0, depth - 1);
+                        const indent = '  '.repeat(depth);
+                        if (line.match(/^<[^/!][^>]*[^/]>$/) && !line.match(/<.*<\//)) depth++;
+                        return indent + line;
+                    })
+                    .filter(l => l !== '')
+                    .join('\n');
+                htmlEditor.setValue(formatted);
+            } catch (e) {
+                console.warn('Formatage impossible', e);
+            }
+        };
+
+        function showSyncIndicator(msg) {
+            const el = document.getElementById('sync-indicator');
+            el.textContent = msg || '⟳ synchronisation...';
+            el.classList.remove('hidden');
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(() => el.classList.add('hidden'), 1500);
+        }
+
+        // ═══════════════════════════════════════════════
+        // 4. IMPORT FICHIER HTML
+        // ═══════════════════════════════════════════════
+        document.getElementById('html-file-import').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const fullHtml = event.target.result;
+
+                // 1. CodeMirror reçoit le HTML complet (avec <style>)
+                htmlEditor.setValue(fullHtml);
+
+                // 2. Summernote reçoit uniquement le <body>
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(fullHtml, 'text/html');
+                $('#content').summernote('code', doc.body.innerHTML);
+
+                // 3. Basculer vers l'aperçu pour voir le résultat
+                switchTab('preview');
+
+                // 4. Afficher le nom du fichier
+                document.getElementById('import-filename').textContent = '✔ ' + file.name;
+                updateWordCount(doc.body.innerHTML);
+
+                e.target.value = '';
+            };
+            reader.readAsText(file, 'UTF-8');
+        });
+
+        // ═══════════════════════════════════════════════
+        // 5. SYNC AVANT SUBMIT (important !)
+        // ═══════════════════════════════════════════════
+        const articleForm = document.getElementById('article-form');
+        if (articleForm) {
+            articleForm.addEventListener('submit', function () {
+                if (currentTab === 'html') {
+                    $('#content').summernote('destroy');
+                    document.getElementById('content').value = htmlEditor.getValue();
+                }
+            });
+        }
+
+        // ═══════════════════════════════════════════════
+        // 6. UTILITAIRES (inchangés)
+        // ═══════════════════════════════════════════════
+        function updateWordCount(content) {
+            const text = $('<div>').html(content).text();
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            const readingTime = Math.max(1, Math.ceil(words / 200));
+
+            const wcEl = document.getElementById('word-count');
+            const rtEl = document.getElementById('reading-time');
+            if (wcEl) wcEl.textContent = words;
+            if (rtEl) rtEl.textContent = readingTime + ' min';
+        }
+
+        document.getElementById('title').addEventListener('input', function () {
+            document.getElementById('slug').value = this.value.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+        });
+
+        // Gestion modals (inchangée)
+        window.showModal = function (id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+        window.hideModal = function (id) {
+            document.getElementById(id).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+        window.confirmDelete    = () => showModal('delete-modal');
+        window.duplicateArticle = () => showModal('duplicate-modal');
+        window.publishArticle   = () => showModal('publish-modal');
+        window.unpublishArticle = () => showModal('unpublish-modal');
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape')
+                document.querySelectorAll('[id$="-modal"]').forEach(m => hideModal(m.id));
+        });
+        document.querySelectorAll('[id$="-modal"]').forEach(m => {
+            m.addEventListener('click', e => { if (e.target === m) hideModal(m.id); });
+        });
+
+        // Image upload (inchangé)
+        const featuredImageInput = document.getElementById('featured_image');
+        const imageDropzone      = document.getElementById('image-dropzone');
+        const imagePreview       = document.getElementById('image-preview');
+        const previewImg         = document.getElementById('preview-img');
+
+        if (featuredImageInput) {
+            featuredImageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    if (previewImg) previewImg.src = e.target.result;
+                    if (imagePreview) imagePreview.classList.remove('hidden');
+                    if (imageDropzone) imageDropzone.classList.add('border-green-400', 'bg-green-50');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        if (imageDropzone) {
+            imageDropzone.addEventListener('click', () => featuredImageInput?.click());
+
+            imageDropzone.addEventListener('dragover', e => {
+                e.preventDefault();
+                imageDropzone.classList.add('border-blue-400', 'bg-blue-50');
+            });
+
+            imageDropzone.addEventListener('dragleave', e => {
+                if (!imageDropzone.contains(e.relatedTarget))
+                    imageDropzone.classList.remove('border-blue-400', 'bg-blue-50');
+            });
+
+            imageDropzone.addEventListener('drop', e => {
+                e.preventDefault();
+                imageDropzone.classList.remove('border-blue-400', 'bg-blue-50');
+                const files = e.dataTransfer.files;
+                if (files[0]?.type.match('image.*')) {
+                    featuredImageInput.files = files;
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        if (previewImg) previewImg.src = ev.target.result;
+                        if (imagePreview) imagePreview.classList.remove('hidden');
+                        imageDropzone.classList.add('border-green-400', 'bg-green-50');
+                    };
+                    reader.readAsDataURL(files[0]);
+                }
+            });
+        }
+        const removeImageBtn = document.getElementById('remove-image');
+        if (removeImageBtn) {
+            removeImageBtn.addEventListener('click', () => {
+                featuredImageInput.value = '';
+                previewImg.src = '';
+                imagePreview.classList.add('hidden');
+                imageDropzone.classList.remove('border-green-400', 'bg-green-50');
+            });
+        }
+
+        // Word count initial
+        updateWordCount($('#content').summernote('code'));
+    });
+    </script>
 @endpush
 @endsection

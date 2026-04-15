@@ -136,9 +136,102 @@
 
                 <!-- Content -->
                 <div>
-                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Contenu de l'article <span class="text-red-500">*</span></label>
-                    <textarea name="content" id="content" rows="20" required
-                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('content') border-red-500 @enderror">{{ old('content', $article->content) }}</textarea>
+                    <!-- Barre supérieure : label + import -->
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Contenu de l'article <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="file" id="html-file-import" accept=".html" class="hidden">
+                            <button type="button" onclick="document.getElementById('html-file-import').click()"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                </svg>
+                                Importer .html
+                            </button>
+                            <span id="import-filename" class="text-xs text-gray-400 italic"></span>
+                        </div>
+                    </div>
+
+                    <!-- Onglets -->
+                    <div class="border border-gray-300 rounded-lg overflow-hidden">
+                        
+                        <!-- Tab Headers -->
+                        <div class="flex border-b border-gray-300 bg-gray-50">
+                            <button type="button" id="tab-visual"
+                                    onclick="switchTab('visual')"
+                                    class="tab-btn active-tab px-4 py-2.5 text-sm font-medium flex items-center gap-1.5 border-b-2 border-blue-500 text-blue-600">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Visuel
+                            </button>
+                            <button type="button" id="tab-html"
+                                    onclick="switchTab('html')"
+                                    class="tab-btn px-4 py-2.5 text-sm font-medium flex items-center gap-1.5 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                </svg>
+                                HTML source
+                            </button>
+                            <button type="button" id="tab-preview"
+                                    onclick="switchTab('preview')"
+                                    class="tab-btn px-4 py-2.5 text-sm font-medium flex items-center gap-1.5 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                Aperçu
+                            </button>
+
+                            <!-- Indicateur de synchro -->
+                            <div class="ml-auto flex items-center pr-3">
+                                <span id="sync-indicator" class="text-xs text-gray-400 italic hidden">
+                                    ⟳ synchronisation...
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Onglet 1 : Éditeur visuel Summernote -->
+                        <div id="panel-visual" class="tab-panel">
+                            <textarea name="content" id="content" rows="20" required
+                                    class="@error('content') border-red-500 @enderror hidden">{{ old('content', $article->content) }}</textarea>
+                        </div>
+
+                        <!-- Onglet 2 : Éditeur HTML CodeMirror -->
+                        <div id="panel-html" class="tab-panel hidden">
+                            <div class="flex items-center justify-between px-3 py-2 bg-gray-900 border-b border-gray-700">
+                                <span class="text-xs text-gray-400 font-mono">HTML / CSS</span>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="formatHtml()"
+                                            class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 transition">
+                                        ✨ Formater
+                                    </button>
+                                    <button type="button" onclick="syncFromHtmlEditor()"
+                                            class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 transition">
+                                        ↺ Sync visuel
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="codemirror-wrapper"></div>
+                        </div>
+
+                        <!-- Onglet 3 : Aperçu iframe -->
+                        <div id="panel-preview" class="tab-panel hidden">
+                            <div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
+                                <span class="text-xs text-gray-500">Rendu final (styles inclus)</span>
+                                <button type="button" onclick="refreshPreview()"
+                                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                                    ↻ Actualiser
+                                </button>
+                            </div>
+                            <iframe id="preview-iframe"
+                                    class="w-full bg-white"
+                                    style="height: 600px; border: none;">
+                            </iframe>
+                        </div>
+                    </div>
+
                     @error('content') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
 

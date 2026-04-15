@@ -163,6 +163,10 @@ new class extends Component
                             <span>{{ number_format($resource->file_size / 1024, 0) }} KB</span>
                         </div>
                         <div class="flex items-center gap-1">
+                            <flux:icon name="chat-bubble-left-right" class="w-4 h-4" />
+                            <span>{{ number_format($resource->comments()->count()) }}
+                        </div>
+                        <div class="flex items-center gap-1">
                             <flux:icon name="arrow-down-tray" class="w-3.5 h-3.5" />
                             <span>{{ number_format($resource->downloads_count) }}</span>
                         </div>

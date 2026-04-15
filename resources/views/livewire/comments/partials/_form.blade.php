@@ -10,15 +10,11 @@
 
             {{-- Avatar --}}
             <div class="shrink-0 mt-0.5">
-                @if(auth()->user()->avatar_url)
-                    <img src="{{ asset('storage/' . auth()->user()->avatar_url) }}"
-                         class="w-9 h-9 rounded-full object-cover ring-2 ring-primary/20" />
-                @else
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary/60
-                                flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    </div>
-                @endif
+                <img src="{{ auth()->user()->avatar_url
+                        ? Storage::url(auth()->user()->avatar_url)
+                        : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=3b82f6&color=fff' }}"
+                     alt="{{ auth()->user()->name }}"
+                     class="w-10 h-10 rounded-full object-cover ring-2 ring-{{ config('theme.primary') }}-200"/>
             </div>
 
             <div class="flex-1 space-y-3 relative">

@@ -36,7 +36,7 @@
                 {{-- Prix --}}
                 <div class="flex items-end gap-1">
                     <span class="text-4xl font-extrabold text-zinc-800 dark:text-white">
-                        3 000
+                        5 000
                     </span>
                     <span class="text-zinc-400 mb-1">XAF / an</span>
                 </div>
@@ -99,16 +99,16 @@
 
                 {{-- Prix barré --}}
                 <div>
-                    <span class="text-sm line-through text-zinc-400">10 000 XAF</span>
+                    <span class="text-sm line-through text-zinc-400">15 000 XAF</span>
                     <div class="flex items-end gap-1">
                         <span class="text-4xl font-extrabold text-{{ $theme['primary'] }}-700
                             dark:text-{{ $theme['primary'] }}-300">
-                            6 000
+                            12 000
                         </span>
                         <span class="text-zinc-400 mb-1">XAF / an</span>
                     </div>
                     <flux:badge color="{{ $theme['success'] }}" class="mt-1">
-                        🎉 -40% {{ __('app.subscriptions.discount') }}
+                        🎉 -20% {{ __('app.subscriptions.discount') }}
                     </flux:badge>
                 </div>
 

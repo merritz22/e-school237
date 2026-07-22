@@ -212,7 +212,7 @@ return [
             'title'       => 'Démarrez votre année scolaire avec confiance',
             'description' => 'Accédez librement à toutes les ressources. Résiliez à tout moment, sans engagement.',
         ],
-        'discount'     => 'de réduction',
+        'discount'     => 'de réduction pour les 50 premiers',
         'cta_subscribe'=> 'Je m\'abonne',
         'cta_start'    => 'Commencer maintenant',
         'classic' => [
@@ -264,18 +264,18 @@ return [
                 'classic' => [
                     'name'        => 'Classique',
                     'description' => 'Accès aux contenus de base',
-                    'price'       => '3 000 XAF',
+                    'price'       => '5 000 XAF',
                 ],
                 'excellence' => [
                     'name'        => 'Excellence',
                     'description' => 'Accès étendu aux ressources',
-                    'price'       => '6 000 XAF',
+                    'price'       => '8 000 XAF',
                     'badge'       => 'Populaire',
                 ],
                 'premium' => [
                     'name'        => 'Premium',
                     'description' => 'Accès complet illimité',
-                    'price'       => '8 000 XAF',
+                    'price'       => '12 000 XAF',
                 ],
             ],
             'phone' => [

@@ -210,7 +210,7 @@ return [
             'title'       => 'Start your school year with confidence',
             'description' => 'Access all resources freely. Cancel anytime, no commitment.',
         ],
-        'discount'     => 'off',
+        'discount'     => 'off for the first 50 customers.',
         'cta_subscribe'=> 'Subscribe now',
         'cta_start'    => 'Get started',
         'classic' => [
@@ -262,18 +262,18 @@ return [
                 'classic' => [
                     'name'        => 'Classic',
                     'description' => 'Access to basic content',
-                    'price'       => '3,000 XAF',
+                    'price'       => '5 000 XAF',
                 ],
                 'excellence' => [
                     'name'        => 'Excellence',
                     'description' => 'Extended access to resources',
-                    'price'       => '6,000 XAF',
+                    'price'       => '8 000 XAF',
                     'badge'       => 'Popular',
                 ],
                 'premium' => [
                     'name'        => 'Premium',
                     'description' => 'Full unlimited access',
-                    'price'       => '8,000 XAF',
+                    'price'       => '12 000 XAF',
                 ],
             ],
             'phone' => [

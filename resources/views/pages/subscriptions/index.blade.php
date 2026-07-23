@@ -160,7 +160,7 @@
                 {{-- Prix --}}
                 <div class="flex items-end gap-1">
                     <span class="text-4xl font-extrabold text-zinc-800 dark:text-white">
-                        8 000
+                        16 000
                     </span>
                     <span class="text-zinc-400 mb-1">XAF / an</span>
                 </div>

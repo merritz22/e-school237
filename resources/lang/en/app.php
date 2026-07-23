@@ -267,7 +267,7 @@ return [
                 'excellence' => [
                     'name'        => 'Excellence',
                     'description' => 'Extended access to resources',
-                    'price'       => '8 000 XAF',
+                    'price'       => '16 000 XAF',
                     'badge'       => 'Popular',
                 ],
                 'premium' => [

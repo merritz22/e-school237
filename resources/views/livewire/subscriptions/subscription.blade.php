@@ -63,10 +63,10 @@
 
                         {{-- Excellence --}}
                         <label class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-150
-                            {{ $price == '8000'
+                            {{ $price == '16000'
                                 ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
                                 : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600' }}">
-                            <input type="radio" wire:model.live="price" value="8000" class="sr-only" />
+                            <input type="radio" wire:model.live="price" value="16000" class="sr-only" />
                             <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center shrink-0">
                                 <flux:icon name="academic-cap" class="w-5 h-5 text-amber-500" />
                             </div>
@@ -78,7 +78,7 @@
                                 <p class="text-xs text-zinc-400">{{ __('app.subscriptions.create.plan.excellence.description') }}</p>
                             </div>
                             <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ __('app.subscriptions.create.plan.excellence.price') }}</span>
-                            @if($price == '8000')
+                            @if($price == '16000')
                                 <flux:icon name="check-circle" class="w-5 h-5 text-sky-500 shrink-0" />
                             @endif
                         </label>

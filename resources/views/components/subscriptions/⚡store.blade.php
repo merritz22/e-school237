@@ -68,11 +68,11 @@ new class extends Component
         
         $type = '';
 
-        if ($this->price == 3000.0) {
+        if ($this->price <= 5000.0) {
             $type = 'CLASSIC';
-        } elseif ($this->price == 6000.0) {
+        } elseif ($this->price >= 6000.0 && $this->price <= 12000.0) {
             $type = 'PREMIUM';
-        } elseif ($this->price == 8000.0) {
+        } elseif ($this->price >= 8000.0 && $this->price <= 16000.0) {
             $type = 'ADVANCED';
         }
 

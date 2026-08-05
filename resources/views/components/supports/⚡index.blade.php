@@ -99,8 +99,8 @@ new class extends Component
                 );
             }
         }
-        elseif ($info && empty($this->level_id)) {
-            $query->where('level_id', $info?->current_level_id);
+        elseif ($info?->current_level_id && empty($this->level_id)) {
+            $query->where('level_id', $info->current_level_id);
         }
 
         // ===== FILTRES MANUELS =====
@@ -125,7 +125,7 @@ new class extends Component
                     ->whereIn('id', $this->subscribedSubjectIds)
                     ->get(),
 
-            $info !== null
+            $info?->current_level_id !== null
                 => Subject::where('is_active', 1)
                     ->whereIn('id',
                         Level::where('id', $info->current_level_id)
@@ -146,7 +146,7 @@ new class extends Component
                     ->whereIn('id', $this->subscribedLevelIds)
                     ->get(),
 
-            $info !== null
+            $info?->current_level_id !== null
                 => Level::where('is_active', 1)
                     ->where('id', $info->current_level_id)
                     ->get(),

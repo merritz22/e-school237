@@ -17,11 +17,11 @@ new class extends Component
             $user = Auth::user();
             $info = $user->information;
 
-            $this->latest_subjects = EvaluationSubject::with('subject')
-            ->where('level_id',$info?->current_level_id)
-            ->latest()
-            ->take(10)
-            ->get();
+            $query = EvaluationSubject::with('subject');
+            if ($info?->current_level_id) {
+                $query->where('level_id', $info->current_level_id);
+            }
+            $this->latest_subjects = $query->latest()->take(10)->get();
 
             $this->show_premium_preview = $user->subscriptions()
                 ->where('status', 'active')

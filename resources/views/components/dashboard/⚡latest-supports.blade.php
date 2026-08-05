@@ -16,12 +16,12 @@ new class extends Component
             $user = Auth::user();
             $info = $user->information;
 
-            $this->latest_supports = EducationalResource::with(['subject', 'level'])
-            ->where('is_approved',1)
-            ->where('level_id',$info?->current_level_id)
-            ->latest()
-            ->take(10)
-            ->get();
+            $query = EducationalResource::with(['subject', 'level'])
+            ->where('is_approved',1);
+            if ($info?->current_level_id) {
+                $query->where('level_id', $info->current_level_id);
+            }
+            $this->latest_supports = $query->latest()->take(10)->get();
 
             $this->show_premium_preview = $user->subscriptions()
                 ->where('status', 'active')

@@ -21,13 +21,20 @@ class SubscriptionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Vous devez être connecté pour réaliser cette opération.');
         }
 
-        $subscriptions = Subscription::latest()->paginate(15);
+        $query = Subscription::latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $subscriptions = $query->paginate(15)->withQueryString();
+
         return view('admin.subscriptions.index', compact('subscriptions'));
     }
     
@@ -189,5 +196,27 @@ class SubscriptionController extends Controller
 
         $status = 'Activé';
         return redirect()->back()->with('success', "Abonnement {$status} avec succès.");
+    }
+
+    /**
+     * Supprimer un abonnement — uniquement s'il n'est pas actif.
+     */
+    public function destroy(Subscription $subscription)
+    {
+        if ($subscription->status === SubscriptionStatus::Active->value) {
+            return redirect()->back()->with('error', "Impossible de supprimer un abonnement actif. Désactivez-le d'abord.");
+        }
+
+        AuditLogger::log(
+            'subscription.deleted',
+            "Suppression de l'abonnement #{$subscription->id} ({$subscription->status}) pour {$subscription->user?->name}",
+            null,
+            ['id' => $subscription->id, 'status' => $subscription->status, 'amount' => $subscription->amount, 'user_id' => $subscription->user_id],
+            []
+        );
+
+        $subscription->delete();
+
+        return redirect()->back()->with('success', 'Abonnement supprimé avec succès.');
     }
 }

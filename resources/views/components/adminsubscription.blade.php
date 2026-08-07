@@ -66,6 +66,40 @@
                                         @endif
                                     </button>
                                 </form>
+
+                                @if($subscription->status !== 'active')
+                                    <form id="deleteSubscriptionForm-{{ $subscription->id }}" action="{{ route('admin.subscription.destroy', $subscription) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                                onclick="openDeleteSubscriptionModal({{ $subscription->id }})"
+                                                class="cursor-pointer p-1 text-red-600 hover:text-red-900"
+                                                title="Supprimer">
+                                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+
+                                    <!-- Modal suppression -->
+                                    <div id="deleteSubscriptionModal-{{ $subscription->id }}"
+                                        class="fixed inset-0 bg-gray-300 bg-opacity-40 hidden items-center justify-center z-50">
+                                        <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-auto">
+                                            <h3 class="text-lg font-semibold mb-4">Confirmer la suppression</h3>
+                                            <p class="mb-6">Supprimer l'abonnement de {{ $subscription->user?->name }} ? Cette action est irréversible.</p>
+                                            <div class="flex justify-end space-x-4">
+                                                <button type="button" onclick="closeDeleteSubscriptionModal({{ $subscription->id }})" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Annuler</button>
+                                                <button type="button" onclick="submitDeleteSubscriptionForm({{ $subscription->id }})" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Supprimer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="inline-block p-1 text-gray-300 cursor-not-allowed" title="Un abonnement actif ne peut pas être supprimé — désactivez-le d'abord">
+                                        <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </span>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -85,3 +119,32 @@
         </div>
     @endif
 </div>
+
+@push('scripts')
+<script>
+    function openDeleteSubscriptionModal(id) {
+        const modal = document.getElementById('deleteSubscriptionModal-' + id);
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
+    }
+
+    function closeDeleteSubscriptionModal(id) {
+        const modal = document.getElementById('deleteSubscriptionModal-' + id);
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
+    }
+
+    function submitDeleteSubscriptionForm(id) {
+        const form = document.getElementById('deleteSubscriptionForm-' + id);
+        if (form) {
+            form.submit();
+        }
+    }
+</script>
+@endpush

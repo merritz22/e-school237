@@ -105,6 +105,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::prefix('subscriptions')->group(function () {
         Route::get('/', [SubscriptionController::class, 'index'])->name('admin.subscriptions.index');
         Route::patch('/{subscription}/publish', [SubscriptionController::class, 'publish'])->name('admin.subscription.publish');
+        Route::delete('/{subscription}', [SubscriptionController::class, 'destroy'])->name('admin.subscription.destroy');
     });
 
     

@@ -7,7 +7,8 @@
       "Read(//d/laragon/**)",
       "PowerShell(Get-Process | Where-Object { $_.ProcessName -match \"php|composer\" } | Select-Object Id, ProcessName, StartTime)",
       "Read(//d/laragon/bin/php/php-8.3.16-Win32-vs16-x64/**)",
-      "Bash(D:/laragon/bin/php/php-8.3.16-Win32-vs16-x64/php.exe artisan *)"
+      "Bash(D:/laragon/bin/php/php-8.3.16-Win32-vs16-x64/php.exe artisan *)",
+      "Bash(php -l routes/web.php)"
     ],
     "additionalDirectories": [
       "D:\\laragon\\bin\\php\\php-8.3.16-Win32-vs16-x64"

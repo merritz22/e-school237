@@ -190,7 +190,6 @@ Route::prefix('auth')->group(function () {
     Route::get('/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
     Route::view('/forgot-password', 'pages.auth.forgot-password')->name('password.request');
     Route::view('/reset-password/{token}', 'pages.auth.reset-password')->name('password.reset');
-    Route::view('/verify-email', 'pages.auth.verify-email')->name('verification.notice');
 });
 Route::get('/email/verify', function () {
     return view('auth.verify-email');

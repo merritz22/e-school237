@@ -157,24 +157,29 @@ class SubscriptionController extends Controller
     {
         // dd($topic);
         Auth::user()->hasRole([ 'admin', 'author']);
-        if ($subscription->status !== SubscriptionStatus::Active->value) {
-            $oldStatus = $subscription->status;
 
-            $subscription->update([
-                'status' => SubscriptionStatus::Active->value,
-                'validated_at' => now(),
-                'validated_by' => Auth::id(),
-                'updated_at' => now()
-            ]);
-
-            AuditLogger::log(
-                'subscription.validated',
-                "Validation manuelle de l'abonnement #{$subscription->id} ({$subscription->amount} " . config('subscriptions.currency') . ") pour {$subscription->user->name}",
-                $subscription,
-                ['status' => $oldStatus],
-                ['status' => SubscriptionStatus::Active->value]
-            );
+        // Action à sens unique : on ne désactive jamais un abonnement déjà actif
+        // depuis cette route (l'admin ne doit pas pouvoir le désactiver ici).
+        if ($subscription->status === SubscriptionStatus::Active->value) {
+            return redirect()->back()->with('error', 'Cet abonnement est déjà actif.');
         }
+
+        $oldStatus = $subscription->status;
+
+        $subscription->update([
+            'status' => SubscriptionStatus::Active->value,
+            'validated_at' => now(),
+            'validated_by' => Auth::id(),
+            'updated_at' => now()
+        ]);
+
+        AuditLogger::log(
+            'subscription.validated',
+            "Validation manuelle de l'abonnement #{$subscription->id} ({$subscription->amount} " . config('subscriptions.currency') . ") pour {$subscription->user->name}",
+            $subscription,
+            ['status' => $oldStatus],
+            ['status' => SubscriptionStatus::Active->value]
+        );
 
         $notification = Notification::where('code', 'WAITING_PAYMENT')->first();
 

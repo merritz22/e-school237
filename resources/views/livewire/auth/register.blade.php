@@ -20,6 +20,23 @@
 
                 <flux:separator />
 
+                {{-- Google --}}
+                <a
+                    href="{{ route('auth.google.redirect') }}"
+                    class="flex items-center justify-center gap-3 w-full px-4 py-2 rounded-lg border
+                        border-zinc-300 dark:border-zinc-600 text-sm font-medium text-zinc-700
+                        dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                >
+                    <x-icons.google class="w-5 h-5" />
+                    {{ __('app.auth.social.continue_with_google') }}
+                </a>
+
+                <div class="flex items-center gap-3">
+                    <flux:separator class="flex-1" />
+                    <flux:text size="sm" class="text-zinc-400">{{ __('app.auth.social.divider') }}</flux:text>
+                    <flux:separator class="flex-1" />
+                </div>
+
                 {{-- Nom & Prénom --}}
                 <div class="grid grid-cols-2 gap-4">
                     <flux:input

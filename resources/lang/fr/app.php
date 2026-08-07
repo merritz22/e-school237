@@ -52,6 +52,10 @@ return [
             'confirm_password'             => 'Confirmer le mot de passe',
             'confirm_password_placeholder' => 'Confirmez votre mot de passe',
         ],
+        'social' => [
+            'continue_with_google' => 'Continuer avec Google',
+            'divider'              => 'ou',
+        ],
         'login' => [
             'title'           => 'Connexion',
             'subtitle'        => 'Accédez à votre espace personnel',

@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(composer require *)",
+      "Read(//c/laragon/**)",
+      "Read(//d/laragon/**)",
+      "PowerShell(Get-Process | Where-Object { $_.ProcessName -match \"php|composer\" } | Select-Object Id, ProcessName, StartTime)",
+      "Read(//d/laragon/bin/php/php-8.3.16-Win32-vs16-x64/**)",
+      "Bash(D:/laragon/bin/php/php-8.3.16-Win32-vs16-x64/php.exe artisan *)"
+    ],
+    "additionalDirectories": [
+      "D:\\laragon\\bin\\php\\php-8.3.16-Win32-vs16-x64"
     ]
   }
 }

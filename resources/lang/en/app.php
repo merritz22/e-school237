@@ -52,6 +52,10 @@ return [
             'confirm_password'             => 'Confirm password',
             'confirm_password_placeholder' => 'Confirm your password',
         ],
+        'social' => [
+            'continue_with_google' => 'Continue with Google',
+            'divider'              => 'or',
+        ],
         'login' => [
             'title'           => 'Login',
             'subtitle'        => 'Access your personal space',

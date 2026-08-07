@@ -46,7 +46,13 @@ return [
         'env' => env('MTN_ENV'),
         'api_user' => env('MTN_API_USER'),
         'api_key' => env('MTN_API_KEY'),
-        'subscription_key' => env('MTN_SUBSCRIPTION_KEY'), 
+        'subscription_key' => env('MTN_SUBSCRIPTION_KEY'),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
 ];

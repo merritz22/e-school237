@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
@@ -185,6 +186,8 @@ Route::prefix('auth')->group(function () {
     })->name('logout');
     Route::view('/login', 'pages.auth.login')->name('login');
     Route::view('/register', 'pages.auth.register')->name('register');
+    Route::get('/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
     Route::view('/forgot-password', 'pages.auth.forgot-password')->name('password.request');
     Route::view('/reset-password/{token}', 'pages.auth.reset-password')->name('password.reset');
     Route::view('/verify-email', 'pages.auth.verify-email')->name('verification.notice');

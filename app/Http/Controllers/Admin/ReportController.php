@@ -25,7 +25,8 @@ class ReportController extends Controller
         [$from, $to] = $this->resolveRange($request);
 
         $baseQuery = fn () => Subscription::where('subscriptions.status', SubscriptionStatus::Active->value)
-            ->whereBetween(DB::raw('COALESCE(subscriptions.validated_at, subscriptions.updated_at)'), [$from->copy()->startOfDay(), $to->copy()->endOfDay()]);
+            ->whereBetween(DB::raw('COALESCE(subscriptions.validated_at, subscriptions.updated_at)'), [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->whereHas('user', $this->excludeAdmins(...));
 
         $total = (clone $baseQuery())->sum('amount');
         $count = (clone $baseQuery())->count();
@@ -46,6 +47,7 @@ class ReportController extends Controller
         $monthly = $this->monthlyBuckets($from, $to, function (Carbon $start, Carbon $end) {
             return Subscription::where('subscriptions.status', SubscriptionStatus::Active->value)
                 ->whereBetween(DB::raw('COALESCE(subscriptions.validated_at, subscriptions.updated_at)'), [$start, $end])
+                ->whereHas('user', $this->excludeAdmins(...))
                 ->sum('amount');
         });
 
@@ -59,6 +61,7 @@ class ReportController extends Controller
         $subscriptions = Subscription::with(['user', 'level'])
             ->where('subscriptions.status', SubscriptionStatus::Active->value)
             ->whereBetween(DB::raw('COALESCE(subscriptions.validated_at, subscriptions.updated_at)'), [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->whereHas('user', $this->excludeAdmins(...))
             ->orderBy('validated_at')
             ->get();
 
@@ -81,9 +84,11 @@ class ReportController extends Controller
     {
         [$from, $to] = $this->resolveRange($request);
 
-        $newUsers = User::whereBetween('created_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])->count();
-        $totalUsers = User::count();
-        $activeUsers = User::where('is_active', true)->count();
+        $newUsers = User::whereBetween('created_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->where('role', '!=', 'admin')
+            ->count();
+        $totalUsers = User::where('role', '!=', 'admin')->count();
+        $activeUsers = User::where('is_active', true)->where('role', '!=', 'admin')->count();
 
         $profileCompleteCount = User::whereHas('information', function ($q) {
             $q->whereNotNull('establishment')
@@ -91,19 +96,22 @@ class ReportController extends Controller
                 ->whereNotNull('gender')
                 ->whereNotNull('profession_id')
                 ->whereNotNull('current_level_id');
-        })->whereNotNull('whatsapp')->count();
+        })->whereNotNull('whatsapp')->where('role', '!=', 'admin')->count();
 
         $byLevel = User::join('user_informations', 'user_informations.user_id', '=', 'users.id')
             ->join('levels', 'levels.id', '=', 'user_informations.current_level_id')
+            ->where('users.role', '!=', 'admin')
             ->select('levels.name as level_name', DB::raw('COUNT(*) as nb'))
             ->groupBy('levels.name')
             ->orderByDesc('nb')
             ->get();
 
-        $byRole = User::select('role', DB::raw('COUNT(*) as nb'))->groupBy('role')->get();
+        $byRole = User::where('role', '!=', 'admin')->select('role', DB::raw('COUNT(*) as nb'))->groupBy('role')->get();
 
         $monthly = $this->monthlyBuckets($from, $to, function (Carbon $start, Carbon $end) {
-            return User::whereBetween('created_at', [$start, $end])->count();
+            return User::whereBetween('created_at', [$start, $end])
+                ->where('role', '!=', 'admin')
+                ->count();
         });
 
         return view('admin.reports.growth', compact(
@@ -117,6 +125,7 @@ class ReportController extends Controller
 
         $users = User::with('information.currentLevel')
             ->whereBetween('created_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->where('role', '!=', 'admin')
             ->orderBy('created_at')
             ->get();
 
@@ -137,8 +146,11 @@ class ReportController extends Controller
     {
         [$from, $to] = $this->resolveRange($request);
 
-        $totalDownloads = DownloadLog::whereBetween('downloaded_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])->count();
+        $totalDownloads = DownloadLog::whereBetween('downloaded_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->where($this->excludeAdminDownloads(...))
+            ->count();
         $uniqueDownloaders = DownloadLog::whereBetween('downloaded_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->where($this->excludeAdminDownloads(...))
             ->distinct('user_id')
             ->count('user_id');
 
@@ -153,7 +165,9 @@ class ReportController extends Controller
         $subjectsFreeVsPremium = DB::table('evaluation_subjects')->select('is_free', DB::raw('COUNT(*) as nb'))->groupBy('is_free')->get();
 
         $monthly = $this->monthlyBuckets($from, $to, function (Carbon $start, Carbon $end) {
-            return DownloadLog::whereBetween('downloaded_at', [$start, $end])->count();
+            return DownloadLog::whereBetween('downloaded_at', [$start, $end])
+                ->where($this->excludeAdminDownloads(...))
+                ->count();
         });
 
         return view('admin.reports.engagement', compact(
@@ -168,6 +182,7 @@ class ReportController extends Controller
 
         $downloads = DownloadLog::with('user')
             ->whereBetween('downloaded_at', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->where($this->excludeAdminDownloads(...))
             ->orderBy('downloaded_at')
             ->get();
 
@@ -178,6 +193,25 @@ class ReportController extends Controller
             $d->resource_id,
             $d->ip_address,
         ]));
+    }
+
+    /**
+     * Callback pour whereHas('user', ...) : exclut les comptes administrateurs.
+     */
+    private function excludeAdmins($query): void
+    {
+        $query->where('role', '!=', 'admin');
+    }
+
+    /**
+     * Callback pour where(...) sur DownloadLog : exclut les téléchargements
+     * effectués par un administrateur, tout en conservant les téléchargements
+     * anonymes (user_id null), qui ne sont par définition pas des admins.
+     */
+    private function excludeAdminDownloads($query): void
+    {
+        $query->whereNull('user_id')
+            ->orWhereHas('user', $this->excludeAdmins(...));
     }
 
     /**

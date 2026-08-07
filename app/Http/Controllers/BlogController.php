@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
 use App\Models\Like;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -269,7 +270,15 @@ class BlogController extends Controller
     public function adminDestroy(BlogPost $post)
     {
         $this->authorize('manage', BlogPost::class);
-        
+
+        AuditLogger::log(
+            'blog_post.deleted',
+            "Suppression (modération) du post « {$post->title} » de {$post->author?->name}",
+            null,
+            ['id' => $post->id, 'title' => $post->title, 'author_id' => $post->author_id],
+            []
+        );
+
         $post->delete();
 
         return redirect()->back()

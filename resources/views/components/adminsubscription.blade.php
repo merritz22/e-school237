@@ -27,17 +27,17 @@
                             <span class="font-semibold">{{ $subscription->level?->name }}</span>
                         </td>
                         <td class="px-4 py-2">
-                            <span class="font-semibold">{{ $subscription->currency}}</span>
+                            <span class="font-semibold">{{ $subscription->phone }}</span>
                         </td>
                         <td class="px-4 py-2">
                             @if($subscription->user?->whatsapp)
-                                <a href="https://wa.me/237{{ $subscription->user?->whatsapp }}">
+                                <a href="https://wa.me/{{ config('subscriptions.country_code') }}{{ $subscription->user?->whatsapp }}">
                                     {{ $subscription->user?->whatsapp }}
                                 </a>
                             @endif
                         </td>
                         <td class="px-4 py-2">
-                            <span class="font-semibold">{{ $subscription->amount }} XAF</span>
+                            <span class="font-semibold">{{ $subscription->amount }} {{ config('subscriptions.currency') }}</span>
                         </td>
                         <td class="px-4 py-2">
                             @if($subscription->status === 'active')

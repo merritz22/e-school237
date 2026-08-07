@@ -28,6 +28,9 @@ use Livewire\Component;
 use App\Models\Article;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Admin\LevelSubjectController;
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\LoginHistoryController;
+use App\Http\Controllers\Admin\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -163,6 +166,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::delete('/posts/{post}', [BlogController::class, 'adminDestroy'])->name('admin.blog.destroy');
         Route::get('/comments', [CommentController::class, 'adminIndex'])->name('admin.comments.index');
         Route::delete('/comments/{comment}', [CommentController::class, 'adminDestroy'])->name('admin.comments.destroy');
+    });
+
+    // Journal d'audit et historique de connexion
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('admin.audit-logs.index');
+    Route::get('/login-history', [LoginHistoryController::class, 'index'])->name('admin.login-history.index');
+
+    // Rapports
+    Route::prefix('reports')->group(function () {
+        Route::get('/revenue', [ReportController::class, 'revenue'])->name('admin.reports.revenue');
+        Route::get('/revenue/export', [ReportController::class, 'exportRevenue'])->name('admin.reports.revenue.export');
+        Route::get('/growth', [ReportController::class, 'growth'])->name('admin.reports.growth');
+        Route::get('/growth/export', [ReportController::class, 'exportGrowth'])->name('admin.reports.growth.export');
+        Route::get('/engagement', [ReportController::class, 'engagement'])->name('admin.reports.engagement');
+        Route::get('/engagement/export', [ReportController::class, 'exportEngagement'])->name('admin.reports.engagement.export');
     });
 
     Route::fallback(function () {

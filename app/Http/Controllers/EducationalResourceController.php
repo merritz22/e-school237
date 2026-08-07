@@ -16,6 +16,7 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\DownloadLog;
 use App\Services\PdfThumbnailService;
+use App\Services\AuditLogger;
 
 class EducationalResourceController extends Controller
 {
@@ -332,6 +333,14 @@ class EducationalResourceController extends Controller
             Storage::disk('public/')->delete($resource->preview_image);
             $this->warn("  → Thumbnail supprimé : {$resource->preview_image}");
         }
+        AuditLogger::log(
+            'resource.deleted',
+            "Suppression de la ressource « {$resource->title} »",
+            null,
+            ['id' => $resource->id, 'title' => $resource->title],
+            []
+        );
+
         $resource->delete();
 
         return redirect()->route('admin.resources.index')
@@ -345,6 +354,14 @@ class EducationalResourceController extends Controller
     {
         $resource->approve();
 
+        AuditLogger::log(
+            'resource.approved',
+            "Approbation de la ressource « {$resource->title} »",
+            $resource,
+            ['is_approved' => false],
+            ['is_approved' => true]
+        );
+
         return back()->with('success', 'Ressource approuvée avec succès.');
     }
 
@@ -354,6 +371,14 @@ class EducationalResourceController extends Controller
     public function reject(EducationalResource $resource)
     {
         $resource->reject();
+
+        AuditLogger::log(
+            'resource.rejected',
+            "Rejet de la ressource « {$resource->title} »",
+            $resource,
+            ['is_approved' => true],
+            ['is_approved' => false]
+        );
 
         return back()->with('success', 'Ressource rejetée avec succès.');
     }
@@ -392,7 +417,16 @@ class EducationalResourceController extends Controller
         Auth::user()->hasRole([ 'admin', 'author']);
         // dd(now());
 
+        $wasApproved = $resource->is_approved;
         $resource->publishOrUnPublish();
+
+        AuditLogger::log(
+            'resource.status_changed',
+            "Support « {$resource->title} » : " . ($wasApproved ? 'publié → dépublié' : 'dépublié → publié'),
+            $resource,
+            ['is_approved' => $wasApproved],
+            ['is_approved' => $resource->is_approved]
+        );
 
         $status = $resource->is_approved == 1 ? 'publié' : 'dépublié';
         return redirect()->back()->with('success', "Support {$status} avec succès.");

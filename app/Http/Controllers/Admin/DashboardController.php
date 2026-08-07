@@ -11,6 +11,8 @@ use App\Models\EducationalResource;
 use App\Models\ForumTopic;
 use App\Models\DownloadLog;
 use App\Models\ForumReply;
+use App\Models\Subject;
+use App\Http\Middleware\TrackUserPresence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -29,7 +31,7 @@ class DashboardController extends Controller
             'new_users_this_month' => User::whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->count(),
-            'online' => User::where('last_login', '>=', now()->subMinutes(15))->count(),
+            'online' => TrackUserPresence::getOnlineCount(),
             
             'total_articles' => Article::count(),
             'pending_articles' => Article::where('status', 'draft')->count(),
@@ -39,9 +41,9 @@ class DashboardController extends Controller
             
             'activity' => [
                 'total_downloads' => DownloadLog::count(),
-                'downloads_today' => DownloadLog::whereDate('created_at', today())->count(),
-                'downloads_this_month' => DownloadLog::whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
+                'downloads_today' => DownloadLog::whereDate('downloaded_at', today())->count(),
+                'downloads_this_month' => DownloadLog::whereMonth('downloaded_at', now()->month)
+                    ->whereYear('downloaded_at', now()->year)
                     ->count(),
                 'comments' => ForumReply::count(),
                 'comments_this_month' => ForumReply::whereMonth('created_at', now()->month)
@@ -72,13 +74,13 @@ class DashboardController extends Controller
             //     ->get(),
         ];
 
-        // Utilisateurs les plus actifs
-        $active_users = ['Empty'];
-        // $active_users = User::withCount(['blogPosts', 'downloads'])
-        //     ->orderBy('blog_posts_count', 'desc')
-        //     ->orderBy('downloads_count', 'desc')
-        //     ->take(10)
-        //     ->get();
+        // Utilisateurs les plus actifs (par téléchargements + posts de forum)
+        $active_users = User::withCount(['downloadLogs', 'forumTopics'])
+            ->orderByDesc('download_logs_count')
+            ->orderByDesc('forum_topics_count')
+            ->havingRaw('(download_logs_count + forum_topics_count) > 0')
+            ->take(10)
+            ->get();
 
         // Données pour les graphiques
         $charts_data = [
@@ -118,9 +120,15 @@ class DashboardController extends Controller
                     // ->where('published_at', '<=', now())
                     ->count(),
             'total_views' => Article::whereNotNull('views_count')->count(),
-            'popular_articles' => [],
-            'recent_articles' => [],
-            'categories_stats' => [],
+            'popular_articles' => Article::published()->with('subject')->orderByDesc('views_count')->take(5)->get(),
+            'recent_articles' => Article::with('subject')->latest()->take(5)->get(),
+            'categories_stats' => Subject::withCount(['articles as articles_count' => function ($q) {
+                    $q->where('status', 'published');
+                }])
+                ->having('articles_count', '>', 0)
+                ->orderByDesc('articles_count')
+                ->get(),
+            'publications_monthly' => $this->getPublicationsMonthlyData(),
         ];
 
         return view('admin.stats', compact(
@@ -151,17 +159,17 @@ class DashboardController extends Controller
             });
 
         // Nouveaux téléchargements
-        $recent_downloads = DownloadLog::with('user')
-            ->orderBy('created_at', 'desc')
+        $recent_downloads = DownloadLog::with(['user', 'resource'])
+            ->orderBy('downloaded_at', 'desc')
             ->take(5)
             ->get()
             ->map(function ($download) {
                 return [
                     'type' => 'download',
-                    'user' => $download->user->name,
-                    'created_at' => $download->created_at,
+                    'user' => $download->user->name ?? 'Anonyme',
+                    'created_at' => $download->downloaded_at,
                     'icon' => 'download',
-                    'description' => 'Téléchargement de ' . ($download->downloadable->title ?? 'Fichier supprimé'),
+                    'description' => 'Téléchargement de ' . ($download->resource->title ?? 'Fichier supprimé'),
                     'title' => 'Téchargement de fichier',
                 ];
             });
@@ -221,10 +229,10 @@ class DashboardController extends Controller
         
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $count = DownloadLog::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
+            $count = DownloadLog::whereYear('downloaded_at', $date->year)
+                ->whereMonth('downloaded_at', $date->month)
                 ->count();
-            
+
             $data[] = [
                 'month' => $date->format('M Y'),
                 'downloads' => $count,
@@ -245,6 +253,29 @@ class DashboardController extends Controller
             ['name' => 'EducationalResources', 'value' => EducationalResource::count()],
             ['name' => 'Posts Blog', 'value' => ForumTopic::count()],
         ];
+    }
+
+    /**
+     * Nombre d'articles publiés par mois (12 derniers mois)
+     */
+    private function getPublicationsMonthlyData()
+    {
+        $data = [];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $count = Article::where('status', 'published')
+                ->whereYear('published_at', $date->year)
+                ->whereMonth('published_at', $date->month)
+                ->count();
+
+            $data[] = [
+                'month' => $date->format('Y-m'),
+                'count' => $count,
+            ];
+        }
+
+        return $data;
     }
 
     /**
@@ -284,11 +315,11 @@ class DashboardController extends Controller
         $date = now()->subDays($period);
 
         return [
-            'total_downloads' => DownloadLog::where('created_at', '>=', $date)->count(),
-            'unique_users' => DownloadLog::where('created_at', '>=', $date)
+            'total_downloads' => DownloadLog::where('downloaded_at', '>=', $date)->count(),
+            'unique_users' => DownloadLog::where('downloaded_at', '>=', $date)
                 ->distinct('user_id')
                 ->count('user_id'),
-            'avg_per_day' => DownloadLog::where('created_at', '>=', $date)->count() / $period,
+            'avg_per_day' => DownloadLog::where('downloaded_at', '>=', $date)->count() / $period,
         ];
     }
 

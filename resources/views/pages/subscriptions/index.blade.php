@@ -1,5 +1,9 @@
 <x-layouts.app>
-    @php $theme = config('theme'); @endphp
+    @php
+        $theme = config('theme');
+        $plans = config('subscriptions.plans');
+        $currency = config('subscriptions.currency');
+    @endphp
 
     <div class="space-y-12">
 
@@ -36,9 +40,9 @@
                 {{-- Prix --}}
                 <div class="flex items-end gap-1">
                     <span class="text-4xl font-extrabold text-zinc-800 dark:text-white">
-                        5 000
+                        {{ number_format($plans['CLASSIC'], 0, ',', ' ') }}
                     </span>
-                    <span class="text-zinc-400 mb-1">XAF / an</span>
+                    <span class="text-zinc-400 mb-1">{{ $currency }} / an</span>
                 </div>
 
                 <flux:separator />
@@ -99,16 +103,16 @@
 
                 {{-- Prix barré --}}
                 <div>
-                    <span class="text-sm line-through text-zinc-400">15 000 XAF</span>
+                    <span class="text-sm line-through text-zinc-400">{{ number_format(config('subscriptions.premium_original_price'), 0, ',', ' ') }} {{ $currency }}</span>
                     <div class="flex items-end gap-1">
                         <span class="text-4xl font-extrabold text-{{ $theme['primary'] }}-700
                             dark:text-{{ $theme['primary'] }}-300">
-                            12 000
+                            {{ number_format($plans['PREMIUM'], 0, ',', ' ') }}
                         </span>
-                        <span class="text-zinc-400 mb-1">XAF / an</span>
+                        <span class="text-zinc-400 mb-1">{{ $currency }} / an</span>
                     </div>
                     <flux:badge color="{{ $theme['success'] }}" class="mt-1">
-                        🎉 -20% {{ __('app.subscriptions.discount') }}
+                        🎉 -{{ round((1 - $plans['PREMIUM'] / config('subscriptions.premium_original_price')) * 100) }}% {{ __('app.subscriptions.discount') }}
                     </flux:badge>
                 </div>
 
@@ -160,9 +164,9 @@
                 {{-- Prix --}}
                 <div class="flex items-end gap-1">
                     <span class="text-4xl font-extrabold text-zinc-800 dark:text-white">
-                        16 000
+                        {{ number_format($plans['ADVANCED'], 0, ',', ' ') }}
                     </span>
-                    <span class="text-zinc-400 mb-1">XAF / an</span>
+                    <span class="text-zinc-400 mb-1">{{ $currency }} / an</span>
                 </div>
 
                 <flux:separator />

@@ -18,7 +18,7 @@ new class extends Component
 
         // Récupérer le whatsapp de l'admin
         $this->adminWhatsapp = User::where('role', 'admin')
-            ->where('email', 'contact@e-school237.com')
+            ->where('email', config('mail.contact_address'))
             ->value('whatsapp');
     }
 
@@ -35,7 +35,7 @@ new class extends Component
 
         {{-- WhatsApp admin --}}
         @if($adminWhatsapp)
-            <a href="https://wa.me/237{{ $adminWhatsapp }}"
+            <a href="https://wa.me/{{ config('subscriptions.country_code') }}{{ $adminWhatsapp }}"
                target="_blank"
                class="flex items-center gap-3 px-4 py-3 rounded-lg
                    border border-zinc-200 dark:border-zinc-700
@@ -58,7 +58,7 @@ new class extends Component
                         {{ __('app.profile.contact.whatsapp_admin') }}
                     </flux:text>
                     <flux:text size="xs" class="text-zinc-400 truncate">
-                        +237 {{ $adminWhatsapp }}
+                        +{{ config('subscriptions.country_code') }} {{ $adminWhatsapp }}
                     </flux:text>
                 </div>
                 <flux:icon name="arrow-up-right"
@@ -68,7 +68,7 @@ new class extends Component
         @endif
 
         {{-- Mail suggestion développeurs --}}
-        <a href="mailto:admin@e-school237.com?subject=Suggestion - E-School237 - {{$user->name}}"
+        <a href="mailto:{{ config('mail.contact_address') }}?subject=Suggestion - E-School237 - {{$user->name}}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg
                border border-zinc-200 dark:border-zinc-700
                hover:border-blue-400 hover:bg-blue-50
@@ -86,7 +86,7 @@ new class extends Component
                     {{ __('app.profile.contact.suggest_developers') }}
                 </flux:text>
                 <flux:text size="xs" class="text-zinc-400 truncate">
-                    contact@e-school237.com
+                    {{ config('mail.contact_address') }}
                 </flux:text>
             </div>
             <flux:icon name="arrow-up-right"

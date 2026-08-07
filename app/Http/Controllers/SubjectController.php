@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -119,10 +120,19 @@ class SubjectController extends Controller
     {
         // dd($topic);
         Auth::user()->hasRole([ 'admin', 'author']);
+        $wasActive = $topic->is_active;
         $topic->update([
             'is_active' => $topic->is_active ? 0 : 1,
             'updated_at' => now()
         ]);
+
+        AuditLogger::log(
+            'subject.status_changed',
+            "Matière « {$topic->name} » : " . ($wasActive ? 'activée → désactivée' : 'désactivée → activée'),
+            $topic,
+            ['is_active' => $wasActive],
+            ['is_active' => $topic->is_active]
+        );
 
         $status = $topic->is_active ? 'Activéee' : 'désactivéee';
         return redirect()->back()->with('success', "Matière {$status} avec succès.");

@@ -106,7 +106,7 @@
                                             {{ $article->title }}
                                         </a>
                                     </h4>
-                                    <p class="text-xs text-gray-500">{{ $article->category->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ $article->subject->name ?? '—' }}</p>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -149,7 +149,7 @@
                                             {{ $article->title }}
                                         </a>
                                     </h4>
-                                    <p class="text-xs text-gray-500">{{ $article->category->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ $article->subject->name ?? '—' }}</p>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -279,9 +279,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Publication Timeline Chart
     const publicationCtx = document.getElementById('publicationChart').getContext('2d');
-    
-    // Get last 6 months data
-    
+
+    const publicationData = @json($stats['publications_monthly']);
 
     new Chart(publicationCtx, {
         type: 'line',

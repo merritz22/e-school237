@@ -8,7 +8,23 @@
       "PowerShell(Get-Process | Where-Object { $_.ProcessName -match \"php|composer\" } | Select-Object Id, ProcessName, StartTime)",
       "Read(//d/laragon/bin/php/php-8.3.16-Win32-vs16-x64/**)",
       "Bash(D:/laragon/bin/php/php-8.3.16-Win32-vs16-x64/php.exe artisan *)",
-      "Bash(php -l routes/web.php)"
+      "Bash(php -l routes/web.php)",
+      "Bash(grep -rln -i \"export\\\\|\\\\\\\\bReport\\\\\\\\b\\\\|excel\\\\|csv\\\\|pdf\" app/Http/Controllers/Admin)",
+      "Bash(grep -rln -i \"Maatwebsite\\\\|FromCollection\\\\|Writer::create\\\\|League\\\\\\\\\\\\\\\\Csv\" app)",
+      "Bash(php -l database/migrations/2026_08_07_000000_create_audit_logs_table.php)",
+      "Bash(php -l database/migrations/2026_08_07_000001_create_login_histories_table.php)",
+      "Bash(php -l database/migrations/2026_08_07_000002_add_validation_fields_to_subscriptions_table.php)",
+      "Bash(php -l app/Models/AuditLog.php)",
+      "Bash(php -l app/Models/LoginHistory.php)",
+      "Bash(\"D:/laragon/bin/php/php-8.3.16-Win32-vs16-x64/php.exe\" artisan *)",
+      "Bash(grep -n 'protected $fillable' -A 10 app/Models/Subject.php app/Models/Level.php)",
+      "Bash(grep -n 'function author\\\\|protected $fillable' -A 5 app/Models/BlogPost.php)",
+      "Bash(grep -n 'protected $fillable' -A 20 app/Models/EducationalResource.php)",
+      "Bash(grep -n 'protected $fillable' -A 20 app/Models/EvaluationSubject.php)",
+      "Bash(php -l app/Http/Controllers/Admin/ReportController.php)",
+      "Bash(php -l app/Http/Controllers/Admin/AuditLogController.php)",
+      "Bash(php -l app/Http/Controllers/Admin/LoginHistoryController.php)",
+      "Bash(grep -n 'protected $fillable' -A 8 app/Models/Category.php)"
     ],
     "additionalDirectories": [
       "D:\\laragon\\bin\\php\\php-8.3.16-Win32-vs16-x64"

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\PdfWatermarkService;
 use Illuminate\Support\Facades\Response;
 use App\Services\PdfThumbnailService;
+use App\Services\AuditLogger;
 
 
 class EvaluationSubjectController extends Controller
@@ -511,6 +512,14 @@ class EvaluationSubjectController extends Controller
             Storage::disk('public')->delete($subject->preview_image);
             $this->warn("  → Thumbnail supprimé : {$subject->preview_image}");
         }
+
+        AuditLogger::log(
+            'evaluation_subject.deleted',
+            "Suppression du sujet d'évaluation « {$subject->title} »",
+            null,
+            ['id' => $subject->id, 'title' => $subject->title],
+            []
+        );
 
         $subject->delete();
 

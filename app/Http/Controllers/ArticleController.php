@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Subject;
 use App\Models\User;
 use App\Models\Tag;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -231,6 +232,14 @@ class ArticleController extends Controller
             Storage::disk('public')->delete($article->featured_image);
         }
 
+        AuditLogger::log(
+            'article.deleted',
+            "Suppression de l'article « {$article->title} »",
+            null,
+            ['id' => $article->id, 'title' => $article->title],
+            []
+        );
+
         $article->delete();
 
         return redirect()->route('admin.articles.index')
@@ -246,10 +255,20 @@ class ArticleController extends Controller
         Auth::user()->hasRole([ 'admin', 'author']);
         // dd(now());
 
+        $oldStatus = $article->status;
+
         $article->update([
             'status' => $article->status == 'draft' || $article->status == 'archived' ? 'published' : 'draft',
             'published_at' => $article->status == 'draft' || $article->status == 'archived' ? now() : null
         ]);
+
+        AuditLogger::log(
+            'article.status_changed',
+            "Article « {$article->title} » : {$oldStatus} → {$article->status}",
+            $article,
+            ['status' => $oldStatus],
+            ['status' => $article->status]
+        );
 
         $status = $article->status == 'published' ? 'publié' : 'dépublié';
         return redirect()->back()->with('success', "Article {$status} avec succès.");

@@ -10,6 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
+use App\Services\AuditLogger;
+use App\Services\SubscriptionPricing;
+use App\Enums\SubscriptionStatus;
 use App\Models\Notification;
 use App\Models\UserNotification;
 
@@ -80,9 +83,8 @@ class SubscriptionController extends Controller
 
         $userId = auth()->id();
 
-        //Dates scolaires Cameroun
-        $startsAt = Carbon::create(date('Y'), 9, 1);
-        $endsAt = Carbon::create(date('Y') + 1, 6, 30);
+        // Dates scolaires Cameroun
+        [$startsAt, $endsAt] = SubscriptionPricing::schoolYearRange();
 
         $exists = Subscription::where('user_id', $userId)
             ->where('level_id', $request->level)
@@ -103,9 +105,11 @@ class SubscriptionController extends Controller
             'subject_id' => null,
             'starts_at'  => $startsAt,
             'ends_at'    => $endsAt,
-            'status'     => 'pending',
+            'status'     => SubscriptionStatus::Pending->value,
             'amount'     => $request->price,
-            'currency'   => $request->phone,
+            'currency'   => config('subscriptions.currency'),
+            'phone'      => $request->phone,
+            'type'       => SubscriptionPricing::classify((float) $request->price)->value,
         ]);
 
         return response()->json([
@@ -146,11 +150,23 @@ class SubscriptionController extends Controller
     {
         // dd($topic);
         Auth::user()->hasRole([ 'admin', 'author']);
-        if ($subscription->status !== 'active') {
+        if ($subscription->status !== SubscriptionStatus::Active->value) {
+            $oldStatus = $subscription->status;
+
             $subscription->update([
-                'status' => 'active',
+                'status' => SubscriptionStatus::Active->value,
+                'validated_at' => now(),
+                'validated_by' => Auth::id(),
                 'updated_at' => now()
             ]);
+
+            AuditLogger::log(
+                'subscription.validated',
+                "Validation manuelle de l'abonnement #{$subscription->id} ({$subscription->amount} " . config('subscriptions.currency') . ") pour {$subscription->user->name}",
+                $subscription,
+                ['status' => $oldStatus],
+                ['status' => SubscriptionStatus::Active->value]
+            );
         }
 
         $notification = Notification::where('code', 'WAITING_PAYMENT')->first();

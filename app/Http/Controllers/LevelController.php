@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Level;
 use App\Models\Subject;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -148,10 +149,19 @@ class LevelController extends Controller
     {
         // dd($level);
         Auth::user()->hasRole([ 'admin', 'author']);
+        $wasActive = $level->is_active;
         $level->update([
             'is_active' => $level->is_active ? 0 : 1,
             'updated_at' => now()
         ]);
+
+        AuditLogger::log(
+            'level.status_changed',
+            "Classe « {$level->name} » : " . ($wasActive ? 'activée → désactivée' : 'désactivée → activée'),
+            $level,
+            ['is_active' => $wasActive],
+            ['is_active' => $level->is_active]
+        );
 
         $status = $level->is_active ? 'Activéee' : 'désactivéee';
         return redirect()->back()->with('success', "Classe {$status} avec succès.");

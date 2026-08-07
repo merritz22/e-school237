@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\GenericMail;
 use App\Models\MailTemplate;
 use App\Services\NotificationService;
+use App\Services\SubscriptionPricing;
+use App\Enums\SubscriptionStatus;
+use App\Support\SubscriptionRules;
 
 new class extends Component
 {
@@ -19,13 +22,15 @@ new class extends Component
     public $level;
     
     #[Validate('required', message: 'Le téléphone est un champs obligatoire')]
-    #[Validate('regex:/^6[0-9]{8}$/', message: 'Le numéro doit être un numéro camerounais valide (ex: 6XXXXXXXX)')]
+    #[Validate('regex:' . SubscriptionRules::PHONE_REGEX, message: 'Le numéro doit être un numéro camerounais valide (ex: 6XXXXXXXX)')]
     public $phone;
-    
+
     #[Validate('required', message: 'Le prix est un champs obligatoire')]
     public $price;
 
     public $levels = [];
+
+    public $plans = [];
 
     public $message = null;
 
@@ -33,6 +38,7 @@ new class extends Component
     {
 
         $this->levels = Level::where('is_active', 1)->get();
+        $this->plans = config('subscriptions.plans');
     }
 
     public function closeModal()
@@ -53,8 +59,7 @@ new class extends Component
         $user = Auth::user();
 
         // Dates scolaires Cameroun
-        $startsAt = Carbon::create(date('Y'), 9, 1);
-        $endsAt   = Carbon::create(date('Y') + 1, 6, 30);
+        [$startsAt, $endsAt] = SubscriptionPricing::schoolYearRange();
 
         $exists = Subscription::where('user_id', $user->id)
             ->where('level_id', $this->level)
@@ -65,16 +70,8 @@ new class extends Component
             $this->addError('level', 'Abonnement déjà existant pour ce niveau.');
             return;
         }
-        
-        $type = '';
 
-        if ($this->price <= 5000.0) {
-            $type = 'CLASSIC';
-        } elseif ($this->price >= 6000.0 && $this->price <= 12000.0) {
-            $type = 'PREMIUM';
-        } elseif ($this->price >= 8000.0 && $this->price <= 16000.0) {
-            $type = 'ADVANCED';
-        }
+        $type = SubscriptionPricing::classify((float) $this->price);
 
         $subscription = Subscription::create([
             'user_id' => $user->id,
@@ -82,10 +79,11 @@ new class extends Component
             'subject_id' => null,
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
-            'status' => 'pending',
+            'status' => SubscriptionStatus::Pending->value,
             'amount' => $this->price,
-            'currency' => $this->phone,
-            'type' => $type,
+            'currency' => config('subscriptions.currency'),
+            'phone' => $this->phone,
+            'type' => $type->value,
         ]);
 
         // Création de la notification
@@ -107,7 +105,7 @@ new class extends Component
             'level' => Level::find($this->level)->name,
         ];
         Mail::to($user->email)->send(new GenericMail($template, $data));
-        Mail::to('admin@e-school237.com')->send(new GenericMail($templateAdmin, $data));
+        Mail::to(config('mail.admin_address'))->send(new GenericMail($templateAdmin, $data));
 
         // 3️⃣ Afficher le modal de confirmation
         $this->showModal = true;
@@ -118,7 +116,8 @@ new class extends Component
     {
 
         return view('livewire.subscriptions.subscription', [
-            'levels' => $this->levels
+            'levels' => $this->levels,
+            'plans' => $this->plans,
         ]);
     }
 };

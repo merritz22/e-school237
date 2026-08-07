@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\NewUserRegistered;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -29,6 +30,8 @@ class GoogleController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (InvalidStateException|\Exception $e) {
+            AuditLogger::logLogin('failed', null, 'inconnu', 'google');
+
             return redirect()->route('login')
                 ->with('error', 'La connexion avec Google a échoué. Veuillez réessayer.');
         }
@@ -70,6 +73,8 @@ class GoogleController extends Controller
         }
 
         Auth::login($user, remember: true);
+
+        AuditLogger::logLogin('success', $user->id, $user->email, 'google');
 
         return $isNewUser
             ? redirect()->route('user.profile')

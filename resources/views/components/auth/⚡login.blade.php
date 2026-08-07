@@ -4,6 +4,7 @@ use Livewire\Component;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
+use App\Services\AuditLogger;
 
 new class extends Component
 {
@@ -24,6 +25,8 @@ new class extends Component
             'password' => $this->password
         ]))
         {
+            AuditLogger::logLogin('success', Auth::id(), $this->email);
+
             if(!Auth::user()->email_verified_at)
             {
                 // Création de la notification
@@ -35,6 +38,8 @@ new class extends Component
             }
             return $this->redirectRoute('home', navigate: true);
         }
+
+        AuditLogger::logLogin('failed', null, $this->email);
 
         $this->reset('password');
 

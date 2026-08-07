@@ -289,6 +289,122 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Abonnements & paiements -->
+            <div class="bg-white rounded shadow mb-4">
+                <div class="px-6 py-3 border-b border-gray-200 flex items-center justify-between">
+                    <h6 class="font-semibold text-blue-600 m-0">Abonnements & paiements</h6>
+                    <a href="{{ route('admin.subscriptions.index') }}" class="text-sm text-blue-600 hover:underline">Voir tous les abonnements</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Niveau</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Type</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Montant</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Statut</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Validé le</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Validé par</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($user->subscriptions as $subscription)
+                                <tr class="border-t">
+                                    <td class="px-4 py-2">{{ $subscription->level->name ?? '—' }}</td>
+                                    <td class="px-4 py-2">{{ $subscription->type ?: '—' }}</td>
+                                    <td class="px-4 py-2">{{ number_format($subscription->amount, 0, ',', ' ') }} {{ config('subscriptions.currency') }}</td>
+                                    <td class="px-4 py-2">
+                                        <span class="px-2 py-1 text-xs rounded-full
+                                            {{ $subscription->status === 'active' ? 'bg-green-100 text-green-800' :
+                                               ($subscription->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                            {{ ucfirst($subscription->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-2">{{ $subscription->validated_at?->format('d/m/Y H:i') ?? '—' }}</td>
+                                    <td class="px-4 py-2">{{ $subscription->validator->name ?? 'Automatique' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-4 py-4 text-center text-gray-500">Aucun abonnement</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Historique de connexion -->
+            <div class="bg-white rounded shadow mb-4">
+                <div class="px-6 py-3 border-b border-gray-200 flex items-center justify-between">
+                    <h6 class="font-semibold text-blue-600 m-0">Historique de connexion (10 dernières)</h6>
+                    <a href="{{ route('admin.login-history.index', ['user_id' => $user->id]) }}" class="text-sm text-blue-600 hover:underline">Voir tout</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Date</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Méthode</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Statut</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($loginHistory as $login)
+                                <tr class="border-t">
+                                    <td class="px-4 py-2">{{ $login->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-4 py-2">{{ $login->provider === 'google' ? 'Google' : 'Email / mot de passe' }}</td>
+                                    <td class="px-4 py-2">
+                                        @if($login->status === 'success')
+                                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Réussie</span>
+                                        @else
+                                            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Échouée</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-500">{{ $login->ip_address }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-4 py-4 text-center text-gray-500">Aucune connexion enregistrée</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Journal d'audit lié à ce compte -->
+            <div class="bg-white rounded shadow mb-4">
+                <div class="px-6 py-3 border-b border-gray-200 flex items-center justify-between">
+                    <h6 class="font-semibold text-blue-600 m-0">Journal d'audit (10 dernières actions)</h6>
+                    <a href="{{ route('admin.audit-logs.index', ['user_id' => $user->id]) }}" class="text-sm text-blue-600 hover:underline">Voir tout</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Date</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Action</th>
+                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($auditActivity as $log)
+                                <tr class="border-t">
+                                    <td class="px-4 py-2 whitespace-nowrap">{{ $log->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-4 py-2"><span class="px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800">{{ $log->action }}</span></td>
+                                    <td class="px-4 py-2 text-gray-700">{{ $log->description }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-4 py-4 text-center text-gray-500">Aucune action enregistrée</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

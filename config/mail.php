@@ -115,4 +115,17 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Adresses de contact de l'application
+    |--------------------------------------------------------------------------
+    |
+    | admin_address reçoit les notifications internes (nouvelles inscriptions,
+    | demandes d'abonnement...). contact_address est l'adresse de support
+    | affichée aux utilisateurs et utilisée pour retrouver le compte admin.
+    |
+    */
+    'admin_address' => env('MAIL_ADMIN_ADDRESS', 'admin@e-school237.com'),
+    'contact_address' => env('MAIL_CONTACT_ADDRESS', 'contact@e-school237.com'),
+
 ];

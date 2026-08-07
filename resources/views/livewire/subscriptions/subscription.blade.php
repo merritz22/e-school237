@@ -44,10 +44,10 @@
 
                         {{-- Classique --}}
                         <label class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-150
-                            {{ $price == '5000'
+                            {{ $price == $plans['CLASSIC']
                                 ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
                                 : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600' }}">
-                            <input type="radio" wire:model.live="price" value="5000" class="sr-only" />
+                            <input type="radio" wire:model.live="price" value="{{ $plans['CLASSIC'] }}" class="sr-only" />
                             <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
                                 <flux:icon name="star" class="w-5 h-5 text-zinc-400" />
                             </div>
@@ -55,18 +55,18 @@
                                 <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ __('app.subscriptions.create.plan.classic.name') }}</p>
                                 <p class="text-xs text-zinc-400">{{ __('app.subscriptions.create.plan.classic.description') }}</p>
                             </div>
-                            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ __('app.subscriptions.create.plan.classic.price') }}</span>
-                            @if($price == '5000')
+                            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ number_format($plans['CLASSIC'], 0, ',', ' ') }} {{ config('subscriptions.currency') }}</span>
+                            @if($price == $plans['CLASSIC'])
                                 <flux:icon name="check-circle" class="w-5 h-5 text-sky-500 shrink-0" />
                             @endif
                         </label>
 
                         {{-- Excellence --}}
                         <label class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-150
-                            {{ $price == '16000'
+                            {{ $price == $plans['ADVANCED']
                                 ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
                                 : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600' }}">
-                            <input type="radio" wire:model.live="price" value="16000" class="sr-only" />
+                            <input type="radio" wire:model.live="price" value="{{ $plans['ADVANCED'] }}" class="sr-only" />
                             <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center shrink-0">
                                 <flux:icon name="academic-cap" class="w-5 h-5 text-amber-500" />
                             </div>
@@ -77,18 +77,18 @@
                                 </div>
                                 <p class="text-xs text-zinc-400">{{ __('app.subscriptions.create.plan.excellence.description') }}</p>
                             </div>
-                            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ __('app.subscriptions.create.plan.excellence.price') }}</span>
-                            @if($price == '16000')
+                            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ number_format($plans['ADVANCED'], 0, ',', ' ') }} {{ config('subscriptions.currency') }}</span>
+                            @if($price == $plans['ADVANCED'])
                                 <flux:icon name="check-circle" class="w-5 h-5 text-sky-500 shrink-0" />
                             @endif
                         </label>
 
                         {{-- Premium --}}
                         <label class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-150
-                            {{ $price == '12000'
+                            {{ $price == $plans['PREMIUM']
                                 ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/10'
                                 : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600' }}">
-                            <input type="radio" wire:model.live="price" value="12000" class="sr-only" />
+                            <input type="radio" wire:model.live="price" value="{{ $plans['PREMIUM'] }}" class="sr-only" />
                             <div class="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center shrink-0">
                                 <flux:icon name="bolt" class="w-5 h-5 text-purple-500" />
                             </div>
@@ -96,8 +96,8 @@
                                 <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ __('app.subscriptions.create.plan.premium.name') }}</p>
                                 <p class="text-xs text-zinc-400">{{ __('app.subscriptions.create.plan.premium.description') }}</p>
                             </div>
-                            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ __('app.subscriptions.create.plan.premium.price') }}</span>
-                            @if($price == '12000')
+                            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 shrink-0">{{ number_format($plans['PREMIUM'], 0, ',', ' ') }} {{ config('subscriptions.currency') }}</span>
+                            @if($price == $plans['PREMIUM'])
                                 <flux:icon name="check-circle" class="w-5 h-5 text-sky-500 shrink-0" />
                             @endif
                         </label>
@@ -155,7 +155,7 @@
                         <ol class="list-decimal list-outside ml-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
                             <li class="leading-relaxed">
                                 Payer
-                                <flux:badge color="yellow" class="mx-1">{{ number_format($price) }} XAF</flux:badge>
+                                <flux:badge color="yellow" class="mx-1">{{ number_format($price, 0, ',', ' ') }} {{ config('subscriptions.currency') }}</flux:badge>
                                  sur l'un des comptes ci-dessous.
                             </li>
                             <li class="leading-relaxed">
@@ -163,7 +163,7 @@
                             </li>
                             <li class="leading-relaxed">
                                 La validation peut prendre jusqu'à
-                                <flux:badge color="red" class="mx-1">12 heures</flux:badge>.
+                                <flux:badge color="red" class="mx-1">{{ config('subscriptions.activation_delay_hours') }} heures</flux:badge>.
                             </li>
                         </ol>
                     </flux:card>
@@ -183,10 +183,10 @@
                                 Numéro de paiement
                             </flux:text>
                             <p class="text-orange-500 font-bold text-2xl tracking-widest">
-                                696 090 236
+                                {{ implode(' ', str_split(config('subscriptions.payment_accounts.orange.number'), 3)) }}
                             </p>
                             <flux:text size="xs" class="text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                                POUOKAM NGUEGUIM
+                                {{ config('subscriptions.payment_accounts.orange.holder') }}
                             </flux:text>
                         </flux:card>
 
@@ -202,10 +202,10 @@
                                 Numéro de paiement
                             </flux:text>
                             <p class="text-yellow-400 font-bold text-2xl tracking-widest">
-                                651 993 749
+                                {{ implode(' ', str_split(config('subscriptions.payment_accounts.mtn.number'), 3)) }}
                             </p>
                             <flux:text size="xs" class="text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                                POUOKAM NGUEGUIM
+                                {{ config('subscriptions.payment_accounts.mtn.holder') }}
                             </flux:text>
                         </flux:card>
 
@@ -213,7 +213,7 @@
 
                     {{-- Note --}}
                     <flux:text size="xs" class="text-center text-gray-400 dark:text-gray-500 px-2">
-                        En cas de problème, contactez le support après 12 heures.
+                        En cas de problème, contactez le support après {{ config('subscriptions.activation_delay_hours') }} heures.
                     </flux:text>
 
                 </div>

@@ -34,6 +34,50 @@
     @component('components.adminquickaction')
     @endcomponent
 
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Croissance des utilisateurs (12 mois)</h3>
+            <canvas id="usersGrowthChart" height="200"></canvas>
+        </div>
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Téléchargements par mois (12 mois)</h3>
+            <canvas id="downloadsMonthlyChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Répartition du contenu</h3>
+            <canvas id="contentDistributionChart" height="220"></canvas>
+        </div>
+
+        <!-- Utilisateurs les plus actifs -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Utilisateurs les plus actifs</h3>
+            </div>
+            <div class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
+                @forelse($active_users as $user)
+                    <div class="px-6 py-3 flex items-center justify-between">
+                        <div class="min-w-0">
+                            <a href="{{ route('admin.users.show', $user) }}" class="text-sm font-medium text-gray-900 hover:text-indigo-600 truncate block">
+                                {{ $user->name }}
+                            </a>
+                            <p class="text-xs text-gray-500">{{ $user->email }}</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500 shrink-0 ml-3">
+                            <div>{{ $user->download_logs_count }} téléchargement(s)</div>
+                            <div>{{ $user->forum_topics_count }} post(s)</div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="px-6 py-6 text-center text-gray-500 text-sm">Aucune activité utilisateur pour le moment</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions & System Info -->
     {{-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
        
@@ -275,8 +319,60 @@
     @endif--}}
 </div>
 
+@push('styles')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+@endpush
+
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const usersGrowth = @json($charts_data['users_growth']);
+    new Chart(document.getElementById('usersGrowthChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: usersGrowth.map(m => m.month),
+            datasets: [{
+                label: 'Nouveaux utilisateurs',
+                data: usersGrowth.map(m => m.users),
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+
+    const downloadsMonthly = @json($charts_data['downloads_monthly']);
+    new Chart(document.getElementById('downloadsMonthlyChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: downloadsMonthly.map(m => m.month),
+            datasets: [{
+                label: 'Téléchargements',
+                data: downloadsMonthly.map(m => m.downloads),
+                backgroundColor: '#3b82f6'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    const contentDistribution = @json($charts_data['content_distribution']);
+    new Chart(document.getElementById('contentDistributionChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: contentDistribution.map(c => c.name),
+            datasets: [{
+                data: contentDistribution.map(c => c.value),
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+});
+
 // Toggle chart function placeholder
 function toggleChart(type) {
     console.log('Basculer vers:', type);

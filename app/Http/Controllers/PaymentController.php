@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Providers\MtnTokenService;
 use App\Jobs\CheckMtnPaymentStatus;
+use App\Services\AuditLogger;
+use App\Enums\SubscriptionStatus;
 
 class PaymentController extends Controller
 {
@@ -24,8 +26,16 @@ class PaymentController extends Controller
             'payment_method' => 'required|in:mtn,orange',
         ]);
 
+        // Seul MTN dispose d'une initiation programmatique dans ce contrôleur ;
+        // Orange n'est traité que côté webhook (voir callback()). On l'indique
+        // explicitement plutôt que de silencieusement traiter un choix "orange"
+        // via le flux MTN.
+        if ($request->payment_method !== 'mtn') {
+            return response()->json(['error' => "Ce mode de paiement n'est pas encore disponible depuis cette interface."], 422);
+        }
+
         $subscriptions = Subscription::where('user_id', auth()->id())
-            ->where('status', 'pending')
+            ->where('status', SubscriptionStatus::Pending->value)
             ->get();
 
         if ($subscriptions->isEmpty()) {
@@ -37,8 +47,8 @@ class PaymentController extends Controller
         $payment = Payment::create([
             'user_id' => auth()->id(),
             'amount' => $totalAmount,
-            'currency' => 'XAF',
-            'provider' => 'mtn',
+            'currency' => config('subscriptions.currency'),
+            'provider' => $request->payment_method,
             'status' => 'pending',
             'transaction_id' => (string) Str::uuid(),
         ]);
@@ -65,9 +75,25 @@ class PaymentController extends Controller
         ]);
 
         // Mise à jour des soubscritption de l'utilisateur
-        Subscription::where('user_id', $payment->user_id)
-            ->where('status', 'pending')
-            ->update(['status' => 'active']);
+        $subscriptions = Subscription::where('user_id', $payment->user_id)
+            ->where('status', SubscriptionStatus::Pending->value)
+            ->get();
+
+        foreach ($subscriptions as $subscription) {
+            $subscription->update([
+                'status' => SubscriptionStatus::Active->value,
+                'validated_at' => now(),
+            ]);
+
+            AuditLogger::log(
+                'subscription.auto_activated',
+                "Activation automatique de l'abonnement #{$subscription->id} suite au paiement MTN #{$payment->id}",
+                $subscription,
+                ['status' => SubscriptionStatus::Pending->value],
+                ['status' => SubscriptionStatus::Active->value],
+                userId: null
+            );
+        }
     }
 
     public function mtnPay(Payment $payment, string $phone)
@@ -87,7 +113,9 @@ class PaymentController extends Controller
             'Content-Type' => 'application/json',
         ])->post(config('services.mtn.base_url') . '/collection/v1_0/requesttopay', [
             'amount' => (string) $payment->amount,
-            'currency' => 'EUR',
+            // Le sandbox MTN MoMo n'accepte que EUR quel que soit le pays cible ;
+            // en production on envoie la vraie devise du paiement (XAF).
+            'currency' => config('services.mtn.env') === 'sandbox' ? 'EUR' : $payment->currency,
             'externalId' => $payment->id,
             'payer' => [
                 'partyIdType' => 'MSISDN',
@@ -113,9 +141,11 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Signature invalide'], 403);
         }
 
-        // ⚡ Sécurité 2 : Vérifier IP (optionnel mais recommandé)
-        $allowedIps = ['154.66.XX.XX', '154.66.XX.XX']; // IPs officielles Orange
-        if (!in_array($request->ip(), $allowedIps)) {
+        // ⚡ Sécurité 2 : Vérifier IP (si une liste a été configurée)
+        $allowedIps = config('subscriptions.orange_webhook_ips');
+        if (empty($allowedIps)) {
+            Log::warning('Callback Orange reçu sans liste ORANGE_WEBHOOK_IPS configurée — contrôle IP ignoré.');
+        } elseif (!in_array($request->ip(), $allowedIps, true)) {
             return response()->json(['error' => 'IP non autorisée'], 403);
         }
 
@@ -128,13 +158,35 @@ class PaymentController extends Controller
                 'transaction_id' => $request->transactionId,
             ]);
 
+            $oldStatus = $payment->subscription->status;
             $payment->subscription->update([
-                'status' => 'active'
+                'status' => SubscriptionStatus::Active->value,
+                'validated_at' => now(),
             ]);
+
+            AuditLogger::log(
+                'subscription.auto_activated',
+                "Activation automatique de l'abonnement #{$payment->subscription->id} suite au paiement Orange #{$payment->id}",
+                $payment->subscription,
+                ['status' => $oldStatus],
+                ['status' => SubscriptionStatus::Active->value],
+                userId: null
+            );
 
         } else {
             $payment->update(['status' => 'failed']);
-            $payment->subscription->update(['status' => 'cancelled']);
+
+            $oldStatus = $payment->subscription->status;
+            $payment->subscription->update(['status' => SubscriptionStatus::Cancelled->value]);
+
+            AuditLogger::log(
+                'subscription.auto_cancelled',
+                "Échec du paiement Orange #{$payment->id} — abonnement #{$payment->subscription->id} annulé",
+                $payment->subscription,
+                ['status' => $oldStatus],
+                ['status' => SubscriptionStatus::Cancelled->value],
+                userId: null
+            );
         }
 
         return response()->json(['message' => 'Callback traité']);

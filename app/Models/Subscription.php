@@ -16,12 +16,16 @@ class Subscription extends Model
         'status',
         'amount',
         'currency',
-        'type'
+        'phone',
+        'type',
+        'validated_at',
+        'validated_by',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'validated_at' => 'datetime',
     ];
 
     /**
@@ -79,6 +83,16 @@ class Subscription extends Model
         // - la clé étrangère est payment.<model>_id (ex: subscription_id)
         // - chaque élément ne peut avoir qu’un seul paiement
         return $this->hasOne(Payment::class);
+    }
+
+    /**
+     * Administrateur ayant validé manuellement l'abonnement (null si activation automatique).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function validator()
+    {
+        return $this->belongsTo(User::class, 'validated_by');
     }
 
 }

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
+use App\Models\LoginHistory;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -79,6 +82,14 @@ class AdminUserController extends Controller
 
         $user = User::create($validated);
 
+        AuditLogger::log(
+            'user.created',
+            "Création de l'utilisateur {$user->name} ({$user->email}) avec le rôle {$user->role}",
+            $user,
+            [],
+            ['name' => $user->name, 'email' => $user->email, 'role' => $user->role]
+        );
+
         return redirect()->route('admin.users.index')
                         ->with('success', 'Utilisateur créé avec succès.');
     }
@@ -88,9 +99,22 @@ class AdminUserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load(['articles', 'evaluationSubjects', 'educationalResources', 'forumTopics', 'forumReplies']);
-        
-        return view('admin.users.show', compact('user'));
+        $user->load([
+            'articles', 'evaluationSubjects', 'educationalResources', 'forumTopics', 'forumReplies',
+            'subscriptions' => fn ($q) => $q->with(['level', 'payment', 'validator'])->latest(),
+        ]);
+
+        $loginHistory = LoginHistory::where('user_id', $user->id)->latest('created_at')->take(10)->get();
+
+        $auditActivity = AuditLog::where('user_id', $user->id)
+            ->orWhere(function ($q) use ($user) {
+                $q->where('auditable_type', $user->getMorphClass())->where('auditable_id', $user->id);
+            })
+            ->latest('created_at')
+            ->take(10)
+            ->get();
+
+        return view('admin.users.show', compact('user', 'loginHistory', 'auditActivity'));
     }
 
     /**
@@ -143,6 +167,14 @@ class AdminUserController extends Controller
                             ->with('error', 'Impossible de supprimer le dernier administrateur.');
         }
 
+        AuditLogger::log(
+            'user.deleted',
+            "Suppression de l'utilisateur {$user->name} ({$user->email})",
+            null,
+            ['id' => $user->id, 'name' => $user->name, 'email' => $user->email],
+            []
+        );
+
         $user->delete();
 
         return redirect()->route('admin.users.index')
@@ -161,6 +193,14 @@ class AdminUserController extends Controller
 
         $user->update(['is_active' => false]);
 
+        AuditLogger::log(
+            'user.suspended',
+            "Suspension de l'utilisateur {$user->name} ({$user->email})",
+            $user,
+            ['is_active' => true],
+            ['is_active' => false]
+        );
+
         return redirect()->route('admin.users.index')
                         ->with('success', 'Utilisateur suspendu avec succès.');
     }
@@ -171,6 +211,14 @@ class AdminUserController extends Controller
     public function activate(User $user)
     {
         $user->update(['is_active' => true]);
+
+        AuditLogger::log(
+            'user.activated',
+            "Réactivation de l'utilisateur {$user->name} ({$user->email})",
+            $user,
+            ['is_active' => false],
+            ['is_active' => true]
+        );
 
         return redirect()->route('admin.users.index')
                         ->with('success', 'Utilisateur activé avec succès.');
@@ -191,7 +239,16 @@ class AdminUserController extends Controller
                             ->with('error', 'Impossible de modifier le rôle du dernier administrateur.');
         }
 
+        $oldRole = $user->role;
         $user->update($validated);
+
+        AuditLogger::log(
+            'user.role_changed',
+            "Changement de rôle de {$user->name} : {$oldRole} → {$validated['role']}",
+            $user,
+            ['role' => $oldRole],
+            ['role' => $validated['role']]
+        );
 
         return redirect()->route('admin.users.index')
                         ->with('success', 'Rôle de l\'utilisateur mis à jour avec succès.');

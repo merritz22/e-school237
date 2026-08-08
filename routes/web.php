@@ -181,6 +181,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/growth/export', [ReportController::class, 'exportGrowth'])->name('admin.reports.growth.export');
         Route::get('/engagement', [ReportController::class, 'engagement'])->name('admin.reports.engagement');
         Route::get('/engagement/export', [ReportController::class, 'exportEngagement'])->name('admin.reports.engagement.export');
+        Route::get('/visits', [ReportController::class, 'visits'])->name('admin.reports.visits');
+        Route::get('/visits/export', [ReportController::class, 'exportVisits'])->name('admin.reports.visits.export');
     });
 
     Route::fallback(function () {

@@ -16,7 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // ✅ Ajouter APRÈS StartSession via le groupe web
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
-            \App\Http\Middleware\TrackUserPresence::class, // 
+            \App\Http\Middleware\TrackUserPresence::class, //
+            \App\Http\Middleware\TrackSiteVisit::class,
         ]);
 
         $middleware->alias([

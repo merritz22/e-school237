@@ -97,6 +97,26 @@ class DownloadLog extends Model
     // Helpers
 
     /**
+     * Un même utilisateur (ou, à défaut, une même IP pour les visiteurs
+     * anonymes) qui télécharge plusieurs fois le même contenu le même jour
+     * ne doit compter que pour un seul téléchargement.
+     */
+    public static function alreadyDownloadedToday(string $resourceType, int $resourceId, ?int $userId, ?string $ipAddress = null): bool
+    {
+        return static::where('resource_type', $resourceType)
+            ->where('resource_id', $resourceId)
+            ->whereDate('downloaded_at', now()->toDateString())
+            ->where(function ($query) use ($userId, $ipAddress) {
+                if ($userId) {
+                    $query->where('user_id', $userId);
+                } else {
+                    $query->whereNull('user_id')->where('ip_address', $ipAddress);
+                }
+            })
+            ->exists();
+    }
+
+    /**
      * Log a download.
      */
     public static function logDownload($resourceType, $resourceId, $userId = null, $ipAddress = null, $userAgent = null): void

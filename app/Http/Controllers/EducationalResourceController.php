@@ -203,15 +203,21 @@ class EducationalResourceController extends Controller
             abort(404, 'Fichier non trouvé.');
         }
 
-        DownloadLog::create([
-            'user_id'       => Auth::id(),
-            'resource_type' => 'resource',
-            'resource_id'   => $resource->id,
-            'ip_address'    => $request->ip(),
-            'downloaded_at' => now(),
-        ]);
+        // Plusieurs téléchargements du même fichier par le même utilisateur
+        // (ou la même IP si anonyme) le même jour ne comptent que pour un.
+        $alreadyDownloadedToday = DownloadLog::alreadyDownloadedToday('resource', $resource->id, Auth::id(), $request->ip());
 
-        $resource->increment('downloads_count');
+        if (!$alreadyDownloadedToday) {
+            DownloadLog::create([
+                'user_id'       => Auth::id(),
+                'resource_type' => 'resource',
+                'resource_id'   => $resource->id,
+                'ip_address'    => $request->ip(),
+                'downloaded_at' => now(),
+            ]);
+
+            $resource->increment('downloads_count');
+        }
 
         return Storage::disk('private')->download(
             $resource->file_path,

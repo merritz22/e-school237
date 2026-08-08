@@ -40,15 +40,21 @@ class EvaluationSubjectController extends Controller
 
         // Le corrigé n'entre pas dans les statistiques de téléchargement des utilisateurs
         if (!$wantsCorrection) {
-            DownloadLog::create([
-                'user_id' => Auth::id(),
-                'resource_type' => 'evaluation',
-                'resource_id' => $subject->id,
-                'ip_address' => request()->ip(),
-                'downloaded_at' => now(),
-            ]);
+            // Plusieurs téléchargements du même fichier par le même utilisateur
+            // (ou la même IP si anonyme) le même jour ne comptent que pour un.
+            $alreadyDownloadedToday = DownloadLog::alreadyDownloadedToday('evaluation', $subject->id, Auth::id(), $request->ip());
 
-            $subject->increment('downloads_count');
+            if (!$alreadyDownloadedToday) {
+                DownloadLog::create([
+                    'user_id' => Auth::id(),
+                    'resource_type' => 'evaluation',
+                    'resource_id' => $subject->id,
+                    'ip_address' => $request->ip(),
+                    'downloaded_at' => now(),
+                ]);
+
+                $subject->increment('downloads_count');
+            }
         }
 
         // Télécharger le fichier déjà filigrané

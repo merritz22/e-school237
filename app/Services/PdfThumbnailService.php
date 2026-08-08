@@ -44,7 +44,7 @@ class PdfThumbnailService
             }
 
             $pdf = new Pdf($sourcePath);
-            $pdf->selectPage(1)->save($destinationPath);
+            $pdf->setPage(1)->saveImage($destinationPath);
 
             $model->update([$column => $thumbnailPath]);
 

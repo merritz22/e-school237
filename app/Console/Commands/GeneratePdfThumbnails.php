@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\PdfToImage\Pdf;
 use App\Models\EvaluationSubject;
 use App\Models\EducationalResource;
+use App\Services\PdfThumbnailService;
 
 class GeneratePdfThumbnails extends Command
 {
@@ -26,43 +26,28 @@ class GeneratePdfThumbnails extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(PdfThumbnailService $thumbnailService)
     {
-
         $this->info("-> Subjects section");
 
-        $subjects = EvaluationSubject::whereNull('preview_image')->get();
+        $subjects = EvaluationSubject::whereNull('preview_image')->whereNotNull('file_path')->get();
 
         foreach ($subjects as $subject) {
-            try {
-                $pdf = new Pdf(storage_path('app/private/' . $subject->file_path));
-                $path = 'thumbnails/' . $subject->file_name . '.jpg';
-
-                $pdf->selectPage(1)
-                    ->save(storage_path('public/' . $path));
-
-                $subject->update(['preview_image' => $path]);
+            if ($thumbnailService->generate(model: $subject, filePath: $subject->file_path)) {
                 $this->info("✓ {$subject->title}");
-            } catch (\Exception $e) {
-                $this->error("✗ {$subject->title} : " . $e->getMessage());
+            } else {
+                $this->error("✗ {$subject->title} — voir storage/logs/laravel.log");
             }
         }
 
         $this->info("-> Supports section");
-        $supports = EducationalResource::whereNull('preview_image')->get();
+        $supports = EducationalResource::whereNull('preview_image')->whereNotNull('file_path')->get();
 
         foreach ($supports as $support) {
-            try {
-                $pdf = new Pdf(storage_path('app/private/' . $support->file_path));
-                $path = 'thumbnails/' . $support->file_name . '.jpg';
-
-                $pdf->selectPage(1)
-                    ->save(storage_path('public/' . $path));
-
-                $support->update(['preview_image' => $path]);
+            if ($thumbnailService->generate(model: $support, filePath: $support->file_path)) {
                 $this->info("✓ {$support->title}");
-            } catch (\Exception $e) {
-                $this->error("✗ {$support->title} : " . $e->getMessage());
+            } else {
+                $this->error("✗ {$support->title} — voir storage/logs/laravel.log");
             }
         }
     }

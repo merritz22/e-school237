@@ -321,3 +321,8 @@ git push origin hotfix/login-crash
 git checkout master
 git merge hotfix/login-crash
 git push origin master
+
+
+php artisan config:cache
+php artisan view:cache
+php artisan route:cache

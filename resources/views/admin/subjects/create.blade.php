@@ -76,13 +76,6 @@
             @error('type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
-        {{-- <div>
-            <label for="exam_date" class="block text-sm font-medium text-gray-700 mb-2">Date de l'examen</label>
-            <input type="date" name="exam_date" id="exam_date" value="{{ old('exam_date') }}"
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('exam_date') border-red-500 @enderror">
-            @error('exam_date') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div> --}}
-
         <div>
             <label for="is_free" class="block text-sm font-medium text-gray-700 mb-2">Accès <span class="text-red-500">*</span></label>
             <select name="is_free" id="is_free" required
@@ -98,7 +91,7 @@
         <div class="flex justify-between">
             <!-- Fichier principal - Style amélioré -->
             <div>
-                <label for="file" class="block text-sm font-medium text-gray-700 mb-2">Fichier principal (pdf, doc, docx) <span class="text-red-500">*</span></label>
+                <label for="file" class="block text-sm font-medium text-gray-700 mb-2">Fichier principal (pdf) <span class="text-red-500">*</span></label>
                 <div class="mt-1 flex items-center">
                     <label for="file" class="relative cursor-pointer bg-white rounded-lg border border-gray-300 hover:border-blue-500 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500 @error('file') border-red-500 @enderror">
                         <div class="px-4 py-3 flex items-center">
@@ -110,12 +103,12 @@
                         <input type="file" name="file" id="file" accept=".pdf" class="sr-only">
                     </label>
                 </div>
-                <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>
+                <p class="mt-1 text-xs text-gray-500">Format accepté : .pdf</p>
                 @error('file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Fichier de correction - Style amélioré -->
-            {{-- <div>
+            <div>
                 <label for="correction_file" class="block text-sm font-medium text-gray-700 mb-2">Fichier de correction (optionnel)</label>
                 <div class="mt-1 flex items-center">
                     <label for="correction_file" class="relative cursor-pointer bg-white rounded-lg border border-gray-300 hover:border-blue-500 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500 @error('correction_file') border-red-500 @enderror">
@@ -123,14 +116,14 @@
                             <svg class="w-6 h-6 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
-                            <span class="text-sm text-gray-700" id="correction-file-name">Choisir un nouveau fichier</span>
+                            <span class="text-sm text-gray-700" id="correction-file-name">Choisir un fichier</span>
                         </div>
-                        <input type="file" name="correction_file" id="correction_file" accept=".pdf,.doc,.docx" class="sr-only">
+                        <input type="file" name="correction_file" id="correction_file" accept=".pdf" class="sr-only">
                     </label>
                 </div>
-                <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>
+                <p class="mt-1 text-xs text-gray-500">Format accepté : .pdf — réservé aux administrateurs, non visible par les utilisateurs pour le moment</p>
                 @error('correction_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-            </div> --}}
+            </div>
         </div>
 
         <div class="flex justify-between space-x-4 pt-4">
@@ -159,10 +152,10 @@
         document.getElementById('file-name').textContent = fileName;
     });
 
-    /*document.getElementById('correction_file').addEventListener('change', function(e) {
+    document.getElementById('correction_file').addEventListener('change', function(e) {
         const fileName = e.target.files[0] ? e.target.files[0].name : 'Choisir un fichier';
         document.getElementById('correction-file-name').textContent = fileName;
-    });*/
+    });
 </script>
 @endpush
 

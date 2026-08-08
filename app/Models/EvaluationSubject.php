@@ -106,14 +106,6 @@ class EvaluationSubject extends Model
     }
 
     /**
-     * Scope by difficulty.
-     */
-    public function scopeByDifficulty($query, $difficulty)
-    {
-        return $query->where('difficulty', $difficulty);
-    }
-
-    /**
      * Scope by author.
      */
     public function scopeByAuthor($query, $authorId)
@@ -138,38 +130,6 @@ class EvaluationSubject extends Model
     }
 
     // Helpers
-
-    /**
-     * Get formatted duration.
-     */
-    public function getFormattedDurationAttribute(): ?string
-    {
-        if (!$this->duration_minutes) {
-            return null;
-        }
-
-        $hours = floor($this->duration_minutes / 60);
-        $minutes = $this->duration_minutes % 60;
-
-        if ($hours > 0) {
-            return $minutes > 0 ? "{$hours}h {$minutes}min" : "{$hours}h";
-        }
-
-        return "{$minutes}min";
-    }
-
-    /**
-     * Get difficulty badge color.
-     */
-    public function getDifficultyColorAttribute(): string
-    {
-        return match($this->difficulty) {
-            'easy' => 'success',
-            'medium' => 'warning',
-            'hard' => 'danger',
-            default => 'secondary'
-        };
-    }
 
     /**
      * Increment downloads count.

@@ -77,13 +77,6 @@
             @error('type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
 
-        {{-- <div>
-            <label for="exam_date" class="block text-sm font-medium text-gray-700 mb-2">Date de l'examen</label>
-            <input type="date" name="exam_date" id="exam_date" value="{{ old('exam_date', $subject->exam_date) }}"
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('exam_date') border-red-500 @enderror">
-            @error('exam_date') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div> --}}
-
         <div>
             <label for="is_free" class="block text-sm font-medium text-gray-700 mb-2">Accès <span class="text-red-500">*</span></label>
             <select name="is_free" id="is_free"
@@ -97,7 +90,7 @@
         <div class="block">
             <!-- Fichier principal -->
             <div>
-                <label for="file" class="block text-sm font-medium text-gray-700 mb-2">Fichier principal (pdf, doc, docx) <span class="text-red-500">*</span></label>
+                <label for="file" class="block text-sm font-medium text-gray-700 mb-2">Fichier principal (pdf) <span class="text-red-500">*</span></label>
                 @if($subject->file_path)
                     <div class="mb-2 flex items-center">
                         <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,16 +108,16 @@
                             </svg>
                             <span class="text-sm text-gray-700" id="file-name">Choisir un nouveau fichier</span>
                         </div>
-                        <input type="file" name="file" id="file" accept=".pdf,.doc,.docx" class="sr-only">
+                        <input type="file" name="file" id="file" accept=".pdf" class="sr-only">
                     </label>
                 </div>
-                <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>
+                <p class="mt-1 text-xs text-gray-500">Format accepté : .pdf - Laissez vide pour conserver le fichier actuel</p>
                 @error('file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Fichier de correction -->
-            {{-- <div>
-                <label for="correction_file" class="block text-sm font-medium text-gray-700 mb-2">Fichier de correction</label>
+            <div>
+                <label for="correction_file" class="block text-sm font-medium text-gray-700 mb-2">Fichier de correction (optionnel)</label>
                 @if($subject->correction_file_path)
                     <div class="mb-2 flex items-center">
                         <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,12 +135,12 @@
                             </svg>
                             <span class="text-sm text-gray-700" id="correction-file-name">Choisir un nouveau fichier</span>
                         </div>
-                        <input type="file" name="correction_file" id="correction_file" accept=".pdf,.doc,.docx" class="sr-only">
+                        <input type="file" name="correction_file" id="correction_file" accept=".pdf" class="sr-only">
                     </label>
                 </div>
-                <p class="mt-1 text-xs text-gray-500">Formats acceptés: .pdf, .doc, .docx - Laissez vide pour conserver le fichier actuel</p>
+                <p class="mt-1 text-xs text-gray-500">Format accepté : .pdf — laissez vide pour conserver le fichier actuel. Réservé aux administrateurs, non visible par les utilisateurs pour le moment.</p>
                 @error('correction_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-            </div> --}}
+            </div>
         </div>
 
         <div class="flex justify-between space-x-4 pt-4">
@@ -176,10 +169,10 @@
         document.getElementById('file-name').textContent = fileName;
     });
 
-    /*document.getElementById('correction_file').addEventListener('change', function(e) {
+    document.getElementById('correction_file').addEventListener('change', function(e) {
         const fileName = e.target.files[0] ? e.target.files[0].name : 'Choisir un nouveau fichier';
         document.getElementById('correction-file-name').textContent = fileName;
-    });*/
+    });
 </script>
 @endpush
 

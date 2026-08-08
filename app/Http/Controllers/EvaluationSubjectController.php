@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\EvaluationSubject;
-use App\Models\Category;
 use App\Models\Subject;
 use App\Models\Level;
 use App\Models\DownloadLog;
@@ -13,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Services\PdfWatermarkService;
-use Illuminate\Support\Facades\Response;
 use App\Services\PdfThumbnailService;
 use App\Services\AuditLogger;
 
@@ -25,137 +23,36 @@ class EvaluationSubjectController extends Controller
     ) {}
 
     /**
-     * Liste des sujets d'évaluation
+     * Télécharge un sujet (ou son corrigé, réservé aux admins)
      */
-    public function index(Request $request)
+    public function download(Request $request, EvaluationSubject $subject)
     {
+        // Le corrigé n'est accessible qu'aux administrateurs et n'est jamais
+        // exposé aux utilisateurs, même via manipulation du paramètre ?type=.
+        $wantsCorrection = $request->query('type') === 'correction' && Auth::user()?->isAdmin();
 
-        $query = EvaluationSubject::with('subject', 'level');
+        $filePath = $wantsCorrection ? $subject->correction_file_path : $subject->file_path;
+        $fileName = $wantsCorrection ? ('corrige-' . $subject->file_name) : $subject->file_name;
 
-        // Filtrage par niveau
-        if ($request->filled('level_id')) {
-            $query->where('level_id', $request->level_id);
-        }
-        // Filtrage par matière
-        if ($request->filled('subject_id')) {
-            $query->where('subject_id', $request->subject_id);
-        }
-        // Filtrage par type
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-        // Filtrage par année
-        if ($request->filled('year')) {
-            $query->whereYear('created_at', $request->year);
-        }
-        // Tri
-        $sort = $request->get('sort', 'latest');
-        switch ($sort) {
-            case 'popular':
-                $query->orderBy('downloads_count', 'desc');
-                break;
-            case 'title':
-                $query->orderBy('title', 'asc');
-                break;
-            case 'level_id':
-                $query->orderBy('level_id', 'asc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-        }
-        
-        $subjects = $query->latest()->paginate(15);
-
-        // Données pour les filtres
-        $subject_names = [];
-        $types = EvaluationSubject::distinct()->pluck('type')->filter()->sort();
-        $authors = [];
-        $years = EvaluationSubject::selectRaw('YEAR(created_at) as year')
-            ->whereNotNull('created_at')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
-
-        // Liste des sujets disponnibles dans mon abonement
-        $filter_subjects = Subject::all()->where('is_active', 1);
-
-        // Liste des niveaux disponnibles dans mon abonement
-        $levels = Level::all()->where('is_active', 1);
-        
-        return view('subjects.index', compact('subjects', 'levels', 'subject_names', 'types', 'years', 'filter_subjects','authors'));
-    }
-
-    /**
-     * Affiche un sujet spécifique
-     */
-    public function show(EvaluationSubject $subject)
-    {
-        // Sujets similaires
-        $related_subjects = EvaluationSubject::where('id', '!=', $subject->id)
-            ->where(function ($query) use ($subject) {
-                $query->where('level_id', $subject->level_id)
-                      ->where('subject_id', $subject->subject_id);
-                    //   ->orWhere('category_id', $subject->category_id);
-            })
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        return view('subjects.show', compact('subject', 'related_subjects'));
-    }
-
-    /**
-     * Télécharge un sujet
-     */
-    public function download(EvaluationSubject $subject)
-    {
-        if (!Storage::disk('private')->exists($subject->file_path)) {
+        if (!$filePath || !Storage::disk('private')->exists($filePath)) {
             abort(404, 'Fichier non trouvé.');
         }
 
-        // Enregistrer le téléchargement
-        DownloadLog::create([
-            'user_id' => Auth::id(),
-            'downloadable_type' => EvaluationSubject::class,
-            'downloadable_id' => $subject->id,
-            'ip_address' => request()->ip(),
-            'resource_id' => $subject->id
-        ]);
+        // Le corrigé n'entre pas dans les statistiques de téléchargement des utilisateurs
+        if (!$wantsCorrection) {
+            DownloadLog::create([
+                'user_id' => Auth::id(),
+                'resource_type' => 'evaluation',
+                'resource_id' => $subject->id,
+                'ip_address' => request()->ip(),
+                'downloaded_at' => now(),
+            ]);
 
-        // Incrémenter le compteur
-        $subject->increment('downloads_count');
+            $subject->increment('downloads_count');
+        }
 
         // Télécharger le fichier déjà filigrané
-        return Storage::disk('private')->download(
-            $subject->file_path,
-            $subject->file_name
-        );
-    }
-
-    /**
-     * Sujets par niveau
-     */
-    public function byLevel($level_id)
-    {
-        $subjects = EvaluationSubject::with('level')
-            ->where('level_id', $level_id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
-
-        return view('subjects.level_id', compact('subjects', 'level_id'));
-    }
-
-    /**
-     * Sujets par matière
-     */
-    public function bySubject($subject_id)
-    {
-        $subjects = EvaluationSubject::with('subject')
-            ->where('subject_id', $subject_id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
-
-        return view('subjects.subject', compact('subjects', 'subject_id'));
+        return Storage::disk('private')->download($filePath, $fileName);
     }
 
     /**
@@ -353,14 +250,8 @@ class EvaluationSubjectController extends Controller
         // $this->authorize('update', $subject);
         $subjects = Subject::all()->where('is_active', 1);
         $levels = Level::all()->where('is_active', 1);
-        
-        // $categories = Category::orderBy('name')->get();
-        // $levels = EvaluationSubject::distinct()->pluck('level_id')->filter()->sort();
-        // $types = ['Examen', 'Contrôle', 'QCM', 'Exercice', 'Devoir'];
-        // dd($subject);
         $types = ['Examen', 'Séquence', 'Travaux dirigés'];
 
-        
         return view('admin.subjects.edit', compact('subject', 'subjects', 'levels', 'types'));
     }
 
@@ -379,7 +270,7 @@ class EvaluationSubjectController extends Controller
             'type' => 'required|max:50',
             // 'exam_date' => 'nullable|date',
             // 'duration_minutes' => 'nullable|integer|min:1',
-            'file' => 'nullable|file|mimes:pdf,doc,docx|max:102400',
+            'file' => 'nullable|file|mimes:pdf|max:102400',
             'correction_file' => 'nullable|file|mimes:pdf|max:102400',
         ]);
         // dd($request);
@@ -392,6 +283,11 @@ class EvaluationSubjectController extends Controller
             // 'exam_date', 
             'is_free'
         ]);
+
+        // Définis en amont : utilisés par le fichier principal ET par le
+        // corrigé, qui peut être modifié indépendamment du fichier principal.
+        $watermarkText = "E-School237.com";
+        $watermarkLink = "https://e-school237.com";
 
         try {
 
@@ -406,9 +302,6 @@ class EvaluationSubjectController extends Controller
                 $file = $request->file('file');
 
                 $tempPath = $file->getRealPath();
-
-                $watermarkText = "E-School237.com";
-                $watermarkLink = "https://e-school237.com";
 
                 // Générer le PDF filigrané
                 $watermarkedPdf = PdfWatermarkService::apply(
@@ -510,7 +403,6 @@ class EvaluationSubjectController extends Controller
         // Supprimer le thumbnail
         if ($subject->preview_image && Storage::disk('public')->exists($subject->preview_image)) {
             Storage::disk('public')->delete($subject->preview_image);
-            $this->warn("  → Thumbnail supprimé : {$subject->preview_image}");
         }
 
         AuditLogger::log(

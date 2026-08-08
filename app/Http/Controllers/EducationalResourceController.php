@@ -204,11 +204,11 @@ class EducationalResourceController extends Controller
         }
 
         DownloadLog::create([
-            'user_id'           => Auth::id(),
-            'downloadable_type' => EducationalResource::class,
-            'downloadable_id'   => $resource->id,
-            'ip_address'        => $request->ip(),
-            'resource_id'       => $resource->id,
+            'user_id'       => Auth::id(),
+            'resource_type' => 'resource',
+            'resource_id'   => $resource->id,
+            'ip_address'    => $request->ip(),
+            'downloaded_at' => now(),
         ]);
 
         $resource->increment('downloads_count');
@@ -330,8 +330,7 @@ class EducationalResourceController extends Controller
 
         // Supprimer le thumbnail
         if ($resource->preview_image && Storage::disk('public')->exists($resource->preview_image)) {
-            Storage::disk('public/')->delete($resource->preview_image);
-            $this->warn("  → Thumbnail supprimé : {$resource->preview_image}");
+            Storage::disk('public')->delete($resource->preview_image);
         }
         AuditLogger::log(
             'resource.deleted',

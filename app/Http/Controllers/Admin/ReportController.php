@@ -8,6 +8,7 @@ use App\Models\DownloadLog;
 use App\Models\EducationalResource;
 use App\Models\EvaluationSubject;
 use App\Models\Level;
+use App\Models\SiteVisit;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Enums\SubscriptionStatus;
@@ -178,6 +179,98 @@ class ReportController extends Controller
             $d->resource_id,
             $d->ip_address,
         ]));
+    }
+
+    /**
+     * Rapport de fréquentation du site (visiteurs uniques par jour).
+     */
+    public function visits(Request $request)
+    {
+        $granularity = in_array($request->input('granularity'), ['day', 'week', 'month'])
+            ? $request->input('granularity')
+            : 'day';
+
+        $defaultDays = match ($granularity) {
+            'week' => 84,   // 12 semaines
+            'month' => 364, // 12 mois
+            default => 29,  // 30 jours
+        };
+
+        $from = $request->filled('from')
+            ? Carbon::parse($request->input('from'))
+            : now()->subDays($defaultDays)->startOfDay();
+        $to = $request->filled('to')
+            ? Carbon::parse($request->input('to'))
+            : now();
+
+        $today = SiteVisit::whereDate('visited_on', today())->count();
+        $thisWeek = SiteVisit::whereBetween('visited_on', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $thisMonth = SiteVisit::whereBetween('visited_on', [now()->startOfMonth(), now()->endOfMonth()])->count();
+
+        $periodTotal = SiteVisit::whereBetween('visited_on', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])->count();
+
+        $buckets = $this->visitBuckets($from, $to, $granularity);
+
+        return view('admin.reports.visits', compact(
+            'today', 'thisWeek', 'thisMonth', 'periodTotal', 'buckets', 'granularity', 'from', 'to'
+        ));
+    }
+
+    public function exportVisits(Request $request)
+    {
+        $from = $request->filled('from')
+            ? Carbon::parse($request->input('from'))
+            : now()->subDays(29)->startOfDay();
+        $to = $request->filled('to')
+            ? Carbon::parse($request->input('to'))
+            : now();
+
+        $visits = SiteVisit::with('user')
+            ->whereBetween('visited_on', [$from->copy()->startOfDay(), $to->copy()->endOfDay()])
+            ->orderBy('visited_on')
+            ->get();
+
+        return $this->streamCsv('rapport-visites', ['Date', 'Utilisateur', 'IP'], $visits->map(fn ($v) => [
+            $v->visited_on->format('d/m/Y'),
+            $v->user->name ?? 'Visiteur non connecté',
+            $v->ip_address,
+        ]));
+    }
+
+    /**
+     * Découpe une période en buckets jour/semaine/mois pour le rapport de visites.
+     */
+    private function visitBuckets(Carbon $from, Carbon $to, string $granularity): array
+    {
+        $buckets = [];
+
+        if ($granularity === 'day') {
+            $cursor = $from->copy()->startOfDay();
+            while ($cursor->lte($to)) {
+                $buckets[] = [
+                    'label' => $cursor->translatedFormat('d M'),
+                    'value' => SiteVisit::whereDate('visited_on', $cursor->toDateString())->count(),
+                ];
+                $cursor->addDay();
+            }
+        } elseif ($granularity === 'week') {
+            $cursor = $from->copy()->startOfWeek();
+            $end = $to->copy()->endOfWeek();
+            while ($cursor->lte($end)) {
+                $weekEnd = $cursor->copy()->endOfWeek();
+                $buckets[] = [
+                    'label' => $cursor->translatedFormat('d M'),
+                    'value' => SiteVisit::whereBetween('visited_on', [$cursor->toDateString(), $weekEnd->toDateString()])->count(),
+                ];
+                $cursor->addWeek();
+            }
+        } else {
+            $buckets = $this->monthlyBuckets($from, $to, function (Carbon $start, Carbon $end) {
+                return SiteVisit::whereBetween('visited_on', [$start->toDateString(), $end->toDateString()])->count();
+            });
+        }
+
+        return $buckets;
     }
 
     /**

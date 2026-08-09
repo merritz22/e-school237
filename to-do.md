@@ -19,3 +19,6 @@ Filtre par nom de fichier a rajouter => OK
 faire en sorte que lorsque le titre est trop long, il passe en wrap-text plutot que d'agrandir le tableau => OK
 
 Reprendre les modification précedentes sur le module sujet d'évaluation + faire en sorte que le design des deux vues listes soit le même. => OK
+
+Les utilisateurs qui n'ont pas renseigné de classe ont accès aux contenus => OK
+Cependant il ne doivent pas voir la miniature du contenue premium, il n'est visible que si l'on a l'abonnement correspondant. J'avais utilisé une image fixe pour ce cas (une image flouté), si tu peux directement flouté l'image du contenu Premium fait le sinon fait comme moi je l'ai fait stp =>

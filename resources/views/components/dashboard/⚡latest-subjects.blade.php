@@ -93,21 +93,19 @@ new class extends Component
                 <a href="{{ route('subjects.show', $subject->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($subject->preview_image)
-                            @if ($show_premium_preview || $subject->is_free)
+                            <div class="relative w-full h-full">
                                 <img
-                                        src="{{ asset('storage/' . $subject->preview_image) }}"
-                                        alt="{{ $subject->title }}"
-                                        class="w-full h-full object-cover object-top
-                                            hover:scale-105 transition-transform duration-300"
-                                    />
-                            @else
-                                <img
-                                    src="{{ asset('images/locked.png') }}"
+                                    src="{{ asset('storage/' . $subject->preview_image) }}"
                                     alt="{{ $subject->title }}"
-                                    class="w-full h-full object-cover object-top
-                                        hover:scale-105 transition-transform duration-300"
-                                    />
-                            @endif    
+                                    class="w-full h-full object-cover object-top transition-transform duration-300
+                                        {{ $show_premium_preview || $subject->is_free ? 'hover:scale-105' : 'blur-md scale-110' }}"
+                                />
+                                @unless($show_premium_preview || $subject->is_free)
+                                    <div class="absolute inset-0 flex items-center justify-center bg-black/25">
+                                        <flux:icon name="lock-closed" class="w-8 h-8 text-white drop-shadow-md" />
+                                    </div>
+                                @endunless
+                            </div>
                         @else
                             <div class="w-full h-full flex items-center justify-center
                                 bg-{{ config('theme.primary') }}-50

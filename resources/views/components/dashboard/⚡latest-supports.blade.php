@@ -93,21 +93,19 @@ new class extends Component
                 <a href="{{ route('resources.show', $resource->id) }}">
                     <div class="w-full h-40 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         @if($resource->preview_image)
-                            @if ($show_premium_preview || $resource->is_free)  
+                            <div class="relative w-full h-full">
                                 <img
                                     src="{{ asset('storage/' . $resource->preview_image) }}"
                                     alt="{{ $resource->title }}"
-                                    class="w-full h-full object-cover object-top
-                                        hover:scale-105 transition-transform duration-300"
+                                    class="w-full h-full object-cover object-top transition-transform duration-300
+                                        {{ $show_premium_preview || $resource->is_free ? 'hover:scale-105' : 'blur-md scale-110' }}"
                                 />
-                            @else
-                                <img
-                                    src="{{ asset('images/locked.png') }}"
-                                    alt="{{ $resource->title }}"
-                                    class="w-full h-full object-cover object-top
-                                        hover:scale-105 transition-transform duration-300"
-                                    />
-                            @endif
+                                @unless($show_premium_preview || $resource->is_free)
+                                    <div class="absolute inset-0 flex items-center justify-center bg-black/25">
+                                        <flux:icon name="lock-closed" class="w-8 h-8 text-white drop-shadow-md" />
+                                    </div>
+                                @endunless
+                            </div>
                         @else
                             <div class="w-full h-full flex items-center justify-center
                                 bg-{{ config('theme.success') }}-50

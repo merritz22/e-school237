@@ -95,7 +95,7 @@ return [
     'home' => [
         'hero' => [
             'badge'          => ':year 📊 Statistiques officielles du Baccalauréat',
-            'title'          => ':fail_rate % des candidats ont échoué au Bac :year au Cameroun',
+            'title'          => ':fail_rate % des candidats ont échoué aux examens :year au Cameroun',
             'description'    => 'Seuls :pass_rate % des candidats ont été admis à la session :year — en baisse de :diff points par rapport à :previous_year. E-School237 donne à votre enfant les sujets corrigés, les ressources et le suivi par niveau pour être du bon côté des statistiques.',
             'cta_register'   => 'Créer un compte gratuit',
             'cta_subjects'   => 'Voir les sujets d\'examens',

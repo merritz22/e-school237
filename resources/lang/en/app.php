@@ -95,7 +95,7 @@ return [
     'home' => [
         'hero' => [
             'badge'          => ':year 📊 Official Baccalauréat statistics',
-            'title'          => ':fail_rate% of candidates failed the :year Baccalauréat in Cameroon',
+            'title'          => ':fail_rate% of candidates failed the :year exam in Cameroon',
             'description'    => 'Only :pass_rate% of candidates were admitted in the :year session — down :diff points from :previous_year. E-School237 gives your child corrected past papers, resources and level-based tracking to be on the right side of the statistics.',
             'cta_register'   => 'Create a free account',
             'cta_subjects'   => 'Browse exam subjects',

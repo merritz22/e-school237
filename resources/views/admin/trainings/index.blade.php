@@ -62,14 +62,14 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($trainings as $training)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 max-w-xs">
                                 <div class="flex items-center">
                                     @if($training->banner)
                                         <img src="{{ $training->banner_url }}"
                                              alt="{{ $training->title }}"
-                                             class="w-12 h-12 rounded-lg object-cover mr-4">
+                                             class="w-12 h-12 rounded-lg object-cover mr-4 shrink-0">
                                     @else
-                                        <div class="w-12 h-12 bg-gray-200 rounded-lg mr-4 flex items-center justify-center">
+                                        <div class="w-12 h-12 bg-gray-200 rounded-lg mr-4 flex items-center justify-center shrink-0">
                                             <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.5a12.083 12.083 0 01-6.16-9.922L12 14z"></path>
@@ -77,7 +77,7 @@
                                         </div>
                                     @endif
                                     <div class="min-w-0 flex-1">
-                                        <div class="text-sm font-medium text-gray-900 truncate">{{ $training->title }}</div>
+                                        <div class="text-sm font-medium text-gray-900 break-words">{{ $training->title }}</div>
                                     </div>
                                 </div>
                             </td>

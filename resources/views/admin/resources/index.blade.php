@@ -28,17 +28,17 @@
     <!-- Filters -->
     <div class="bg-gray-50 rounded-lg p-6 mb-6">
         <form method="GET" action="{{ route('admin.resources.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Search -->
-                {{-- <div class="md:col-span-2">
-                    <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                    <input type="text" 
-                           id="search" 
-                           name="search" 
-                           value="{{ request('search') }}"
-                           placeholder="Titre, contenu..."
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Filename Filter -->
+                <div>
+                    <label for="file_name" class="block text-sm font-medium text-gray-700 mb-2">Nom du fichier</label>
+                    <input type="text"
+                           id="file_name"
+                           name="file_name"
+                           value="{{ request('file_name') }}"
+                           placeholder="Ex : cours-maths.pdf"
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div> --}}
+                </div>
 
                 <!-- Status Filter -->
                 <div>
@@ -109,7 +109,7 @@
                     Rechercher
                 </button>
                 
-                @if(request()->hasAny(['search', 'status', 'category', 'author']))
+                @if(request()->hasAny(['file_name', 'status', 'subject', 'level']))
                     <a href="{{ route('admin.resources.index') }}" 
                        class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">
                         Effacer les filtres
@@ -175,29 +175,29 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matière</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vues</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléchargements</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($resources as $resource)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 max-w-xs">
                                 <div class="flex items-center">
                                     @if($resource->preview_image)
-                                        <img src="{{ Storage::url($resource->preview_image) }}" 
-                                             alt="{{ $resource->title }}" 
-                                             class="w-12 h-12 rounded-lg object-cover mr-4">
+                                        <img src="{{ Storage::url($resource->preview_image) }}"
+                                             alt="{{ $resource->title }}"
+                                             class="w-12 h-12 rounded-lg object-cover mr-4 shrink-0">
                                     @else
-                                        <div class="w-12 h-12 bg-gray-200 rounded-lg mr-4 flex items-center justify-center">
+                                        <div class="w-12 h-12 bg-gray-200 rounded-lg mr-4 flex items-center justify-center shrink-0">
                                             <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
                                         </div>
                                     @endif
-                                    
+
                                     <div class="min-w-0 flex-1">
-                                        <div class="text-sm font-medium text-gray-900 truncate">
+                                        <div class="text-sm font-medium text-gray-900 break-words">
                                             {{ $resource->title }}
                                         </div>
                                         <div class="text-sm text-gray-500">
@@ -242,7 +242,7 @@
                             </td>
                             
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ number_format($resource->views_count) }}
+                                {{ number_format($resource->downloads_count) }}
                             </td>
                             
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -371,7 +371,7 @@
 @push('scripts')
 <script>
 // Auto-submit form on select change
-document.querySelectorAll('select[name="status"], select[name="category"], select[name="author"]').forEach(function(select) {
+document.querySelectorAll('select[name="status"], select[name="subject"], select[name="level"]').forEach(function(select) {
     select.addEventListener('change', function() {
         this.closest('form').submit();
     });

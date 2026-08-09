@@ -92,7 +92,7 @@ class ArticleController extends Controller
 
         // Filtres
         if ($request->filled('status')) {
-            $query->where('is_published', $request->status === 'published');
+            $query->where('status', $request->status);
         }
 
         if ($request->filled('subject')) {

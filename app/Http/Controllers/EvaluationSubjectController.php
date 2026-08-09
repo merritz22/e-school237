@@ -71,16 +71,19 @@ class EvaluationSubjectController extends Controller
         $query = EvaluationSubject::with( 'subject', 'level', 'author');
 
         // Filtres
+        if ($request->filled('file_name')) {
+            $query->where('file_name', 'like', '%' . $request->file_name . '%');
+        }
+
         if ($request->filled('level_id')) {
             $query->where('level_id', $request->level_id);
-            // echo($request->level_id);
         }
 
         if ($request->filled('subject_id')) {
             $query->where('subject_id', $request->subject_id);
         }
 
-        
+
         if ($request->filled('author_id')) {
             $query->where('author_id', $request->author_id);
         }

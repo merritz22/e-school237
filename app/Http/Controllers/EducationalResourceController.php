@@ -31,14 +31,20 @@ class EducationalResourceController extends Controller
     public function adminIndex(Request $request)
     {
         $resources = EducationalResource::query()
-            ->when($request->has('search'), function($query) use ($request) {
+            ->when($request->filled('search'), function($query) use ($request) {
                 $query->search($request->search);
             })
-            ->when($request->has('subject'), function($query) use ($request) {
+            ->when($request->filled('file_name'), function($query) use ($request) {
+                $query->where('file_name', 'like', '%' . $request->file_name . '%');
+            })
+            ->when($request->filled('subject'), function($query) use ($request) {
                 $query->bySubject($request->subject);
             })
-            ->when($request->has('level'), function($query) use ($request) {
+            ->when($request->filled('level'), function($query) use ($request) {
                 $query->byLevel($request->level);
+            })
+            ->when($request->filled('status'), function($query) use ($request) {
+                $query->where('is_approved', $request->status === 'published');
             })
             ->with(['subject', 'level', 'uploader'])
             ->latest()

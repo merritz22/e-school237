@@ -34,9 +34,9 @@
             @forelse($trainings as $training)
                 <flux:card class="overflow-hidden flex flex-col p-0">
                     @if($training->banner)
-                        <img src="{{ $training->banner_url }}" alt="{{ $training->title }}" class="w-full h-40 object-cover">
+                        <img src="{{ $training->banner_url }}" alt="{{ $training->title }}" class="w-full aspect-2/1 object-cover">
                     @else
-                        <div class="w-full h-40 bg-{{ $theme['primary'] }}-100 dark:bg-{{ $theme['primary'] }}-900/30 flex items-center justify-center">
+                        <div class="w-full aspect-2/1 bg-{{ $theme['primary'] }}-100 dark:bg-{{ $theme['primary'] }}-900/30 flex items-center justify-center">
                             <flux:icon name="academic-cap" class="w-10 h-10 text-{{ $theme['primary'] }}-600" />
                         </div>
                     @endif

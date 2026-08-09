@@ -17,9 +17,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-6">
                 @if($training->banner)
-                    <img src="{{ $training->banner_url }}" alt="{{ $training->title }}" class="w-full h-64 object-cover rounded-2xl">
+                    <img src="{{ $training->banner_url }}" alt="{{ $training->title }}" class="w-full aspect-2/1 object-cover rounded-2xl">
                 @else
-                    <div class="w-full h-64 rounded-2xl bg-{{ $theme['primary'] }}-100 dark:bg-{{ $theme['primary'] }}-900/30 flex items-center justify-center">
+                    <div class="w-full aspect-2/1 rounded-2xl bg-{{ $theme['primary'] }}-100 dark:bg-{{ $theme['primary'] }}-900/30 flex items-center justify-center">
                         <flux:icon name="academic-cap" class="w-16 h-16 text-{{ $theme['primary'] }}-600" />
                     </div>
                 @endif

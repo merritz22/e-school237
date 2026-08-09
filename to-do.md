@@ -1,9 +1,13 @@
 
-Donner également la possibilité d'ajouter un ficher de correction sur les sujets par l'admin (pas visible pour les utilisateurs actuellement) =>
+Donner également la possibilité d'ajouter un ficher de correction sur les sujets par l'admin (pas visible pour les utilisateurs actuellement) => OK
 
 
-Dans l'administration Afficher également le nombre de personnes qui visitent le site par jour et par semaine ou par mois
+Dans l'administration Afficher également le nombre de personnes qui visitent le site par jour et par semaine ou par mois => OK
 
-Faire en sorte qu’un téléchargement d’un même fichier plusieurs fois dans la même journée compte pour un.
+Faire en sorte qu’un téléchargement d’un même fichier plusieurs fois dans la même journée compte pour un. => OK
 
-Qu'est-ce qui peut faire en sorte que tu télécharges le même fichier plusieurs sans qu'il ? Ne charge vraiment ( sauf si c'est un problème de réseau. Le site marque que j'ai trois téléchargement d'une fiche de synthèse en physique de terminale pourtant le téléchargement n'a pas abouti à cause du réseau probablement :Est-ce possible de remédier à ce genre de préoccupation ?)
+Gestion des formations:
+- Un admin doit pouvoir gérer les formations (créer, éditer, publier, désactiver, ....)
+- Une formation est constitué d'un titre, une description, une banière, une durée, un prix (avec un prix initial barré), les prérequis technique et intellectuel. Tout ces champs doivent être modifiable par l'admin.
+- Crée une pour cela qui sera reférencé par le lien de formation présent sur la page d'accueil côté utilisateur.
+- Crée également quelques formations en informatique qui pourrait intéressé des jeunes camerounais

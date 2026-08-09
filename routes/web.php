@@ -31,6 +31,8 @@ use App\Http\Controllers\Admin\LevelSubjectController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\TrainingController as AdminTrainingController;
+use App\Http\Controllers\TrainingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +101,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::put('/{level}', [LevelController::class, 'update'])->name('admin.levels.update');
         Route::delete('/{level}', [LevelController::class, 'destroy'])->name('admin.levels.destroy');
         Route::patch('/{level}/publish', [LevelController::class, 'publish'])->name('admin.levels.publish');
+    });
+
+    // Gestion des formations
+    Route::prefix('trainings')->group(function () {
+        Route::get('/', [AdminTrainingController::class, 'index'])->name('admin.trainings.index');
+        Route::get('/create', [AdminTrainingController::class, 'create'])->name('admin.trainings.create');
+        Route::post('/', [AdminTrainingController::class, 'store'])->name('admin.trainings.store');
+        Route::get('/{training}/edit', [AdminTrainingController::class, 'edit'])->name('admin.trainings.edit');
+        Route::put('/{training}', [AdminTrainingController::class, 'update'])->name('admin.trainings.update');
+        Route::delete('/{training}', [AdminTrainingController::class, 'destroy'])->name('admin.trainings.destroy');
+        Route::patch('/{training}/publish', [AdminTrainingController::class, 'publish'])->name('admin.trainings.publish');
+        Route::patch('/{training}/disable', [AdminTrainingController::class, 'disable'])->name('admin.trainings.disable');
     });
 
      // Gestion des abonnements
@@ -241,6 +255,12 @@ Route::prefix('articles')->group(function () {
 });
 
 
+
+// Formations
+Route::prefix('formations')->group(function () {
+    Route::get('/', [TrainingController::class, 'index'])->name('trainings.index');
+    Route::get('/{training:slug}', [TrainingController::class, 'show'])->name('trainings.show');
+});
 
 // Page affichée quand un téléchargement est bloqué
 Route::view('/download/limit', 'pages.downloads.limit')->name('download.limit')->middleware('auth');

@@ -81,49 +81,82 @@
             </div>
         </div>
 
-        {{-- ===== BANDEAU DE STATISTIQUES ===== --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 text-center">
-                <div class="text-3xl font-extrabold text-{{ $theme['success'] }}-600">
-                    {{ number_format($exam['pass_rate'], 2, ',', ' ') }}%
+        {{-- ===== NOS SERVICES ===== --}}
+        @php
+            $phoneRaw = config('subscriptions.payment_accounts.orange.number');
+            $phoneDisplay = implode(' ', str_split($phoneRaw, 3));
+            $waNumber = config('subscriptions.country_code') . $phoneRaw;
+            $contactEmail = config('mail.contact_address');
+        @endphp
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {{-- Répétitions à domicile --}}
+            <flux:card class="p-6 flex flex-col">
+                <div class="w-11 h-11 rounded-lg bg-{{ $theme['primary'] }}-100 dark:bg-{{ $theme['primary'] }}-900/30 flex items-center justify-center">
+                    <flux:icon name="home" class="w-6 h-6 text-{{ $theme['primary'] }}-600" />
                 </div>
-                <flux:text size="sm" class="text-zinc-500 mt-1 block">
-                    {{ __('app.home.exam_stats.pass_rate', ['year' => $schoolStats['year']]) }}
-                </flux:text>
-                <flux:text size="xs" class="text-red-500 mt-1 block">
-                    ▼ {{ __('app.home.exam_stats.pass_rate_change', [
-                        'diff' => number_format(abs($diff), 2, ',', ' '),
-                        'previous_year' => $exam['previous_year'],
-                    ]) }}
-                </flux:text>
-            </div>
+                <flux:heading size="sm" class="font-semibold mt-3">{{ __('app.home.services.tutoring.title') }}</flux:heading>
+                <flux:text size="sm" class="text-zinc-500 mt-2 flex-1">{{ __('app.home.services.tutoring.description') }}</flux:text>
+                <a href="https://wa.me/{{ $waNumber }}?text={{ urlencode(__('app.home.services.tutoring.cta')) }}"
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-1 text-sm font-medium text-{{ $theme['primary'] }}-600 hover:underline mt-4">
+                    {{ __('app.home.services.tutoring.cta') }}
+                    <flux:icon name="arrow-up-right" class="w-3.5 h-3.5" />
+                </a>
+                <a href="mailto:{{ $contactEmail }}" class="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 mt-1">
+                    {{ $contactEmail }}
+                </a>
+            </flux:card>
 
-            <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 text-center">
-                <div class="text-3xl font-extrabold text-red-600">
-                    {{ number_format($failRate, 2, ',', ' ') }}%
+            {{-- Formations --}}
+            <flux:card class="p-6 flex flex-col">
+                <div class="w-11 h-11 rounded-lg bg-{{ $theme['warning'] }}-100 dark:bg-{{ $theme['warning'] }}-900/30 flex items-center justify-center">
+                    <flux:icon name="academic-cap" class="w-6 h-6 text-{{ $theme['warning'] }}-600" />
                 </div>
-                <flux:text size="sm" class="text-zinc-500 mt-1 block">
-                    {{ __('app.home.exam_stats.fail_rate', ['year' => $schoolStats['year']]) }}
-                </flux:text>
-            </div>
+                <flux:heading size="sm" class="font-semibold mt-3">{{ __('app.home.services.trainings.title') }}</flux:heading>
+                <flux:text size="sm" class="text-zinc-500 mt-2 flex-1">{{ __('app.home.services.trainings.description') }}</flux:text>
+                <a href="{{ route('trainings.index') }}"
+                   wire:navigate
+                   class="inline-flex items-center gap-1 text-sm font-medium text-{{ $theme['warning'] }}-600 hover:underline mt-4">
+                    {{ __('app.home.services.trainings.cta') }}
+                    <flux:icon name="arrow-up-right" class="w-3.5 h-3.5" />
+                </a>
+            </flux:card>
 
-            <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 text-center">
-                <div class="text-3xl font-extrabold text-{{ $theme['primary'] }}-600">
-                    {{ number_format($exam['candidates_present']) }}
+            {{-- Cours en ligne --}}
+            <flux:card class="p-6 flex flex-col">
+                <div class="w-11 h-11 rounded-lg bg-{{ $theme['success'] }}-100 dark:bg-{{ $theme['success'] }}-900/30 flex items-center justify-center">
+                    <flux:icon name="computer-desktop" class="w-6 h-6 text-{{ $theme['success'] }}-600" />
                 </div>
-                <flux:text size="sm" class="text-zinc-500 mt-1 block">
-                    {{ __('app.home.exam_stats.candidates') }}
+                <flux:heading size="sm" class="font-semibold mt-3">{{ __('app.home.services.online_courses.title') }}</flux:heading>
+                <flux:text size="sm" class="text-zinc-500 mt-2">{{ __('app.home.services.online_courses.description') }}</flux:text>
+                <flux:text size="xs" class="text-zinc-400 mt-2">
+                    {{ __('app.home.services.online_courses.pricing', ['monthly' => '2 500', 'quarterly' => '7 000']) }}
                 </flux:text>
-            </div>
+                <div class="flex-1"></div>
+                <a href="https://wa.me/{{ $waNumber }}?text={{ urlencode(__('app.home.services.online_courses.cta')) }}"
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-1 text-sm font-medium text-{{ $theme['success'] }}-600 hover:underline mt-4">
+                    {{ __('app.home.services.online_courses.cta') }}
+                    <flux:icon name="arrow-up-right" class="w-3.5 h-3.5" />
+                </a>
+                <flux:text size="xs" class="text-zinc-400 mt-1 block">
+                    {{ __('app.home.services.online_courses.cta_note', ['phone' => $phoneDisplay]) }}
+                </flux:text>
+            </flux:card>
 
-            <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 text-center">
-                <div class="text-3xl font-extrabold text-{{ $theme['success'] }}-600">
-                    {{ number_format($exam['admitted']) }}
+            {{-- Orientation scolaire --}}
+            <flux:card class="p-6 flex flex-col">
+                <div class="w-11 h-11 rounded-lg bg-{{ $theme['primary'] }}-100 dark:bg-{{ $theme['primary'] }}-900/30 flex items-center justify-center">
+                    <flux:icon name="map" class="w-6 h-6 text-{{ $theme['primary'] }}-600" />
                 </div>
-                <flux:text size="sm" class="text-zinc-500 mt-1 block">
-                    {{ __('app.home.exam_stats.admitted', ['girls' => number_format($exam['admitted_girls'])]) }}
-                </flux:text>
-            </div>
+                <flux:heading size="sm" class="font-semibold mt-3">{{ __('app.home.services.guidance.title') }}</flux:heading>
+                <flux:text size="sm" class="text-zinc-500 mt-2 flex-1">{{ __('app.home.services.guidance.description') }}</flux:text>
+                <a href="mailto:{{ $contactEmail }}?subject={{ urlencode(__('app.home.services.guidance.cta')) }}"
+                   class="inline-flex items-center gap-1 text-sm font-medium text-{{ $theme['primary'] }}-600 hover:underline mt-4">
+                    {{ __('app.home.services.guidance.cta') }}
+                    <flux:icon name="arrow-up-right" class="w-3.5 h-3.5" />
+                </a>
+            </flux:card>
         </div>
 
         {{-- ===== LA SOLUTION ===== --}}

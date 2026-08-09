@@ -102,12 +102,29 @@ return [
             'cta_plans'      => 'Discover our plans',
             'source_prefix'  => 'Source:',
         ],
-        'exam_stats' => [
-            'pass_rate'        => ':year Baccalauréat pass rate',
-            'pass_rate_change' => ':diff points vs :previous_year',
-            'fail_rate'        => 'Candidates who failed the :year Bac',
-            'candidates'       => 'Candidates who sat the exam',
-            'admitted'         => 'Admitted, including :girls girls',
+        'services' => [
+            'tutoring' => [
+                'title'       => 'Home tutoring',
+                'description' => 'Qualified teachers come to you, anywhere in Cameroon\'s 10 regions, for personalised support adapted to your child\'s pace.',
+                'cta'         => 'Request a teacher',
+            ],
+            'trainings' => [
+                'title'       => 'Trainings',
+                'description' => 'Office tools, Artificial Intelligence, Robotics, content creation and more: hands-on trainings led by professionals to build new skills, at any age.',
+                'cta'         => 'Discover our trainings',
+            ],
+            'online_courses' => [
+                'title'       => 'Online courses',
+                'description' => 'Wherever you are, learn as if you were there. Live classes in small groups (WhatsApp, Zoom, YouTube, Google Meet), where every student takes part, asks questions and keeps progressing with constant support from their teachers even after class.',
+                'pricing'     => '',
+                'cta'         => 'Join a course',
+                'cta_note'    => '',
+            ],
+            'guidance' => [
+                'title'       => 'School guidance',
+                'description' => 'The right choice, from the start. Personalised support to choose the right stream, series or school, based on the student\'s profile and ambitions.',
+                'cta'         => 'Request guidance advice',
+            ],
         ],
         'solution' => [
             'badge'       => 'The solution',

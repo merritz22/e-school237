@@ -95,6 +95,30 @@
                         </a>
                     </div>
 
+                    <!-- Formations Section -->
+                    <div class="space-y-1">
+                        <div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Formations
+                        </div>
+
+                        <a href="{{ route('admin.trainings.index') }}"
+                           class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.trainings.*') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
+                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.5a12.083 12.083 0 01-6.16-9.922L12 14z" />
+                            </svg>
+                            Toutes les formations
+                        </a>
+
+                        <a href="{{ route('admin.trainings.create') }}"
+                           class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.trainings.create') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors">
+                            <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Nouvelle formation
+                        </a>
+                    </div>
+
                     <!-- Educational resources Section -->
                     <div class="space-y-1">
                         <div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">

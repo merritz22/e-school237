@@ -102,12 +102,29 @@ return [
             'cta_plans'      => 'Découvrir nos formules',
             'source_prefix'  => 'Source :',
         ],
-        'exam_stats' => [
-            'pass_rate'        => 'Taux de réussite au Bac :year',
-            'pass_rate_change' => ':diff points vs :previous_year',
-            'fail_rate'        => 'Candidats recalés au Bac :year',
-            'candidates'       => 'Candidats présentés à l\'examen',
-            'admitted'         => 'Admis, dont :girls filles',
+        'services' => [
+            'tutoring' => [
+                'title'       => 'Répétitions à domicile',
+                'description' => 'Des professeurs qualifiés se déplacent chez vous, dans les 10 régions du Cameroun, pour un accompagnement personnalisé et adapté au rythme de votre enfant.',
+                'cta'         => 'Demander un professeur',
+            ],
+            'trainings' => [
+                'title'       => 'Formations',
+                'description' => 'Bureautique, Intelligence Artificielle, Robotique, création de contenu et bien plus : des formations pratiques animées par des professionnels pour développer de nouvelles compétences, à tout âge.',
+                'cta'         => 'Découvrir nos formations',
+            ],
+            'online_courses' => [
+                'title'       => 'Cours en ligne',
+                'description' => 'Où que vous soyez, apprenez comme si vous y étiez. Cours en direct en petits groupes (WhatsApp, Zoom, YouTube, Google Meet), où chaque élève participe, pose ses questions et progresse avec le soutien constant de ses professeurs même après le cours.',
+                'pricing'     => '',
+                'cta'         => 'Rejoindre un cours',
+                'cta_note'    => '',
+            ],
+            'guidance' => [
+                'title'       => 'Orientation scolaire',
+                'description' => 'Le bon choix, dès le départ. Un accompagnement personnalisé pour choisir la bonne filière, la bonne série ou le bon établissement, selon le profil et les ambitions de l\'élève.',
+                'cta'         => 'Demander un conseil d\'orientation',
+            ],
         ],
         'solution' => [
             'badge'       => 'La solution',

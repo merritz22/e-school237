@@ -142,7 +142,7 @@ return [
             's1_title' => 'Create an account',
             's1_desc'  => 'Free sign-up in 2 minutes, no card required.',
             's2_title' => 'Explore freely',
-            's2_desc'  => 'Browse the free content before committing to anything.',
+            's2_desc'  => 'BCheck out the content, then subscribe when you\'re ready.',
             's3_title' => 'Subscribe for your class',
             's3_desc'  => 'Unlock full access to the subjects and resources for their level.',
         ],

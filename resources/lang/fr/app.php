@@ -142,7 +142,7 @@ return [
             's1_title' => 'Créer un compte',
             's1_desc'  => 'Inscription gratuite en 2 minutes, aucune carte bancaire requise.',
             's2_title' => 'Explorer librement',
-            's2_desc'  => 'Consultez les contenus gratuits avant de vous engager.',
+            's2_desc'  => 'Consultez les contenus puis passez à l\'abonnement quand vous êtes prêt.',
             's3_title' => 'S\'abonner à sa classe',
             's3_desc'  => 'Débloquez l\'accès complet aux sujets et ressources de son niveau.',
         ],
